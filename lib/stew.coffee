@@ -1,5 +1,44 @@
 class PredicateFactory
-  make_by_attribute_predicate:(attrname,attrvalue=null,bytoken=false)->
+
+  # **make_by_attribute_predicate** creates a predicate
+  # that returns `true` if the given `attrname`
+  # matches the given `attrvalue`.
+  #
+  # If `attrvalue` is null, then the predicate will
+  # return true if the tested node has an attribute
+  # named `attrname`.
+  #
+  # If `attrvalue` is a RegExp then the predicate will
+  # return true if the value of the `attrname` attribute
+  # *matches* the `attrvalue` *expression*.
+  #
+  # If `attrvalue` is a String then the predicate will
+  # return true if the value of the `attrname` attribute
+  # *equals* the `attrvalue` *string*.
+  #
+  # If `valuedelim` is non-null, the specified value will
+  # be used as a delimiter by which to split the value of
+  # the `attrname` attribute, and the corresponding elements
+  # will be tested rather than the entire string.
+  #
+  # For example, the call:
+  #
+  #     make_by_attribute_predicate('class','foo',/\s+/)
+  #
+  # will return a function that tests if a given DOM node
+  # has been assigned class `foo`.  E.g, `true` for these:
+  #
+  #     <span class="foo"></span>
+  #
+  #     <span class="bar foo"></span>
+  #
+  # and `false` for these:
+  #
+  #     <span></span>
+  #
+  #     <span class="food"></span>
+  #
+  make_by_attribute_predicate:(attrname,attrvalue=null,valuedelim=null)->
     if typeof(attrname) is 'string'
       np = (str)->str is attrname
     else
@@ -19,9 +58,9 @@ class PredicateFactory
           if vp is null
             return true
           else
-            if bytoken
+            if valuedelim?
               if value?
-                for token in value.split(/\s/)
+                for token in value.split(valuedelim)
                   if vp(token)
                     return true
             else
@@ -29,29 +68,54 @@ class PredicateFactory
                 return true
       return false
 
+  # **make_by_class_predicate** creates a predicate
+  # that returns `true` if the given DOM node has
+  # the specified `klass` value.
+  make_by_class_predicate:(klass)=>
+    return @make_by_attribute_predicate('class',klass,/\s+/)
 
-  make_by_class_predicate:(selector)=>
-    return @make_by_attribute_predicate('class',selector,true)
+  # **make_by_id_predicate** creates a predicate
+  # that returns `true` if the given DOM node has
+  # the specified `id` value.
+  make_by_id_predicate:(id)=>
+    return @make_by_attribute_predicate('id',id)
 
-  make_by_id_predicate:(selector)=>
-    return @make_by_attribute_predicate('id',selector)
+  # **make_by_attr_value_predicate** is equivalent to `make_by_attribute_predicate`
+  make_by_attr_value_predicate:(attrname,attrvalue,valuedelim)=>
+    return @make_by_attribute_predicate(attrname,attrvalue,valuedelim)
 
-  make_by_attr_value_predicate:(attrname,attrvalue,bytoken=false)=>
-    return @make_by_attribute_predicate(attrname,attrvalue,bytoken)
-
+  # **make_by_attr_exists_predicate** creates a
+  # predicate that returns `true` if the given DOM
+  # node has an attributed with the specified `attrname`,
+  # regardless of the value for the atttribute.
   make_by_attr_exists_predicate:(attrname)=>
     return @make_by_attribute_predicate(attrname,null)
 
-  make_by_tag_predicate:(selector)->
-    if typeof selector is 'string'
-      return (node,parent)->(selector is node.name)
+  # **make_by_tag_predicate** creates a
+  # predicate that returns `true` if the given DOM
+  # node is a tag with the specified `name`.
+  #
+  # If `name` is a RegExp then the predicate will
+  # return true if tag's name *matches* the
+  # specified *expression*.
+  #
+  # If `name` is a String then the predicate will
+  # return true if the tag's name *equals* the
+  # specified *string*.
+  make_by_tag_predicate:(name)->
+    if typeof name is 'string'
+      return (node,parent)->(name is node.name)
     else
-      return (node,parent)->(selector.test(node.name))
+      return (node,parent)->(name.test(node.name))
 
 class Stew
   constructor:()->
     @factory = new PredicateFactory()
 
+  # If `str` is a string that starts and ends with `/`
+  # (or an optional `g`, `m` or `i` suffix, it is
+  # converted to the corresponding RegExp. Else the
+  # original `str` value is returned.
   _to_string_or_regex:(str)->
     match = str.match /^\/(.*)\/([gmi]*)$/
     if match?[1]?
