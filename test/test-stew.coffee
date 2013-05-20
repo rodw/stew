@@ -61,6 +61,15 @@ describe "Stew",->
       # done
       done()
 
+    it 'support the type selector with regexp',(done)->
+      nodeset = @stew.select(@DOM,'/E*x?M/i')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'html'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'em'
+      done()
+
     # E F -  any F element that is a descendant of an E element. - Descendant selectors
     it 'support the descendant selector',(done)->
       # `div span`
@@ -91,6 +100,14 @@ describe "Stew",->
         node.type.should.equal 'tag'
         node.name.should.equal 'div'
       # done
+      done()
+
+    # E F -  any F element that is a descendant of an E element. - Descendant selectors
+    it 'support the descendant selector with regexp',(done)->
+      nodeset = @stew.select(@DOM,'div /s[tp][aeiou]+n/')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
       done()
 
 #-------------------------------------------------------------------------------
