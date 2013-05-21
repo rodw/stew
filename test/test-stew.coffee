@@ -177,6 +177,12 @@ describe "Stew",->
         node.type.should.equal 'tag'
         node.name.should.equal 'div'
       #
+      nodeset = @stew.select(@DOM,'div[class~=inner]')
+      nodeset.length.should.equal 4
+      for node in nodeset
+        node.type.should.equal 'tag'
+        node.name.should.equal 'div'
+      #
       done()
 
 
