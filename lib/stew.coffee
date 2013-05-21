@@ -59,6 +59,10 @@ class Stew
       result.push @_parse_selector(selector)
     return result
 
+  # TODO make parser support whitespace within tokens
+  # TODO make parser support quoted strings (attribute values)
+  TAG_N_ATTR = /^([A-Z0-9_]+)(\[.+\])/i
+
   _parse_selector:(selector)->
     if /^\.(.+)$/.test(selector)
       # class
@@ -74,6 +78,9 @@ class Stew
       else
         [name,value] = selector.split('=') # TODO handle ~= case
         return @factory.by_attr_value_predicate( @_to_string_or_regex(name), @_to_string_or_regex(value) )
+    else if TAG_N_ATTR.test(selector)
+      matches = selector.match TAG_N_ATTR
+      return @factory.and_predicate([@_parse_selector(matches[1]),@_parse_selector(matches[2])])
     else
       return @factory.by_tag_predicate( @_to_string_or_regex(selector) )
 

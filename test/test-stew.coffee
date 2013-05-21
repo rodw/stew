@@ -110,6 +110,68 @@ describe "Stew",->
       nodeset[0].name.should.equal 'span'
       done()
 
+    # E[foo] - Matches any E element with the "foo" attribute set (whatever the value). - Attribute selectors
+    it 'support the attribute selector',(done)->
+      #
+      nodeset = @stew.select(@DOM,'b[foo]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      #
+      nodeset = @stew.select(@DOM,'div b[foo]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      #
+      nodeset = @stew.select(@DOM,'b[/fo+/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      #
+      done()
+
+
+    # E[foo="warning"] - Matches any E element whose "foo" attribute value is exactly equal to "warning". - Attribute selectors
+    it 'support the attribute-value selector',(done)->
+      #
+      nodeset = @stew.select(@DOM,'[width=17]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      #
+      nodeset = @stew.select(@DOM,'b[foo=bar]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      #
+      nodeset = @stew.select(@DOM,'div [foo=bar]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      #
+      nodeset = @stew.select(@DOM,'div b[foo=foo]')
+      nodeset.length.should.equal 0
+      #
+      nodeset = @stew.select(@DOM,'b[/fo+/=/ba?r/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      #
+      nodeset = @stew.select(@DOM,'div[id=inner-1-1]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      #
+      nodeset = @stew.select(@DOM,'div[id=/inner-1/]')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      #
+      done()
+
+
 #-------------------------------------------------------------------------------
 # *                 Matches any element.                                                                                                                      Universal selector
 # E > F             Matches any F element that is a child of an element E.                                                                                    Child selectors
@@ -121,7 +183,6 @@ describe "Stew",->
 # E:focus           Matches E during certain user actions.                                                                                                    The dynamic pseudo-classes
 # E:lang(c)         Matches element of type E if it is in (human) language c (the document language specifies how language is determined).                    The :lang() pseudo-class
 # E + F             Matches any F element immediately preceded by a sibling element E.                                                                        Adjacent selectors
-# E[foo]            Matches any E element with the "foo" attribute set (whatever the value).                                                                  Attribute selectors
 # E[foo="warning"]	Matches any E element whose "foo" attribute value is exactly equal to "warning".                                                          Attribute selectors
 # E[foo~="warning"]	Matches any E element whose "foo" attribute value is a list of space-separated values, one of which is exactly equal to "warning".        Attribute selectors
 # E[lang|="en"]     Matches any E element whose "lang" attribute has a hyphen-separated list of values beginning (from the left) with "en".                   Attribute selectors
@@ -133,8 +194,8 @@ TEST_HTML = """
 <html>
   <body>
     <div class="outer odd" id="outer-1">
-      <div class="inner odd" id="inner-1-1"><span>A</span></div>
-      <div class="inner even" id="inner-1-2"><b>B</b></div>
+      <div class="inner odd" id="inner-1-1"><span width=17>A</span></div>
+      <div class="inner even" id="inner-1-2"><b foo="bar">B</b></div>
     </div>
     <div class="outer even" id="outer-2">
       <div class="inner odd" id="inner-2-1"><b><i>C<i></b></div>

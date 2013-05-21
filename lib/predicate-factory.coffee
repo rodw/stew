@@ -1,5 +1,19 @@
 class PredicateFactory
 
+  and_predicate:(predicates)->
+    return (node)->
+      for predicate in predicates
+        if not predicate(node)
+          return false
+      return true
+
+  or_predicate:(predicates)->
+    return (node)->
+      for predicate in predicates
+        if predicate(node)
+          return true
+      return false
+
   # **by_attribute_predicate** creates a predicate
   # that returns `true` if the given `attrname`
   # matches the given `attrvalue`.
