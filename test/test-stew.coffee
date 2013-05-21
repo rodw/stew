@@ -169,6 +169,14 @@ describe "Stew",->
       nodeset[1].type.should.equal 'tag'
       nodeset[1].name.should.equal 'div'
       #
+      nodeset = @stew.select(@DOM,'div[class=inner]')
+      nodeset.length.should.equal 0
+      nodeset = @stew.select(@DOM,'div[class=/inner/]')
+      nodeset.length.should.equal 4
+      for node in nodeset
+        node.type.should.equal 'tag'
+        node.name.should.equal 'div'
+      #
       done()
 
 
@@ -183,7 +191,6 @@ describe "Stew",->
 # E:focus           Matches E during certain user actions.                                                                                                    The dynamic pseudo-classes
 # E:lang(c)         Matches element of type E if it is in (human) language c (the document language specifies how language is determined).                    The :lang() pseudo-class
 # E + F             Matches any F element immediately preceded by a sibling element E.                                                                        Adjacent selectors
-# E[foo="warning"]	Matches any E element whose "foo" attribute value is exactly equal to "warning".                                                          Attribute selectors
 # E[foo~="warning"]	Matches any E element whose "foo" attribute value is a list of space-separated values, one of which is exactly equal to "warning".        Attribute selectors
 # E[lang|="en"]     Matches any E element whose "lang" attribute has a hyphen-separated list of values beginning (from the left) with "en".                   Attribute selectors
 # DIV.warning       Language specific. (In HTML, the same as DIV[class~="warning"].)                                                                          Class selectors
