@@ -8,7 +8,7 @@ PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFact
 #-------------------------------------------------------------------------------
 #                                                                        1    1     11 1          1
 #                      1        2          34           5  6       789   0    1     23 4          5
-CSS_SELECTOR_REGEXP = /([\w-]+)?(\#[\w-]+)?((\.[\w-]+)*)(\[([\w-]+)(((=)|(~=)|(\|=))(("([^\]]*)")|([^\]]+)))?\])?/
+CSS_SELECTOR_REGEXP = /([\w-]+)?(\#[\w-]+)?((\.[\w-]+)*)(\[([\w-]+)(((=)|(~=)|(\|=))(("([^\]]*)")|([^\]]+)))?\])?/g
 #                      -------- ---------- ----------      -------- --------------- -----------------------
 #                      | name | |   id   | |  class |      | name | | operator    | |      value          |
 #                                                          |       ---------------- ------------------------
@@ -25,6 +25,10 @@ CSS_SELECTOR_REGEXP = /([\w-]+)?(\#[\w-]+)?((\.[\w-]+)*)(\[([\w-]+)(((=)|(~=)|(\
 # 12 => attribute value (optional quotes)
 # 14 => unquoted attribute value
 # 15 => never-quoted attribute value
+#
+# TODO: SELECTORS = / ^ SELECTOR ( \s+ SELECTOR )* $ /
+#
+#
 class Stew
 
   constructor:()->
