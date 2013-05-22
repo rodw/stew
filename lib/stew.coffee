@@ -6,7 +6,25 @@ LIB_DIR          = if fs.existsSync(path.join(HOMEDIR,'lib-cov')) then path.join
 DOMUtil          = require(path.join(LIB_DIR,'dom-util')).DOMUtil
 PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFactory
 #-------------------------------------------------------------------------------
-
+#                                                                        1    1     11 1          1
+#                      1        2          34           5  6       789   0    1     23 4          5
+CSS_SELECTOR_REGEXP = /([\w-]+)?(\#[\w-]+)?((\.[\w-]+)*)(\[([\w-]+)(((=)|(~=)|(\|=))(("([^\]]*)")|([^\]]+)))?\])?/
+#                      -------- ---------- ----------      -------- --------------- -----------------------
+#                      | name | |   id   | |  class |      | name | | operator    | |      value          |
+#                                                          |       ---------------- ------------------------
+#                                                          |       | operator-value                        |
+#                                                       --------------------------------------------------------
+#                                                       | attribute                                            |
+#                                                       --------------------------------------------------------
+# "tag#id.class-one.class-two[name~=\"value with spaces\"]".match(CSS_SELECTOR_REGEXP)
+# 1  => element name
+# 2  => id
+# 3  => classes
+# 6  => attribute name
+# 8  => operator
+# 12 => attribute value (optional quotes)
+# 14 => unquoted attribute value
+# 15 => never-quoted attribute value
 class Stew
 
   constructor:()->
