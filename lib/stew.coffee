@@ -6,30 +6,21 @@ LIB_DIR          = if fs.existsSync(path.join(HOMEDIR,'lib-cov')) then path.join
 DOMUtil          = require(path.join(LIB_DIR,'dom-util')).DOMUtil
 PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFactory
 #-------------------------------------------------------------------------------
-#                                                                        1    1     11 1          1
-#                      1        2          34           5  6       789   0    1     23 4          5
-CSS_SELECTOR_REGEXP = /([\w-]+)?(\#[\w-]+)?((\.[\w-]+)*)(\[([\w-]+)(((=)|(~=)|(\|=))(("([^\]]*)")|([^\]]+)))?\])?/g
-#                      -------- ---------- ----------      -------- --------------- -----------------------
-#                      | name | |   id   | |  class |      | name | | operator    | |      value          |
-#                                                          |       ---------------- ------------------------
-#                                                          |       | operator-value                        |
-#                                                       --------------------------------------------------------
-#                                                       | attribute                                            |
-#                                                       --------------------------------------------------------
-# "tag#id.class-one.class-two[name~=\"value with spaces\"]".match(CSS_SELECTOR_REGEXP)
-# 1  => element name
-# 2  => id
-# 3  => classes
-# 6  => attribute name
-# 8  => operator
-# 12 => attribute value (optional quotes)
-# 14 => unquoted attribute value
-# 15 => never-quoted attribute value
 #
-# TODO: SELECTORS = / ^ SELECTOR ( \s+ SELECTOR )* $ /
+
+######################################################################
+######################################################################
+######################################################################
+# TODO: NEXT STEP IS TO CREATE _parse_selectors_2 METHOD AND UPDATE
+#       select METHOD TO USE IT.
+######################################################################
+######################################################################
+######################################################################
+
 #
 #
 class Stew
+
 
   constructor:()->
       @factory = new PredicateFactory()
@@ -60,6 +51,102 @@ class Stew
       return true
     DOMUtil.walk_dom dom, visit:visit
     return result
+
+  # like selector.split(/\s/), but allows quoted strings
+  # via: http://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array
+  SPLIT_ON_WS_REGEXP = /\S+|\"[^\"]+\"/g
+  _split_on_unquoted_ws:(selector)->
+    result = []
+    # in regular JS, this is
+    #   while(token = SPLIT_ON_WS_REGEXP.exec(selector) { ... }
+    # surely there is a better way to do this in coffeescript
+    while true
+      token = SPLIT_ON_WS_REGEXP.exec(selector)
+      if token?[0]?
+        result.push(token[0])
+      else
+        break
+    return result
+
+  # NOTE: ((\/[^\/]*\/[gmi]*)|([\w-]+)) # regexp or word
+
+  #
+  #                                                                                         11                  1           1  11                  1        111   2    2     22 2          2                #
+  #                     12                  3         4  56                  7          89  01                  2           3  45                  6        789   0    1     23 4          5                #
+  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|([\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("([^\]]*)")|([^\]]+)))?\])?/ #
+  #                     \----------------------------/\--------------------------------/\----------------------------------/|  \---------------------------/|\--------------/\---------------------/|    |
+  #                     | name                        | id                              | one or more classes               |  | name                       || operator      | value                |    |
+  #                                                                                                                         |                               \---------------------------------------/    |
+  #                                                                                                                         |                               | operator and value                         |
+  #                                                                                                                         \----------------------------------------------------------------------------/
+  #                                                                                                                         | `[...]` attribute part
+  # "tag#id.class-one.class-two[name~=\"value with spaces\"]".match(CSS_SELECTOR_REGEXP)
+  # 1  => element name
+  # 4  => id
+  # 8  => classes
+  # 14  => attribute name
+  # 18  => operator
+  # 22 => attribute value (optional quotes)
+  # 24 => unquoted attribute value2
+  # 25 => never-quoted attribute value
+
+  # returns a (possibly compound) predicate that matches the provided `selector`
+  _parse_selector_2:(selector)->
+    match = @CSS_SELECTOR_REGEXP.exec(selector)
+    j = { }
+
+    NAME = 1
+    ID = 4
+    CLASSES = 8
+    ATTR_NAME = 14
+    OPERATOR = 18
+    DEQUOTED_ATTR_VALUE = 24
+    NEVERQUOTED_ATTR_VALUE = 25
+
+    j.name      = match[NAME] if match[NAME]?
+    j.id        = match[ID] if match[ID]?
+    if match[CLASSES]?.length > 0
+     j.classes = match[CLASSES]?.split(/\s+/)
+    j.attr_name = match[ATTR_NAME] if match[ATTR_NAME]?
+    j.operator  = match[OPERATOR] if match[OPERATOR]?
+    j.attr_value = match[DEQUOTED_ATTR_VALUE] if match[DEQUOTED_ATTR_VALUE]?
+    j.attr_value = match[15] if match[15]?
+
+    clauses = []
+    if match[NAME]?
+      clauses.push(@factory.by_tag_predicate(@_to_string_or_regex(match[NAME])))
+      # clauses.push(["by_tag",@_to_string_or_regex(match[NAME])])
+    if match[ID]?
+      clauses.push(@factory.by_id_predicate(@_to_string_or_regex(match[ID].substring(1))))
+      # clauses.push(["by_id",@_to_string_or_regex(match[ID].substring(1))])
+    if match[CLASSES]?.length > 0
+                               # match[CLASSES] contains something like `.foo.bar`
+      cs = match[CLASSES].split('.') # split the string into individual class names
+      cs.shift()               # and skip the first (empty) token that is included
+      for c in cs
+        clauses.push(@factory.by_class_predicate(@_to_string_or_regex(c)))
+        # clauses.push(["by_class",@_to_string_or_regex(c)])
+    if match[ATTR_NAME]? and (not match[OPERATOR]?)
+      clauses.push(@factory.by_attr_exists_predicate(@_to_string_or_regex(match[ATTR_NAME])))
+      # clauses.push(["by_attr_exists",@_to_string_or_regex(match[ATTR_NAME])])
+    if match[ATTR_NAME]? and match[OPERATOR]? and (match[DEQUOTED_ATTR_VALUE]? or match[NEVERQUOTED_ATTR_VALUE]?)
+      delim = null
+      if match[OPERATOR] is '~='
+        delim = /\s+/
+      clauses.push(
+        @factory.by_attr_value_predicate(
+          @_to_string_or_regex(match[ATTR_NAME]),
+          @_to_string_or_regex(match[DEQUOTED_ATTR_VALUE] ? match[NEVERQUOTED_ATTR_VALUE]),
+          delim
+        )
+      )
+      # clauses.push(["by_attr_value",@_to_string_or_regex(match[ATTR_NAME]),@_to_string_or_regex(match[DEQUOTED_ATTR_VALUE] ? match[NEVERQUOTED_ATTR_VALUE]),delim])
+
+    if clauses.length > 0
+      return @factory.and_predicate(clauses)
+    else
+      return clauses[0]
+
 
 
   # If `str` is a string that starts and ends with `/`
@@ -109,3 +196,25 @@ class Stew
 
 exports = exports ? this
 exports.Stew = Stew
+
+
+  # OLD, DELETE ME
+  # #                                                                        1    1     11 1          1
+  # #                      1        2          34           5  6       789   0    1     23 4          5
+  # CSS_SELECTOR_REGEXP: /([\w-]+)?(\#[\w-]+)?((\.[\w-]+)*)(\[([\w-]+)(((=)|(~=)|(\|=))(("([^\]]*)")|([^\]]+)))?\])?/
+  # #                      -------- ---------- ----------      -------- --------------- -----------------------
+  # #                      | name | |   id   | |  class |      | name | | operator    | |      value          |
+  # #                                                          |       ---------------- ------------------------
+  # #                                                          |       | operator-value                        |
+  # #                                                       --------------------------------------------------------
+  # #                                                       | attribute                                            |
+  # #                                                       --------------------------------------------------------
+  # # "tag#id.class-one.class-two[name~=\"value with spaces\"]".match(CSS_SELECTOR_REGEXP)
+  # # 1  => element name
+  # # 2  => id
+  # # 3  => classes
+  # # 6  => attribute name
+  # # 8  => operator
+  # # 12 => attribute value (optional quotes)
+  # # 14 => unquoted attribute value2
+  # # 15 => never-quoted attribute value
