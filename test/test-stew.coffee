@@ -28,21 +28,21 @@ describe "Stew",->
     @DOM = null
     done()
 
-  it 'DEBUGGING',(done)->
-    console.log '--------------------'
-    console.log '/t[ao]g/i#/bar/./foo/.another[/y/~="quoted string"]'.match(@stew.CSS_SELECTOR_REGEXP)
-    console.log '--------------------'
-    a = @stew._split_on_unquoted_ws('/tag/#/bar/./foo/./another/[/y/~=/z/]')
-    console.log a
-    for e in a
-      console.log e
-      v = @stew._parse_selector_2(e)
-      console.log v
-    done()
+  # it 'DEBUGGING',(done)->
+  #   # console.log '--------------------'
+  #   # console.log '/t[ao]g/i#/bar/./foo/.another[/y/~="quoted string"]'.match(@stew.CSS_SELECTOR_REGEXP)
+  #   # console.log '--------------------'
+  #   a = @stew._parse_selectors_2('/tag/#/bar/./foo/./another/[/y/~=/z/] foo')
+  #   console.log a
+  #   # for e in a
+  #   #   console.log e
+  #   #   v = @stew._parse_selector_2(e)
+  #   #   console.log v
+  #   done()
 
 
   it 'can parse a selector string into a list of predictes ',(done)->
-    selector = @stew.parse_selectors('tag .foo #bar [/x/i] [y=/z/]')
+    selector = @stew._parse_selectors('tag .foo #bar [/x/i] [y=/z/]')
     selector.length.should.equal 5
     selector[0]({name:'tag'}).should.be.ok
     selector[0]({name:'zzz'}).should.not.be.ok
