@@ -6,18 +6,18 @@ LIB_DIR          = if fs.existsSync(path.join(HOMEDIR,'lib-cov')) then path.join
 DOMUtil          = require(path.join(LIB_DIR,'dom-util')).DOMUtil
 PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFactory
 #-------------------------------------------------------------------------------
-#
 
-######################################################################
-######################################################################
-######################################################################
-# TODO: NEXT STEP IS TO CREATE _parse_selectors_2 METHOD AND UPDATE
-#       select METHOD TO USE IT.
-######################################################################
-######################################################################
-######################################################################
+
+################################################################################
+################################################################################
+## NEXT STEP: fix handing of escaped quotes in the big ugly regexp            ##
+################################################################################
+################################################################################
 
 #
+# TODO clean up tests
+# TODO support `|=` operator
+# TODO support `,` and `+` operators
 #
 class Stew
 
@@ -78,11 +78,13 @@ class Stew
     return result
 
   # NOTE: ((\/[^\/]*\/[gmi]*)|([\w-]+)) # matches regexp or word (incl. `-`)
-  # TODO Combine the `id` and `class` rules to make them order-indepedent? (I think CSS specifies the order, but still.)
+  # TODO: Combine the `id` and `class` rules to make them order-indepedent? (I think CSS specifies the order, but still.)
+  # TODO: support escaped chars, notably `\/` in regexps
   #
-  #                                                                                         11                  1           1  11                  1        111   2    2     22 2          2                #
-  #                     12                  3         4  56                  7          89  01                  2           3  45                  6        789   0    1     23 4          5                #
-  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|([\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("([^\]]*)")|([^\]]+)))?\])?/ #
+  #                                                                                         11                  1           1  11                  1        111   2    2     22 22      2           22                  2      #
+  #                     12                  3         4  56                  7          89  01                  2           3  45                  6        789   0    1     23 45      6           78                  9      #
+  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|([\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])?/ #
+  #
   #                     \----------------------------/\--------------------------------/\----------------------------------/|  \---------------------------/|\--------------/\---------------------/|    |
   #                     | name                        | id                              | one or more classes               |  | name                       || operator      | value                |    |
   #                                                                                                                         |                               \---------------------------------------/    |
@@ -95,16 +97,8 @@ class Stew
   ATTR_NAME = 14
   OPERATOR = 18
   DEQUOTED_ATTR_VALUE = 24
-  NEVERQUOTED_ATTR_VALUE = 25
+  NEVERQUOTED_ATTR_VALUE = 27
   # "tag#id.class-one.class-two[name~=\"value with spaces\"]".match(CSS_SELECTOR_REGEXP)
-  # 1  => element name
-  # 4  => id
-  # 8  => classes
-  # 14  => attribute name
-  # 18  => operator
-  # 22 => attribute value (optional quotes)
-  # 24 => unquoted attribute value2
-  # 25 => never-quoted attribute value
 
   # returns a (possibly compound) predicate that matches the provided `selector`
   _parse_selector_2:(selector)->
