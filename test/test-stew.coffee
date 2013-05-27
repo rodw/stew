@@ -48,17 +48,19 @@ describe "Stew",->
 
   it 'can parse a selector string into a list of predictes ',(done)->
     selector = @stew._parse_selectors('tag .foo #bar [/x/i] [y=/z/]')
-    selector.length.should.equal 5
-    selector[0]({name:'tag'}).should.be.ok
-    selector[0]({name:'zzz'}).should.not.be.ok
-    selector[1]({name:'tag',attribs:{class:'foo'}}).should.be.ok
-    selector[2]({name:'tag',attribs:{id:'bar'}}).should.be.ok
-    selector[3]({name:'tag',attribs:{X:null}}).should.be.ok
-    selector[3]({name:'tag',attribs:{x:'foo'}}).should.be.ok
-    selector[3]({name:'tag',attribs:{x:'z'}}).should.be.ok
-    selector[3]({name:'tag',attribs:{y:'foo'}}).should.not.be.ok
-    selector[4]({name:'tag',attribs:{y:'z'}}).should.be.ok
-    selector[4]({name:'tag',attribs:{y:null}}).should.not.be.ok
+    # _parse_selectors now returns a single function rather than array of them
+    (typeof selector).should.equal 'function'
+    # selector.length.should.equal 5
+    # selector[0]({name:'tag'}).should.be.ok
+    # selector[0]({name:'zzz'}).should.not.be.ok
+    # selector[1]({name:'tag',attribs:{class:'foo'}}).should.be.ok
+    # selector[2]({name:'tag',attribs:{id:'bar'}}).should.be.ok
+    # selector[3]({name:'tag',attribs:{X:null}}).should.be.ok
+    # selector[3]({name:'tag',attribs:{x:'foo'}}).should.be.ok
+    # selector[3]({name:'tag',attribs:{x:'z'}}).should.be.ok
+    # selector[3]({name:'tag',attribs:{y:'foo'}}).should.not.be.ok
+    # selector[4]({name:'tag',attribs:{y:'z'}}).should.be.ok
+    # selector[4]({name:'tag',attribs:{y:null}}).should.not.be.ok
     done()
 
   describe "select()",->

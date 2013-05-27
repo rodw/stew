@@ -133,5 +133,24 @@ class PredicateFactory
       return false
   first_child_predicate:()->return @_first_child_impl
 
+  descendant_predicate:(predicates)->
+    if predicates.length is 1
+      return predicates[0]
+    else
+      return (node,parent,path,siblings,sib_index)->
+        if predicates[predicates.length-1](node,parent,path,siblings,sib_index)
+          cloned_path = [].concat(path)
+          cloned_predicates = [].concat(predicates)
+          leaf_predicate = cloned_predicates.pop()
+          leaf_node = node
+          while cloned_path.length > 0
+            node = cloned_path.pop()
+            if cloned_predicates[cloned_predicates.length-1](node,parent,path,siblings,sib_index)
+              cloned_predicates.pop()
+              if cloned_predicates.length is 0
+                return true
+                break
+        return false
+
 exports = exports ? this
 exports.PredicateFactory = PredicateFactory

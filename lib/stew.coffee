@@ -21,7 +21,6 @@ PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFact
 # TODO: fix handing of escaped quotes in the big ugly regexp
 class Stew
 
-
   constructor:()->
       @factory = new PredicateFactory()
 
@@ -30,25 +29,28 @@ class Stew
       selector = @_parse_selectors(selector)
     return @_unguarded_select(dom,selector)
 
-  _unguarded_select:(dom,predicates)->
+  _unguarded_select:(dom,predicate)->
     result = []
     visit = (node,parent,path,siblings,sib_index)->
-      if predicates[predicates.length-1](node,parent,path,siblings,sib_index)
-        if predicates.length is 1
-          result.push node
-        else
-          cloned_path = [].concat(path)
-          cloned_predicates = [].concat(predicates)
-          leaf_predicate = cloned_predicates.pop()
-          leaf_node = node
-          while cloned_path.length > 0
-            node = cloned_path.pop()
-            if cloned_predicates[cloned_predicates.length-1](node,parent,path,siblings,sib_index)
-              cloned_predicates.pop()
-              if cloned_predicates.length is 0
-                result.push leaf_node
-                break
+      if predicate(node,parent,path,siblings,sib_index)
+        result.push node
       return true
+      # if predicates[predicates.length-1](node,parent,path,siblings,sib_index)
+      #   if predicates.length is 1
+      #     result.push node
+      #   else
+      #     cloned_path = [].concat(path)
+      #     cloned_predicates = [].concat(predicates)
+      #     leaf_predicate = cloned_predicates.pop()
+      #     leaf_node = node
+      #     while cloned_path.length > 0
+      #       node = cloned_path.pop()
+      #       if cloned_predicates[cloned_predicates.length-1](node,parent,path,siblings,sib_index)
+      #         cloned_predicates.pop()
+      #         if cloned_predicates.length is 0
+      #           result.push leaf_node
+      #           break
+      # return true
     DOMUtil.walk_dom dom, visit:visit
     return result
 
@@ -68,13 +70,15 @@ class Stew
         break
     return result
 
-  # given a sequence of one or more css selectors, return a sequence of predicates that evaluate them
+  # returns a predicate that evalues a sequence of one or more css selectors
   _parse_selectors:(selectors)->
     result = []
     if typeof selectors is 'string'
       selectors = @_split_on_ws_respecting_quotes(selectors)
     for selector in selectors
-      result = result.concat @_parse_selector_2(selector)
+      result.push(@_parse_selector_2(selector))
+    if result.length > 0
+      result = @factory.descendant_predicate(result)
     return result
 
   # NOTE: ((\/[^\/]*\/[gmi]*)|([\w-]+)) # matches regexp or word (incl. `-`)
@@ -107,20 +111,16 @@ class Stew
     clauses = []
     if match[NAME]?
       clauses.push(@factory.by_tag_predicate(@_to_string_or_regex(match[NAME])))
-      # clauses.push(["by_tag",@_to_string_or_regex(match[NAME])])
     if match[ID]?
       clauses.push(@factory.by_id_predicate(@_to_string_or_regex(match[ID].substring(1))))
-      # clauses.push(["by_id",@_to_string_or_regex(match[ID].substring(1))])
     if match[CLASSES]?.length > 0
-                               # match[CLASSES] contains something like `.foo.bar`
+                                     # match[CLASSES] contains something like `.foo.bar`
       cs = match[CLASSES].split('.') # split the string into individual class names
-      cs.shift()               # and skip the first (empty) token that is included
+      cs.shift()                     # and skip the first (empty) token that is included
       for c in cs
         clauses.push(@factory.by_class_predicate(@_to_string_or_regex(c)))
-        # clauses.push(["by_class",@_to_string_or_regex(c)])
     if match[ATTR_NAME]? and (not match[OPERATOR]?)
       clauses.push(@factory.by_attr_exists_predicate(@_to_string_or_regex(match[ATTR_NAME])))
-      # clauses.push(["by_attr_exists",@_to_string_or_regex(match[ATTR_NAME])])
     if match[ATTR_NAME]? and match[OPERATOR]? and (match[DEQUOTED_ATTR_VALUE]? or match[NEVERQUOTED_ATTR_VALUE]?)
       delim = null
       if match[OPERATOR] is '~='
@@ -132,12 +132,11 @@ class Stew
           delim
         )
       )
-      # clauses.push(["by_attr_value",@_to_string_or_regex(match[ATTR_NAME]),@_to_string_or_regex(match[DEQUOTED_ATTR_VALUE] ? match[NEVERQUOTED_ATTR_VALUE]),delim])
     if clauses.length > 0
-      clauses = [ @factory.and_predicate(clauses) ]
+      clauses = @factory.and_predicate(clauses)
     if match[PSEUDO_CLASS]?
       if match[PSEUDO_CLASS] is 'first-child'
-        clauses.push(@factory.first_child_predicate())
+        clauses = @factory.descendant_predicate([clauses,@factory.first_child_predicate()])
     return clauses
 
   # If `str` is a string that starts and ends with `/`
