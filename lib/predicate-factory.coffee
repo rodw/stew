@@ -121,5 +121,17 @@ class PredicateFactory
     else
       return (node)->(name.test(node.name))
 
+  _first_child_impl:(node,parent,path,siblings,sib_index)->
+    if node.type is 'tag'
+      index_of_first_tag = -1
+      for elt, index in siblings
+        if elt.type is 'tag'
+          index_of_first_tag = index
+          break
+      return index_of_first_tag is sib_index
+    else
+      return false
+  first_child_predicate:()->return @_first_child_impl
+
 exports = exports ? this
 exports.PredicateFactory = PredicateFactory

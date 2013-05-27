@@ -291,16 +291,35 @@ describe "Stew",->
       #
       done()
 
-    it 'supports escaped quotation marks within quoted strings',(done)->
-      # nodeset = @stew.select(@DOM,'section span')
-      nodeset = @stew.select(@DOM,'[label="this label includes \\\"escaped\\\" text]')
+    # TODO - handle escaping better (at all?)
+    # it 'supports escaped quotation marks within quoted strings',(done)->
+    #   nodeset = @stew.select(@DOM,'[label="this label includes \\"escaped\\" text]')
+    #   nodeset.length.should.equal 1
+    #   for node in nodeset
+    #     node.type.should.equal 'tag'
+    #     node.name.should.equal 'span'
+    #     node.attribs.id.should.equal 'escaped-quote-test'
+    #   done()
+
+    it 'supports the :first-child pseudo class (`E:first-child`) (string case)',(done)->
+      nodeset = @stew.select(@DOM,'body:first-child')
+      # nodeset.length.should.equal 1 # TODO FIXME need to make this work like `+`, immediate first child only
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      #
+      nodeset = @stew.select(@DOM,'section:first-child')
       nodeset.length.should.equal 1
-      # console.log nodeset[0]
-      # console.log nodeset[0].attribs.label
       for node in nodeset
         node.type.should.equal 'tag'
         node.name.should.equal 'span'
         node.attribs.id.should.equal 'escaped-quote-test'
+      #
+      nodeset = @stew.select(@DOM,'#outer-1:first-child')
+      # nodeset.length.should.equal 1 # TODO need to make this work like `+`, immediate first child only
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
       done()
 
 

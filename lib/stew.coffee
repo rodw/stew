@@ -10,7 +10,7 @@ PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFact
 
 ################################################################################
 ################################################################################
-## NEXT STEP: fix handing of escaped quotes in the big ugly regexp            ##
+## NEXT STEP: ADD FIRST-CHILD PREDICATE                                       ##
 ################################################################################
 ################################################################################
 
@@ -18,7 +18,7 @@ PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFact
 # TODO clean up tests
 # TODO support `|=` operator
 # TODO support `,` and `+` operators
-#
+# TODO: fix handing of escaped quotes in the big ugly regexp
 class Stew
 
 
@@ -33,7 +33,7 @@ class Stew
   _unguarded_select:(dom,predicates)->
     result = []
     visit = (node,parent,path,siblings,sib_index)->
-      if predicates[predicates.length-1](node)
+      if predicates[predicates.length-1](node,parent,path,siblings,sib_index)
         if predicates.length is 1
           result.push node
         else
@@ -43,7 +43,7 @@ class Stew
           leaf_node = node
           while cloned_path.length > 0
             node = cloned_path.pop()
-            if cloned_predicates[cloned_predicates.length-1](node)
+            if cloned_predicates[cloned_predicates.length-1](node,parent,path,siblings,sib_index)
               cloned_predicates.pop()
               if cloned_predicates.length is 0
                 result.push leaf_node
@@ -74,22 +74,22 @@ class Stew
     if typeof selectors is 'string'
       selectors = @_split_on_ws_respecting_quotes(selectors)
     for selector in selectors
-      result.push @_parse_selector_2(selector)
+      result = result.concat @_parse_selector_2(selector)
     return result
 
   # NOTE: ((\/[^\/]*\/[gmi]*)|([\w-]+)) # matches regexp or word (incl. `-`)
   # TODO: Combine the `id` and `class` rules to make them order-indepedent? (I think CSS specifies the order, but still.)
   # TODO: support escaped chars, notably `\/` in regexps
   #
-  #                                                                                         11                  1           1  11                  1        111   2    2     22 22      2           22                  2      #
-  #                     12                  3         4  56                  7          89  01                  2           3  45                  6        789   0    1     23 45      6           78                  9      #
-  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|([\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])?/ #
   #
-  #                     \----------------------------/\--------------------------------/\----------------------------------/|  \---------------------------/|\--------------/\---------------------/|    |
-  #                     | name                        | id                              | one or more classes               |  | name                       || operator      | value                |    |
-  #                                                                                                                         |                               \---------------------------------------/    |
-  #                                                                                                                         |                               | operator and value                         |
-  #                                                                                                                         \----------------------------------------------------------------------------/
+  #                                                                                         11                  1           1  11                  1        111   2    2     22 22      2           22                  2                3 3             #
+  #                     12                  3         4  56                  7          89  01                  2           3  45                  6        789   0    1     23 45      6           78                  9                0 1             #
+  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|([\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])?(:([\w-]+))?/   #
+  #                     \----------------------------/\--------------------------------/\----------------------------------/|  \---------------------------/|\--------------/\----------------------------------------------------/|    |
+  #                     | name                        | id                              | one or more classes               |  | name                       || operator      | value                                               |    |
+  #                                                                                                                         |                               \----------------------------------------------------------------------/    |
+  #                                                                                                                         |                               | operator and value                                                        |
+  #                                                                                                                         \-----------------------------------------------------------------------------------------------------------/
   #                                                                                                                         | `[...]` attribute part
   NAME = 1
   ID = 4
@@ -98,6 +98,7 @@ class Stew
   OPERATOR = 18
   DEQUOTED_ATTR_VALUE = 24
   NEVERQUOTED_ATTR_VALUE = 27
+  PSEUDO_CLASS = 31
   # "tag#id.class-one.class-two[name~=\"value with spaces\"]".match(CSS_SELECTOR_REGEXP)
 
   # returns a (possibly compound) predicate that matches the provided `selector`
@@ -133,9 +134,11 @@ class Stew
       )
       # clauses.push(["by_attr_value",@_to_string_or_regex(match[ATTR_NAME]),@_to_string_or_regex(match[DEQUOTED_ATTR_VALUE] ? match[NEVERQUOTED_ATTR_VALUE]),delim])
     if clauses.length > 0
-      return @factory.and_predicate(clauses)
-    else
-      return clauses[0]
+      clauses = [ @factory.and_predicate(clauses) ]
+    if match[PSEUDO_CLASS]?
+      if match[PSEUDO_CLASS] is 'first-child'
+        clauses.push(@factory.first_child_predicate())
+    return clauses
 
   # If `str` is a string that starts and ends with `/`
   # (or an optional `g`, `m` or `i` suffix, it is
