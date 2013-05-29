@@ -303,32 +303,34 @@ describe "Stew",->
     #     node.attribs.id.should.equal 'escaped-quote-test'
     #   done()
 
+    # E:first-child     Matches element E when E is the first child of its parent.                                                                                The :first-child pseudo-class
     it 'supports the :first-child pseudo class (`E:first-child`) (string case)',(done)->
-      nodeset = @stew.select(@DOM,'body:first-child')
-      # nodeset.length.should.equal 1 # TODO FIXME need to make this work like `+`, immediate first child only
+      nodeset = @stew.select(@DOM,'div:first-child')
+      nodeset.length.should.equal 3
       nodeset[0].type.should.equal 'tag'
       nodeset[0].name.should.equal 'div'
       nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-1'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-1'
       #
       nodeset = @stew.select(@DOM,'section:first-child')
-      nodeset.length.should.equal 1
-      for node in nodeset
-        node.type.should.equal 'tag'
-        node.name.should.equal 'span'
-        node.attribs.id.should.equal 'escaped-quote-test'
+      nodeset.length.should.equal 0
       #
-      nodeset = @stew.select(@DOM,'#outer-1:first-child')
-      # nodeset.length.should.equal 1 # TODO need to make this work like `+`, immediate first child only
+      nodeset = @stew.select(@DOM,'body section span:first-child')
+      nodeset.length.should.equal 1
       nodeset[0].type.should.equal 'tag'
-      nodeset[0].name.should.equal 'div'
-      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.id.should.equal 'escaped-quote-test'
       done()
 
 
 #-------------------------------------------------------------------------------
 # *                 Matches any element.                                                                                                                      Universal selector
 # E > F             Matches any F element that is a child of an element E.                                                                                    Child selectors
-# E:first-child     Matches element E when E is the first child of its parent.                                                                                The :first-child pseudo-class
 # E:link
 # E:visited         Matches element E if E is the source anchor of a hyperlink of which the target is not yet visited (:link) 	                              The link pseudo-classes
 # E:active	         or already visited (:visited).

@@ -132,11 +132,11 @@ class Stew
           delim
         )
       )
-    if clauses.length > 0
-      clauses = @factory.and_predicate(clauses)
     if match[PSEUDO_CLASS]?
       if match[PSEUDO_CLASS] is 'first-child'
-        clauses = @factory.descendant_predicate([clauses,@factory.first_child_predicate()])
+        clauses.push(@factory.first_child_predicate())
+    if clauses.length > 0
+      clauses = @factory.and_predicate(clauses)
     return clauses
 
   # If `str` is a string that starts and ends with `/`

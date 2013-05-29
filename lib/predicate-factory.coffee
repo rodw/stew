@@ -1,16 +1,16 @@
 class PredicateFactory
 
   and_predicate:(predicates)->
-    return (node)->
+    return (node,parent,path,siblings,sib_index)->
       for predicate in predicates
-        if not predicate(node)
+        if not predicate(node,parent,path,siblings,sib_index)
           return false
       return true
 
   or_predicate:(predicates)->
-    return (node)->
+    return (node,parent,path,siblings,sib_index)->
       for predicate in predicates
-        if predicate(node)
+        if predicate(node,parent,path,siblings,sib_index)
           return true
       return false
 
@@ -65,7 +65,7 @@ class PredicateFactory
     else if attrvalue?.test?
       vp = (str)->attrvalue.test(str)
 
-    return (node)->
+    return (node,parent,path,siblings,sib_index)->
       for name,value of node?.attribs
         if np(name)
           if vp is null
@@ -122,7 +122,7 @@ class PredicateFactory
       return (node)->(name.test(node.name))
 
   _first_child_impl:(node,parent,path,siblings,sib_index)->
-    if node.type is 'tag'
+    if node.type is 'tag' and siblings?
       index_of_first_tag = -1
       for elt, index in siblings
         if elt.type is 'tag'
