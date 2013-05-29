@@ -121,6 +121,13 @@ class PredicateFactory
     else
       return (node)->(name.test(node.name))
 
+  # **first_child_predicate**
+  # returns a predicate that evaluates to `true`
+  # iff the given `node` is the first child *tag* node
+  # among all of its siblings.
+  #
+  # TODO FIXME should :first-child also consider elements like <script>?
+  first_child_predicate:()->return @_first_child_impl
   _first_child_impl:(node,parent,path,siblings,sib_index)->
     if node.type is 'tag' and siblings?
       index_of_first_tag = -1
@@ -131,8 +138,28 @@ class PredicateFactory
       return index_of_first_tag is sib_index
     else
       return false
-  first_child_predicate:()->return @_first_child_impl
 
+
+  # **descendant_predicate**
+  # returns a predicate that for the given array
+  # of *n* predicates *P*, evaluates to `true` for
+  # a given node if:
+  #
+  #  - *P[n-1](node)* is `true`, and
+  #
+  #  - *P[n-2](parent)* is `true` for some element
+  #    `parent` that is an ancestor of `node`
+  #
+  #  - *P[n-3](parent2)* is `true` for some element
+  #     `parent2` that is an ancestor of `parent`
+  #
+  #  - ...etc.
+  #
+  # In other words, the returned predicate will evalue to `true`
+  # for the current node if each of the given `predicates`
+  # evaluates to true for some ancestor of the node, in sequence.
+  # (I.e., the node that matches `predicates[n]` must be an ancestor
+  # of the node that mathces `predicates[n+1]`.)
   descendant_predicate:(predicates)->
     if predicates.length is 1
       return predicates[0]
