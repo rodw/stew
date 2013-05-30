@@ -54,9 +54,11 @@ class Stew
     DOMUtil.walk_dom dom, visit:visit
     return result
 
-  # like str.split(/\s/), but treats "quoted phrases" as a single token
+  # like str.split(/\s/), but treats "quoted phrases" (and `/regular expressions/` as a single token)
   # via: http://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array
-  SPLIT_ON_WS_REGEXP = /\S+|\"[^\"]+\"/g
+  # TODO add support for `,`, `+` and `>` delimiter/operators (with or without surrounding whitespace
+  # SPLIT_ON_WS_REGEXP = /([^\" ]|(\"[^\"]+\"))+/g
+  SPLIT_ON_WS_REGEXP = /([^\"\/\s]|(\"[^\"]+\")|(\/[^\/]+\/))+/g
   _split_on_ws_respecting_quotes:(selector)->
     result = []
     # in regular JS, this is
@@ -68,6 +70,7 @@ class Stew
         result.push(token[0])
       else
         break
+    console.log "SELECTOR",selector,"RESULT",result
     return result
 
   # returns a predicate that evalues a sequence of one or more css selectors
@@ -75,14 +78,17 @@ class Stew
     result = []
     if typeof selectors is 'string'
       selectors = @_split_on_ws_respecting_quotes(selectors)
-    # TODO should probably clean up the boolean-operator handling here
+    # TODO should probably clean up the boolean-operator handling here; there is probably a more elegant way to do this
     child_operator = false
     adjacent_operator = false
+    or_operator = false
     for selector in selectors
       if selector is '>'
         child_operator = true
       else if selector is '+'
         adjacent_operator = true
+      else if selector is ','
+        or_operator = true
       else
         predicate = @_parse_selector_2(selector)
         if child_operator
@@ -91,6 +97,9 @@ class Stew
         else if adjacent_operator
           result.push( @factory.adjacent_sibling_predicate( result.pop(), predicate  ) )
           adjacent_operator = false
+        else if or_operator
+          result.push( @factory.or_predicate( [ result.pop(), predicate ] ) )
+          or_operator = false
         else
           result.push( predicate )
     if result.length > 0

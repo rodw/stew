@@ -54,6 +54,16 @@ describe "Stew",->
 
   describe "select()",->
 
+    # TODO - handle escaping better (at all?)
+    # it 'supports escaped quotation marks within quoted strings',(done)->
+    #   nodeset = @stew.select(@DOM,'[label="this label includes \\"escaped\\" text]')
+    #   nodeset.length.should.equal 1
+    #   for node in nodeset
+    #     node.type.should.equal 'tag'
+    #     node.name.should.equal 'span'
+    #     node.attribs.id.should.equal 'escaped-quote-test'
+    #   done()
+
     # * - Matches any tag
     it 'supports the any-tag selector (`*`)',(done)->
       # `div *`
@@ -106,6 +116,171 @@ describe "Stew",->
       nodeset[0].name.should.equal 'html'
       nodeset[1].type.should.equal 'tag'
       nodeset[1].name.should.equal 'em'
+      done()
+
+    # DIV.warning - Language specific. (In HTML, the same as DIV[class~="warning"].) - Class Selector
+    it 'supports the class selector (`.warning`) (string case)',(done)->
+      # `div.outer`
+      nodeset = @stew.select(@DOM,'div.outer')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      # `.outer`
+      nodeset = @stew.select(@DOM,'.outer')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      # `div.outer.odd`
+      nodeset = @stew.select(@DOM,'div.outer.odd')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      # `.outer.odd`
+      nodeset = @stew.select(@DOM,'.outer.odd')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      # `.outer.odd`
+      nodeset = @stew.select(@DOM,'.odd.outer')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      # `.inner.even`
+      nodeset = @stew.select(@DOM,'.inner.even')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-2'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-2-2'
+      # `*.odd *.even`
+      nodeset = @stew.select(@DOM,'*.odd *.even')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-2'
+      done()
+
+    it 'supports the class selector (`.warning`) (regex case)',(done)->
+      # `div.outer`
+      nodeset = @stew.select(@DOM,'div./[ou]+ter/')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      # `.outer`
+      nodeset = @stew.select(@DOM,'./[ou]+ter/')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      # `div./er$/`
+      nodeset = @stew.select(@DOM,'div./er$/')
+      nodeset.length.should.equal 6
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-1'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-1-2'
+      nodeset[3].type.should.equal 'tag'
+      nodeset[3].name.should.equal 'div'
+      nodeset[3].attribs.id.should.equal 'outer-2'
+      nodeset[4].type.should.equal 'tag'
+      nodeset[4].name.should.equal 'div'
+      nodeset[4].attribs.id.should.equal 'inner-2-1'
+      nodeset[5].type.should.equal 'tag'
+      nodeset[5].name.should.equal 'div'
+      nodeset[5].attribs.id.should.equal 'inner-2-2'
+      # `div./er$/.odd`
+      nodeset = @stew.select(@DOM,'div./er$/.odd')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-1'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-1'
+      nodeset[2].type.should.equal 'tag'
+      done()
+
+    # E#myid - Matches any E element with ID equal to "myid" - ID selector
+    it 'supports the id selector (`E#myid`) (string case)',(done)->
+      # `div#outer-2`
+      nodeset = @stew.select(@DOM,'div#outer-2')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-2'
+      # `#outer-2`
+      nodeset = @stew.select(@DOM,'#outer-2')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-2'
+      # `div#outer-2.even`
+      nodeset = @stew.select(@DOM,'div#outer-2.even')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-2'
+      # `div#outer-2.odd`
+      nodeset = @stew.select(@DOM,'div#outer-2.odd')
+      nodeset.length.should.equal 0
+      done()
+
+    it 'supports the id selector (`E#myid`) (regex case)',(done)->
+      # `div#/outer-[0-9]/`
+      nodeset = @stew.select(@DOM,'div#/outer-[0-9]/')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      # `#/outer-[0-9]/`
+      nodeset = @stew.select(@DOM,'#/outer-[0-9]/')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      # `#/outer-[0-9]/ b`
+      nodeset = @stew.select(@DOM,'#/outer-[0-9]/ b')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      nodeset[0].attribs.foo.should.equal 'bar'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'b'
+      nodeset[1].attribs.fact.should.equal 'white space is ok here'
       done()
 
     # E F -  any F element that is a descendant of an E element. - Descendant selectors
@@ -243,6 +418,37 @@ describe "Stew",->
       #
       done()
 
+    it 'supports the attribute-value selector (`E[foo="bar"]`) (quoted string containing whitespace case)',(done)->
+      nodeset = @stew.select(@DOM,'b[fact="white space is ok here"]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      nodeset[0].attribs.fact.should.equal 'white space is ok here'
+      done()
+
+    it 'supports the attribute-value selector (`E[foo="bar"]`) (regexp containing whitespace case)',(done)->
+      nodeset = @stew.select(@DOM,'b[fact=/white space is ok here/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      nodeset[0].attribs.fact.should.equal 'white space is ok here'
+      nodeset = @stew.select(@DOM,'b[fact=/white space/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      nodeset[0].attribs.fact.should.equal 'white space is ok here'
+      nodeset = @stew.select(@DOM,'b[fact=/^white space.*ok here$/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      nodeset[0].attribs.fact.should.equal 'white space is ok here'
+      nodeset = @stew.select(@DOM,'b[fact=/"?white\\s*space"? is ok\\s+here/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'b'
+      nodeset[0].attribs.fact.should.equal 'white space is ok here'
+      done()
+
     it 'supports the attribute-value selector (`E[foo="bar"]`) (regexp case)',(done)->
       #
       nodeset = @stew.select(@DOM,'b[/fo+/=/ba?r/]')
@@ -342,16 +548,6 @@ describe "Stew",->
       #
       done()
 
-    # TODO - handle escaping better (at all?)
-    # it 'supports escaped quotation marks within quoted strings',(done)->
-    #   nodeset = @stew.select(@DOM,'[label="this label includes \\"escaped\\" text]')
-    #   nodeset.length.should.equal 1
-    #   for node in nodeset
-    #     node.type.should.equal 'tag'
-    #     node.name.should.equal 'span'
-    #     node.attribs.id.should.equal 'escaped-quote-test'
-    #   done()
-
     # E:first-child     Matches element E when E is the first child of its parent.                                                                                The :first-child pseudo-class
     it 'supports the :first-child pseudo class (`E:first-child`) (string case)',(done)->
       nodeset = @stew.select(@DOM,'div:first-child')
@@ -414,6 +610,46 @@ describe "Stew",->
       #
       done()
 
+
+    # E , F - all nodes matching E or F
+    it 'supports the comma (or) operator (`E , F`) (string case)',(done)->
+      nodeset = @stew.select(@DOM,'b , span')
+      nodeset.length.should.equal 4
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'b'
+      nodeset[1].attribs.foo.should.equal 'bar'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'b'
+      nodeset[2].attribs.fact.should.equal 'white space is ok here'
+      nodeset[3].type.should.equal 'tag'
+      nodeset[3].name.should.equal 'span'
+      nodeset[3].attribs.id.should.equal 'escaped-quote-test'
+      #
+      done()
+
+    # TODO support E,F (without spaces)
+    # it 'supports the comma (or) operator without spaces (`E,F`) (string case)',(done)->
+    #   nodeset = @stew.select(@DOM,'b,span')
+    #   console.log nodeset
+    #   nodeset.length.should.equal 4
+    #   nodeset[0].type.should.equal 'tag'
+    #   nodeset[0].name.should.equal 'span'
+    #   nodeset[0].attribs.width.should.equal '17'
+    #   nodeset[1].type.should.equal 'tag'
+    #   nodeset[1].name.should.equal 'b'
+    #   nodeset[1].attribs.foo.should.equal 'bar'
+    #   nodeset[2].type.should.equal 'tag'
+    #   nodeset[2].name.should.equal 'b'
+    #   nodeset[2].attribs.fact.should.equal 'white space is ok here'
+    #   nodeset[3].type.should.equal 'tag'
+    #   nodeset[3].name.should.equal 'span'
+    #   nodeset[3].attribs.id.should.equal 'escaped-quote-test'
+    #   #
+    #   done()
+
 #-------------------------------------------------------------------------------
 # E:link
 # E:visited         Matches element E if E is the source anchor of a hyperlink of which the target is not yet visited (:link) 	                              The link pseudo-classes
@@ -421,8 +657,4 @@ describe "Stew",->
 # E:hover           Matches E during certain user actions.
 # E:focus           Matches E during certain user actions.                                                                                                    The dynamic pseudo-classes
 # E:lang(c)         Matches element of type E if it is in (human) language c (the document language specifies how language is determined).                    The :lang() pseudo-class
-
-# E + F             Matches any F element immediately preceded by a sibling element E.                                                                        Adjacent selectors
-# DIV.warning       Language specific. (In HTML, the same as DIV[class~="warning"].)                                                                          Class selectors
-# E#myid            Matches any E element with ID equal to "myid".                                                                                            ID selectors
 #-------------------------------------------------------------------------------
