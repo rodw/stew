@@ -86,7 +86,7 @@ class Stew
       else
         predicate = @_parse_selector_2(selector)
         if child_operator
-          result.push( @factory.direct_descendant_predicate( [ result.pop(), predicate ] ) )
+          result.push( @factory.direct_descendant_predicate( result.pop(), predicate ) )
           child_operator = false
         else if adjacent_operator
           result.push( @factory.adjacent_sibling_predicate( result.pop(), predicate  ) )

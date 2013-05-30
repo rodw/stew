@@ -20,21 +20,23 @@ class DOMUtil
     if typeof callbacks is 'function'
       callbacks = { visit:callbacks }
     nodes = DOMUtil.as_nodeset(dom)
-    parent = null
-    path = []
-    siblings = nodes
+    dom_metadata = []
     for node, sib_index in nodes
-      DOMUtil._unguarded_walk_dom(node,parent,path,siblings,sib_index,callbacks)
+      node_metadata = { parent:null, path:[], siblings:nodes, sib_index: sib_index }
+      node._node_id = dom_metadata.length
+      dom_metadata.push node_metadata
+      DOMUtil._unguarded_walk_dom(node,node_metadata,dom_metadata,callbacks)
 
-  @_unguarded_walk_dom:(node,parent,path,siblings,sib_index,callbacks)->
-    # return if (callbacks.before_visit?(dom,parent,path,siblings,sib_index) is false)
-    visit_children = callbacks.visit?(node,parent,path,siblings,sib_index)
+  @_unguarded_walk_dom:(node,node_metadata,dom_metadata,callbacks)->
+    visit_children = callbacks.visit?(node,node_metadata,dom_metadata)
     if visit_children and node.children?
-      path.push(node)
+      new_path = [].concat(node_metadata.path)
+      new_path.push(node)
       for child,index in node.children
-        DOMUtil._unguarded_walk_dom(child,node,path,node.children,index,callbacks)
-      path.pop()
-    # return if (callbacks.after_visit?(dom,parent,path,siblings,sib_index) is false)
+        new_node_metadata = { parent:node, path:new_path, siblings:node.children, sib_index: index }
+        child._node_id = dom_metadata.length
+        dom_metadata.push new_node_metadata
+        DOMUtil._unguarded_walk_dom(child,new_node_metadata,dom_metadata,callbacks)
 
 exports = exports ? this
 exports.DOMUtil = DOMUtil

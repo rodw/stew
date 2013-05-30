@@ -1,16 +1,16 @@
 class PredicateFactory
 
   and_predicate:(predicates)->
-    return (node,parent,path,siblings,sib_index)->
+    return (node,node_metadata,dom_metadata)->
       for predicate in predicates
-        if not predicate(node,parent,path,siblings,sib_index)
+        if not predicate(node,node_metadata,dom_metadata)
           return false
       return true
 
   or_predicate:(predicates)->
-    return (node,parent,path,siblings,sib_index)->
+    return (node,node_metadata,dom_metadata)->
       for predicate in predicates
-        if predicate(node,parent,path,siblings,sib_index)
+        if predicate(node,node_metadata,dom_metadata)
           return true
       return false
 
@@ -65,7 +65,7 @@ class PredicateFactory
     else if attrvalue?.test?
       vp = (str)->attrvalue.test(str)
 
-    return (node,parent,path,siblings,sib_index)->
+    return (node,node_metadata,dom_metadata)->
       for name,value of node?.attribs
         if np(name)
           if vp is null
@@ -128,14 +128,14 @@ class PredicateFactory
   #
   # TODO FIXME should :first-child also consider elements like <script>?
   first_child_predicate:()->return @_first_child_impl
-  _first_child_impl:(node,parent,path,siblings,sib_index)->
-    if node.type is 'tag' and siblings?
+  _first_child_impl:(node,node_metadata,dom_metadata)->
+    if node.type is 'tag' and node_metadata.siblings?
       index_of_first_tag = -1
-      for elt, index in siblings
+      for elt, index in node_metadata.siblings
         if elt.type is 'tag'
           index_of_first_tag = index
           break
-      return index_of_first_tag is sib_index
+      return index_of_first_tag is node_metadata.sib_index
     else
       return false
 
@@ -143,7 +143,7 @@ class PredicateFactory
   # returns a predicate that evaluates to `true`
   # iff the given `node` is a tag.
   any_tag_predicate:()->return @_any_tag_impl
-  _any_tag_impl:(node,parent,path,siblings,sib_index)->(node?.type is 'tag')
+  _any_tag_impl:(node)->(node?.type is 'tag')
 
   # **descendant_predicate**
   # returns a predicate that for the given array
@@ -169,15 +169,16 @@ class PredicateFactory
     if predicates.length is 1
       return predicates[0]
     else
-      return (node,parent,path,siblings,sib_index)->
-        if predicates[predicates.length-1](node,parent,path,siblings,sib_index)
-          cloned_path = [].concat(path)
+      return (node,node_metadata,dom_metadata)->
+        if predicates[predicates.length-1](node,node_metadata,dom_metadata)
+          cloned_path = [].concat(node_metadata.path)
           cloned_predicates = [].concat(predicates)
           leaf_predicate = cloned_predicates.pop()
           leaf_node = node
           while cloned_path.length > 0
             node = cloned_path.pop()
-            if cloned_predicates[cloned_predicates.length-1](node,cloned_path[cloned_path.length-1],cloned_path) # TODO FIXME find `siblings,sib_index` here
+            node_metadata = dom_metadata[node._node_id]
+            if cloned_predicates[cloned_predicates.length-1](node,node_metadata,dom_metadata)
               cloned_predicates.pop()
               if cloned_predicates.length is 0
                 return true
@@ -185,52 +186,29 @@ class PredicateFactory
         return false
 
   # **direct_descendant_predicate**
-  # returns a predicate that for the given array
-  # of *n* predicates *P*, evaluates to `true` for
-  # a given node if:
-  #
-  #  - *P[n-1](node)* is `true`, and
-  #
-  #  - *P[n-2](parent)* is `true` for the direct parent of `node`
-  #    `parent` that is an ancestor of `node`
-  #
-  #  - *P[n-3](parent2)* is `true` for the direct parent of `parent`
-  #
-  #  - ...etc.
-  direct_descendant_predicate:(predicates)->
-    if predicates.length is 1
-      return predicates[0]
-    else
-      return (node,parent,path,siblings,sib_index)->
-        if predicates[predicates.length-1](node,parent,path,siblings,sib_index)
-          cloned_path = [].concat(path)
-          cloned_predicates = [].concat(predicates)
-          leaf_predicate = cloned_predicates.pop()
-          leaf_node = node
-          while cloned_predicates.length > 0 and cloned_path.length > 0
-            node = cloned_path.pop()
-            if cloned_predicates[cloned_predicates.length-1](node,cloned_path[cloned_path.length-1],cloned_path) # TODO FIXME find `siblings,sib_index` here
-              cloned_predicates.pop()
-              if cloned_predicates.length is 0
-                return true
-                break
-            else
-              return false
-        return false
+  direct_descendant_predicate:(parent_selector,child_selector)->
+    return (node,node_metadata,dom_metadata)->
+      if child_selector(node,node_metadata,dom_metadata)
+        cloned_path = [].concat(node_metadata.path)
+        parent = cloned_path.pop()
+        parent_metadata = dom_metadata[parent._node_id]
+        if parent_selector(parent,parent_metadata,dom_metadata)
+          return true
+      return false
 
   adjacent_sibling_predicate:(first,second)->
-    return (node,parent,path,siblings,sib_index)->
-      if second(node,parent,path,siblings,sib_index)
+    return (node,node_metadata,dom_metadata)->
+      if second(node,node_metadata,dom_metadata)
         prev_tag_node = null
-        prev_tag_index = sib_index - 1
+        prev_tag_index = node_metadata.sib_index - 1
         while prev_tag_index > 0
-          if siblings[prev_tag_index].type is 'tag'
-            prev_tag_node = siblings[prev_tag_index]
+          if node_metadata.siblings[prev_tag_index].type is 'tag'
+            prev_tag_node = node_metadata.siblings[prev_tag_index]
             break
           else
             prev_tag_index -= 1
         if prev_tag_node?
-          if first(prev_tag_node,parent,path,siblings,prev_tag_index)
+          if first(prev_tag_node,dom_metadata[prev_tag_node._node_id],dom_metadata)
             return true
           else
             return false

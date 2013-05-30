@@ -63,14 +63,14 @@ describe "DOMUtil",->
     it "passes parent node to visit function",(done)=>
       handler = new htmlparser.DefaultHandler (err, dom)=>
         expected = [ null, 'html', 'div', 'html', 'div', 'b' ]
-        DOMUtil.walk_dom dom, (node,parent)=>
+        DOMUtil.walk_dom dom, (node,node_metadata)=>
           if node.type is 'tag'
             expected_name = expected.shift()
             if expected_name?
-              parent.should.exist
-              parent.name.should.equal expected_name
+              node_metadata.parent.should.exist
+              node_metadata.parent.name.should.equal expected_name
             else
-              should.not.exist parent
+              should.not.exist node_metadata.parent
           return true
         expected.length.should.equal 0
         done()
@@ -80,12 +80,12 @@ describe "DOMUtil",->
     it "passes path to node to visit function",(done)=>
       handler = new htmlparser.DefaultHandler (err, dom)=>
         expected = [ [], ['html'], ['html','div'], ['html','div','span'], ['html'], ['html','div'], ['html','div','b'], ['html','div','b','i'] ]
-        DOMUtil.walk_dom dom, (node,parent,path)=>
+        DOMUtil.walk_dom dom, (node,node_metadata)=>
           if node.type is 'tag' or node.type is 'text'
             expected_path = expected.shift()
-            expected_path.length.should.equal path.length
+            expected_path.length.should.equal node_metadata.path.length
             for elt,i in expected_path
-              path[i].name.should.equal elt
+              node_metadata.path[i].name.should.equal elt
           return true
         expected.length.should.equal 0
         done()
@@ -95,12 +95,12 @@ describe "DOMUtil",->
     it "passes siblings to visit function",(done)=>
       handler = new htmlparser.DefaultHandler (err, dom)=>
         expected = [ ['html'], ['div','div'], ['span'], ['div','div'],['b'],['i'] ]
-        DOMUtil.walk_dom dom, (node,parent,path,siblings)=>
+        DOMUtil.walk_dom dom, (node,node_metadata)=>
           if node.type is 'tag'
             expected_sibs = expected.shift()
-            expected_sibs.length.should.equal siblings.length
+            expected_sibs.length.should.equal node_metadata.siblings.length
             for elt,i in expected_sibs
-              siblings[i].name.should.equal elt
+              node_metadata.siblings[i].name.should.equal elt
           return true
         expected.length.should.equal 0
         done()
@@ -110,12 +110,86 @@ describe "DOMUtil",->
     it "passes sibling index to visit function",(done)=>
       handler = new htmlparser.DefaultHandler (err, dom)=>
         expected = [ 0, 0, 0, 1, 0, 0 ]
-        DOMUtil.walk_dom dom, (node,parent,path,siblings,sib_index)=>
+        DOMUtil.walk_dom dom, (node,node_metadata)=>
           if node.type is 'tag'
             expected_index = expected.shift()
-            sib_index.should.equal expected_index
+            node_metadata.sib_index.should.equal expected_index
           return true
         expected.length.should.equal 0
         done()
       parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
       parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+
+
+    # it "performs a depth-first walk of the dom tree",(done)=>
+    #   handler = new htmlparser.DefaultHandler (err, dom)=>
+    #     expected = [ 'html', 'div', 'span', 'div', 'b', 'i' ]
+    #     DOMUtil.walk_dom dom, (node)=>
+    #       if node.type is 'tag'
+    #         expected_name = expected.shift()
+    #         node.name.should.equal expected_name
+    #       return true
+    #     expected.length.should.equal 0
+    #     done()
+    #   parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+    #   parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+
+    # it "passes parent node to visit function",(done)=>
+    #   handler = new htmlparser.DefaultHandler (err, dom)=>
+    #     expected = [ null, 'html', 'div', 'html', 'div', 'b' ]
+    #     DOMUtil.walk_dom dom, (node,parent)=>
+    #       if node.type is 'tag'
+    #         expected_name = expected.shift()
+    #         if expected_name?
+    #           parent.should.exist
+    #           parent.name.should.equal expected_name
+    #         else
+    #           should.not.exist parent
+    #       return true
+    #     expected.length.should.equal 0
+    #     done()
+    #   parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+    #   parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+
+    # it "passes path to node to visit function",(done)=>
+    #   handler = new htmlparser.DefaultHandler (err, dom)=>
+    #     expected = [ [], ['html'], ['html','div'], ['html','div','span'], ['html'], ['html','div'], ['html','div','b'], ['html','div','b','i'] ]
+    #     DOMUtil.walk_dom dom, (node,parent,path)=>
+    #       if node.type is 'tag' or node.type is 'text'
+    #         expected_path = expected.shift()
+    #         expected_path.length.should.equal path.length
+    #         for elt,i in expected_path
+    #           path[i].name.should.equal elt
+    #       return true
+    #     expected.length.should.equal 0
+    #     done()
+    #   parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+    #   parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+
+    # it "passes siblings to visit function",(done)=>
+    #   handler = new htmlparser.DefaultHandler (err, dom)=>
+    #     expected = [ ['html'], ['div','div'], ['span'], ['div','div'],['b'],['i'] ]
+    #     DOMUtil.walk_dom dom, (node,parent,path,siblings)=>
+    #       if node.type is 'tag'
+    #         expected_sibs = expected.shift()
+    #         expected_sibs.length.should.equal siblings.length
+    #         for elt,i in expected_sibs
+    #           siblings[i].name.should.equal elt
+    #       return true
+    #     expected.length.should.equal 0
+    #     done()
+    #   parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+    #   parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+
+    # it "passes sibling index to visit function",(done)=>
+    #   handler = new htmlparser.DefaultHandler (err, dom)=>
+    #     expected = [ 0, 0, 0, 1, 0, 0 ]
+    #     DOMUtil.walk_dom dom, (node,parent,path,siblings,sib_index)=>
+    #       if node.type is 'tag'
+    #         expected_index = expected.shift()
+    #         sib_index.should.equal expected_index
+    #       return true
+    #     expected.length.should.equal 0
+    #     done()
+    #   parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+    #   parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
