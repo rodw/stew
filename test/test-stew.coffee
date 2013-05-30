@@ -396,6 +396,24 @@ describe "Stew",->
       #
       done()
 
+    # E + F - any F element immediately preceded by a sibling element E - Adjacent selectors
+    it 'supports the adjacent selector (`E + F`) (reg case)',(done)->
+      nodeset = @stew.select(@DOM,'/(div)|(dove)/ /(div)|(dave)/')
+      nodeset.length.should.equal 4
+      nodeset = @stew.select(@DOM,'/(div)|(dove)/ + /(div)|(dave)/')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-2'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-2'
+      #
+      done()
+
 #-------------------------------------------------------------------------------
 # E:link
 # E:visited         Matches element E if E is the source anchor of a hyperlink of which the target is not yet visited (:link) 	                              The link pseudo-classes
@@ -405,7 +423,6 @@ describe "Stew",->
 # E:lang(c)         Matches element of type E if it is in (human) language c (the document language specifies how language is determined).                    The :lang() pseudo-class
 
 # E + F             Matches any F element immediately preceded by a sibling element E.                                                                        Adjacent selectors
-# E[lang|="en"]     Matches any E element whose "lang" attribute has a hyphen-separated list of values beginning (from the left) with "en".                   Attribute selectors
 # DIV.warning       Language specific. (In HTML, the same as DIV[class~="warning"].)                                                                          Class selectors
 # E#myid            Matches any E element with ID equal to "myid".                                                                                            ID selectors
 #-------------------------------------------------------------------------------
