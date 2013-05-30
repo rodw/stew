@@ -397,7 +397,7 @@ describe "Stew",->
       done()
 
     # E + F - any F element immediately preceded by a sibling element E - Adjacent selectors
-    it 'supports the adjacent selector (`E + F`) (reg case)',(done)->
+    it 'supports the adjacent selector (`E + F`) (regexp case)',(done)->
       nodeset = @stew.select(@DOM,'/(div)|(dove)/ /(div)|(dave)/')
       nodeset.length.should.equal 4
       nodeset = @stew.select(@DOM,'/(div)|(dove)/ + /(div)|(dave)/')
