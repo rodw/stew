@@ -70,7 +70,7 @@ class Stew
         result.push(token[0])
       else
         break
-    console.log "SELECTOR",selector,"RESULT",result
+    # console.log "SELECTOR",selector,"RESULT",result
     return result
 
   # returns a predicate that evalues a sequence of one or more css selectors
