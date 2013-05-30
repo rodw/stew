@@ -218,5 +218,26 @@ class PredicateFactory
               return false
         return false
 
+  adjacent_sibling_predicate:(first,second)->
+    return (node,parent,path,siblings,sib_index)->
+      if second(node,parent,path,siblings,sib_index)
+        prev_tag_node = null
+        prev_tag_index = sib_index - 1
+        while prev_tag_index > 0
+          if siblings[prev_tag_index].type is 'tag'
+            prev_tag_node = siblings[prev_tag_index]
+            break
+          else
+            prev_tag_index -= 1
+        if prev_tag_node?
+          if first(prev_tag_node,parent,path,siblings,prev_tag_index)
+            return true
+          else
+            return false
+        else
+          return false
+      else
+        return false
+
 exports = exports ? this
 exports.PredicateFactory = PredicateFactory

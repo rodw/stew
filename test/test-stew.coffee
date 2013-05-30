@@ -147,12 +147,12 @@ describe "Stew",->
       nodeset[0].name.should.equal 'span'
       done()
 
-
-    it 'supports the child selector (`E > F`) (regexp case)',(done)->
-      # `body > /d[aeiou]ve?/`
-      nodeset = @stew.select(@DOM,'body /d[aeiou]ve?/')
+    # E > F -  any F element that is a child of an E element. - Child selectors
+    it 'supports the child selector (`E > F`) (string case)',(done)->
+      # `body > div`
+      nodeset = @stew.select(@DOM,'body div')
       nodeset.length.should.equal 6
-      nodeset = @stew.select(@DOM,'body > /d[aeiou]ve?/')
+      nodeset = @stew.select(@DOM,'body > div')
       nodeset.length.should.equal 2
       nodeset[0].type.should.equal 'tag'
       nodeset[0].name.should.equal 'div'
@@ -163,12 +163,11 @@ describe "Stew",->
       #
       done()
 
-    # E > F -  any F element that is a child of an E element. - Child selectors
-    it 'supports the child selector (`E > F`) (string case)',(done)->
-      # `body > div`
-      nodeset = @stew.select(@DOM,'body div')
+    it 'supports the child selector (`E > F`) (regexp case)',(done)->
+      # `body > /d[aeiou]ve?/`
+      nodeset = @stew.select(@DOM,'body /d[aeiou]ve?/')
       nodeset.length.should.equal 6
-      nodeset = @stew.select(@DOM,'body > div')
+      nodeset = @stew.select(@DOM,'body > /d[aeiou]ve?/')
       nodeset.length.should.equal 2
       nodeset[0].type.should.equal 'tag'
       nodeset[0].name.should.equal 'div'
@@ -379,14 +378,32 @@ describe "Stew",->
       done()
 
 
+    # E + F - any F element immediately preceded by a sibling element E - Adjacent selectors
+    it 'supports the adjacent selector (`E + F`) (string case)',(done)->
+      nodeset = @stew.select(@DOM,'div div')
+      nodeset.length.should.equal 4
+      nodeset = @stew.select(@DOM,'div + div')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-2'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-2'
+      #
+      done()
+
 #-------------------------------------------------------------------------------
-# E > F             Matches any F element that is a child of an element E.                                                                                    Child selectors
 # E:link
 # E:visited         Matches element E if E is the source anchor of a hyperlink of which the target is not yet visited (:link) 	                              The link pseudo-classes
 # E:active	         or already visited (:visited).
 # E:hover           Matches E during certain user actions.
 # E:focus           Matches E during certain user actions.                                                                                                    The dynamic pseudo-classes
 # E:lang(c)         Matches element of type E if it is in (human) language c (the document language specifies how language is determined).                    The :lang() pseudo-class
+
 # E + F             Matches any F element immediately preceded by a sibling element E.                                                                        Adjacent selectors
 # E[lang|="en"]     Matches any E element whose "lang" attribute has a hyphen-separated list of values beginning (from the left) with "en".                   Attribute selectors
 # DIV.warning       Language specific. (In HTML, the same as DIV[class~="warning"].)                                                                          Class selectors

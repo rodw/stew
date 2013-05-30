@@ -75,15 +75,22 @@ class Stew
     result = []
     if typeof selectors is 'string'
       selectors = @_split_on_ws_respecting_quotes(selectors)
-    child_selector = false
+    # TODO should probably clean up the boolean-operator handling here
+    child_operator = false
+    adjacent_operator = false
     for selector in selectors
       if selector is '>'
-        child_selector = true
+        child_operator = true
+      else if selector is '+'
+        adjacent_operator = true
       else
         predicate = @_parse_selector_2(selector)
-        if child_selector
+        if child_operator
           result.push( @factory.direct_descendant_predicate( [ result.pop(), predicate ] ) )
-          child_selector = false
+          child_operator = false
+        else if adjacent_operator
+          result.push( @factory.adjacent_sibling_predicate( result.pop(), predicate  ) )
+          adjacent_operator = false
         else
           result.push( predicate )
     if result.length > 0
