@@ -17,7 +17,6 @@ PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFact
 #
 # TODO clean up tests
 # TODO support `|=` operator
-# TODO support `,` and `+` operators
 # TODO: fix handing of escaped quotes in the big ugly regexp
 class Stew
 
@@ -54,7 +53,7 @@ class Stew
     # console.log "SELECTOR",selector,"RESULT",result
     return result
 
-  # returns a predicate that evalues a sequence of one or more css selectors
+  # returns a predicate that evaluates a sequence of one or more css selectors
   _parse_selectors:(selectors)->
     result = []
     if typeof selectors is 'string'
@@ -92,15 +91,15 @@ class Stew
   # TODO: support escaped chars, notably `\/` in regexps
   #
   #
-  #                                                                                         11                  1           1  11                  1        111   2    2     22 22      2           22                  2                3 3             #
-  #                     12                  3         4  56                  7          89  01                  2           3  45                  6        789   0    1     23 45      6           78                  9                0 1             #
+  #                                                                                            11                  1           1  11                  1        111   2    2     22 22      2           22                  2                3 3             #
+  #                     12                  3            4  56                  7          89  01                  2           3  45                  6        789   0    1     23 45      6           78                  9                0 1             #
   CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|(\*|[\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])?(:([\w-]+))?/   #
-  #                     \----------------------------/\--------------------------------/\----------------------------------/|  \---------------------------/|\--------------/\----------------------------------------------------/|    |
-  #                     | name                        | id                              | one or more classes               |  | name                       || operator      | value                                               |    |
-  #                                                                                                                         |                               \----------------------------------------------------------------------/    |
-  #                                                                                                                         |                               | operator and value                                                        |
-  #                                                                                                                         \-----------------------------------------------------------------------------------------------------------/
-  #                                                                                                                         | `[...]` attribute part
+  #                     \-------------------------------/\--------------------------------/\----------------------------------/|  \---------------------------/|\--------------/\----------------------------------------------------/|    |\----------/
+  #                     | name                           | id                              | one or more classes               |  | name                       || operator      | value                                               |    | | :pseudo-class
+  #                                                                                                                            |                               \----------------------------------------------------------------------/    |
+  #                                                                                                                            |                               | operator and value                                                        |
+  #                                                                                                                            \-----------------------------------------------------------------------------------------------------------/
+  #                                                                                                                            | `[...]` attribute part
   NAME = 1
   ID = 4
   CLASSES = 8

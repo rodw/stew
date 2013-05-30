@@ -25,7 +25,7 @@ TEST_HTML = """
       <div class="inner even" id="inner-2-2"><em extra="contains spaces, commas and symbols like +">D</em></div>
     </div>
     <section>
-      <span id="escaped-quote-test" label="this label includes \\\"escaped\\\" quotes"></span>
+      <span id="escaped-quote-test" label='this label includes "quote" marks'></span>
     </section>
   </body>
 </html>
@@ -53,16 +53,6 @@ describe "Stew",->
     done()
 
   describe "select()",->
-
-    # TODO - handle escaping better (at all?)
-    # it 'supports escaped quotation marks within quoted strings',(done)->
-    #   nodeset = @stew.select(@DOM,'[label="this label includes \\"escaped\\" text]')
-    #   nodeset.length.should.equal 1
-    #   for node in nodeset
-    #     node.type.should.equal 'tag'
-    #     node.name.should.equal 'span'
-    #     node.attribs.id.should.equal 'escaped-quote-test'
-    #   done()
 
     # * - Matches any tag
     it 'supports the any-tag selector (`*`)',(done)->
@@ -694,11 +684,17 @@ describe "Stew",->
       #
       done()
 
-#-------------------------------------------------------------------------------
-# E:link
-# E:visited         Matches element E if E is the source anchor of a hyperlink of which the target is not yet visited (:link) 	                              The link pseudo-classes
-# E:active	         or already visited (:visited).
-# E:hover           Matches E during certain user actions.
-# E:focus           Matches E during certain user actions.                                                                                                    The dynamic pseudo-classes
-# E:lang(c)         Matches element of type E if it is in (human) language c (the document language specifies how language is determined).                    The :lang() pseudo-class
-#-------------------------------------------------------------------------------
+    it 'supports escaped quotation marks within quoted strings',(done)->
+      nodeset = @stew.select(@DOM,'[label="this label includes \\"quote\\" marks"]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.id.should.equal 'escaped-quote-test'
+      #
+      nodeset = @stew.select(@DOM,'[label=/^this label includes "quote" marks$/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.id.should.equal 'escaped-quote-test'
+      #
+      done()

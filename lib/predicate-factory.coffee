@@ -61,24 +61,33 @@ class PredicateFactory
     if attrvalue is null
       vp = null
     else if typeof(attrvalue) is 'string'
+      attrvalue = attrvalue.replace(/\\\"/g,'"')
       vp = (str)->str is attrvalue
     else if attrvalue?.test?
       vp = (str)->attrvalue.test(str)
 
     return (node)->
+      # console.log "by_attribute_predicate",attrname,attrvalue,valuedelim,node.raw
       for name,value of node?.attribs
         if np(name)
           if vp is null
+            # console.log "returning true"
             return true
           else
             if valuedelim?
               if value?
                 for token in value.split(valuedelim)
                   if vp(token)
+                    # console.log "returning true"
                     return true
             else
+              # console.log "attrvalue",attrvalue
+              # console.log "value",value
+              # console.log "vp(value)",vp(value)
               if vp(value)
+                # console.log "returning true"
                 return true
+      # console.log "returning false"
       return false
 
   # **by_class_predicate** creates a predicate
