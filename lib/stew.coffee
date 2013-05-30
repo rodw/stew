@@ -75,8 +75,17 @@ class Stew
     result = []
     if typeof selectors is 'string'
       selectors = @_split_on_ws_respecting_quotes(selectors)
+    child_selector = false
     for selector in selectors
-      result.push(@_parse_selector_2(selector))
+      if selector is '>'
+        child_selector = true
+      else
+        predicate = @_parse_selector_2(selector)
+        if child_selector
+          result.push( @factory.direct_descendant_predicate( [ result.pop(), predicate ] ) )
+          child_selector = false
+        else
+          result.push( predicate )
     if result.length > 0
       result = @factory.descendant_predicate(result)
     return result

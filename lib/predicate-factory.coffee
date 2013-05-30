@@ -177,11 +177,45 @@ class PredicateFactory
           leaf_node = node
           while cloned_path.length > 0
             node = cloned_path.pop()
-            if cloned_predicates[cloned_predicates.length-1](node,parent,path,siblings,sib_index)
+            if cloned_predicates[cloned_predicates.length-1](node,cloned_path[cloned_path.length-1],cloned_path) # TODO FIXME find `siblings,sib_index` here
               cloned_predicates.pop()
               if cloned_predicates.length is 0
                 return true
                 break
+        return false
+
+  # **direct_descendant_predicate**
+  # returns a predicate that for the given array
+  # of *n* predicates *P*, evaluates to `true` for
+  # a given node if:
+  #
+  #  - *P[n-1](node)* is `true`, and
+  #
+  #  - *P[n-2](parent)* is `true` for the direct parent of `node`
+  #    `parent` that is an ancestor of `node`
+  #
+  #  - *P[n-3](parent2)* is `true` for the direct parent of `parent`
+  #
+  #  - ...etc.
+  direct_descendant_predicate:(predicates)->
+    if predicates.length is 1
+      return predicates[0]
+    else
+      return (node,parent,path,siblings,sib_index)->
+        if predicates[predicates.length-1](node,parent,path,siblings,sib_index)
+          cloned_path = [].concat(path)
+          cloned_predicates = [].concat(predicates)
+          leaf_predicate = cloned_predicates.pop()
+          leaf_node = node
+          while cloned_predicates.length > 0 and cloned_path.length > 0
+            node = cloned_path.pop()
+            if cloned_predicates[cloned_predicates.length-1](node,cloned_path[cloned_path.length-1],cloned_path) # TODO FIXME find `siblings,sib_index` here
+              cloned_predicates.pop()
+              if cloned_predicates.length is 0
+                return true
+                break
+            else
+              return false
         return false
 
 exports = exports ? this
