@@ -65,7 +65,7 @@ class PredicateFactory
     else if attrvalue?.test?
       vp = (str)->attrvalue.test(str)
 
-    return (node,node_metadata,dom_metadata)->
+    return (node)->
       for name,value of node?.attribs
         if np(name)
           if vp is null
@@ -133,11 +133,8 @@ class PredicateFactory
       index_of_first_tag = -1
       for elt, index in node_metadata.siblings
         if elt.type is 'tag'
-          index_of_first_tag = index
-          break
-      return index_of_first_tag is node_metadata.sib_index
-    else
-      return false
+          return node._node_id is elt._node_id
+    return false
 
   # **any_tag_predicate**
   # returns a predicate that evaluates to `true`
@@ -173,8 +170,7 @@ class PredicateFactory
         if predicates[predicates.length-1](node,node_metadata,dom_metadata)
           cloned_path = [].concat(node_metadata.path)
           cloned_predicates = [].concat(predicates)
-          leaf_predicate = cloned_predicates.pop()
-          leaf_node = node
+          cloned_predicates.pop() # drop last predicate, we just tested it
           while cloned_path.length > 0
             node = cloned_path.pop()
             node_metadata = dom_metadata[node._node_id]
@@ -189,33 +185,23 @@ class PredicateFactory
   direct_descendant_predicate:(parent_selector,child_selector)->
     return (node,node_metadata,dom_metadata)->
       if child_selector(node,node_metadata,dom_metadata)
-        cloned_path = [].concat(node_metadata.path)
-        parent = cloned_path.pop()
+        parent = node_metadata.parent
         parent_metadata = dom_metadata[parent._node_id]
-        if parent_selector(parent,parent_metadata,dom_metadata)
-          return true
+        return parent_selector(parent,parent_metadata,dom_metadata)
       return false
 
   adjacent_sibling_predicate:(first,second)->
     return (node,node_metadata,dom_metadata)->
       if second(node,node_metadata,dom_metadata)
-        prev_tag_node = null
+        # prev_tag_node = null
         prev_tag_index = node_metadata.sib_index - 1
         while prev_tag_index > 0
           if node_metadata.siblings[prev_tag_index].type is 'tag'
-            prev_tag_node = node_metadata.siblings[prev_tag_index]
-            break
+            prev_tag = node_metadata.siblings[prev_tag_index]
+            return first(prev_tag,dom_metadata[prev_tag._node_id],dom_metadata)
           else
             prev_tag_index -= 1
-        if prev_tag_node?
-          if first(prev_tag_node,dom_metadata[prev_tag_node._node_id],dom_metadata)
-            return true
-          else
-            return false
-        else
-          return false
-      else
-        return false
+      return false
 
 exports = exports ? this
 exports.PredicateFactory = PredicateFactory
