@@ -7,17 +7,9 @@ DOMUtil          = require(path.join(LIB_DIR,'dom-util')).DOMUtil
 PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFactory
 #-------------------------------------------------------------------------------
 
-
-################################################################################
-################################################################################
-## NEXT STEP: ADD FIRST-CHILD PREDICATE                                       ##
-################################################################################
-################################################################################
-
-#
-# TODO clean up tests
 # TODO support `|=` operator
-# TODO: fix handing of escaped quotes in the big ugly regexp
+# TODO support `\/` as escaped `/` in regexp
+
 class Stew
 
   constructor:()->
@@ -88,7 +80,6 @@ class Stew
 
   # NOTE: ((\/[^\/]*\/[gmi]*)|([\w-]+)) # matches regexp or word (incl. `-`)
   # TODO: Combine the `id` and `class` rules to make them order-indepedent? (I think CSS specifies the order, but still.)
-  # TODO: support escaped chars, notably `\/` in regexps
   #
   #
   #                                                                                            11                  1           11  11                  1        112   2    2     22 22       2           22                  3                3 3             #

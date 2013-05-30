@@ -22,7 +22,7 @@ TEST_HTML = """
     </div>
     <div class="outer even" id="outer-2">
       <div class="inner odd" id="inner-2-1"><b fact="white space is ok here"><i>C</i></b></div>
-      <div class="inner even" id="inner-2-2"><em extra="contains spaces, commas and symbols like +">D</em></div>
+      <div class="inner even" id="inner-2-2"><em extra="contains spaces, commas and symbols like + and /">D</em></div>
     </div>
     <section>
       <span id="escaped-quote-test" label='this label includes "quote" marks'></span>
@@ -477,21 +477,22 @@ describe "Stew",->
       done()
 
     it 'supports the attribute-value selector (`E[foo="bar"]`) (extra symbols case)',(done)->
-      nodeset = @stew.select(@DOM,'[extra="contains spaces, commas and symbols like +"]')
+      nodeset = @stew.select(@DOM,'[extra="contains spaces, commas and symbols like + and /"]')
       nodeset.length.should.equal 1
       nodeset[0].type.should.equal 'tag'
       nodeset[0].name.should.equal 'em'
-      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like +'
+      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like + and /'
       nodeset = @stew.select(@DOM,'[extra=/contains spaces, commas and symbols like \\+/]')
       nodeset.length.should.equal 1
       nodeset[0].type.should.equal 'tag'
       nodeset[0].name.should.equal 'em'
-      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like +'
-      nodeset = @stew.select(@DOM,'[extra=/^contains spaces, commas and symbols like \\+$/]')
+      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like + and /'
+
+      nodeset = @stew.select(@DOM,'[extra=/^contains spaces, commas and symbols like \\+ and .$/]') # TODO support `\/` as a way to escape `/` in regexp patterns (replacing `.` here)
       nodeset.length.should.equal 1
       nodeset[0].type.should.equal 'tag'
       nodeset[0].name.should.equal 'em'
-      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like +'
+      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like + and /'
       done()
 
     # E[foo~="warning"] - Matches any E element whose "foo" attribute value is a list of space-separated values, one of which is exactly equal to "warning".
