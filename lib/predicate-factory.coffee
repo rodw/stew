@@ -139,6 +139,11 @@ class PredicateFactory
     else
       return false
 
+  # **any_tag_predicate**
+  # returns a predicate that evaluates to `true`
+  # iff the given `node` is a tag.
+  any_tag_predicate:()->return @_any_tag_impl
+  _any_tag_impl:(node,parent,path,siblings,sib_index)->(node?.type is 'tag')
 
   # **descendant_predicate**
   # returns a predicate that for the given array

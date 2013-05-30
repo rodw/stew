@@ -21,7 +21,7 @@ TEST_HTML = """
       <div class="inner even" id="inner-1-2"><b foo="bar">B</b></div>
     </div>
     <div class="outer even" id="outer-2">
-      <div class="inner odd" id="inner-2-1"><b fact="white space is ok here"><i>C<i></b></div>
+      <div class="inner odd" id="inner-2-1"><b fact="white space is ok here"><i>C</i></b></div>
       <div class="inner even" id="inner-2-2"><em>D</em></div>
     </div>
     <section>
@@ -64,6 +64,36 @@ describe "Stew",->
     done()
 
   describe "select()",->
+
+    # * - Matches any tag
+    it 'supports the any-tag selector (`*`)',(done)->
+      # `div *`
+      nodeset = @stew.select(@DOM,'div *')
+      console.log nodeset
+      nodeset.length.should.equal 9
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'span'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-1-2'
+      nodeset[3].type.should.equal 'tag'
+      nodeset[3].name.should.equal 'b'
+      nodeset[4].type.should.equal 'tag'
+      nodeset[4].name.should.equal 'div'
+      nodeset[4].attribs.id.should.equal 'inner-2-1'
+      nodeset[5].type.should.equal 'tag'
+      nodeset[5].name.should.equal 'b'
+      nodeset[6].type.should.equal 'tag'
+      nodeset[6].name.should.equal 'i'
+      nodeset[7].type.should.equal 'tag'
+      nodeset[7].name.should.equal 'div'
+      nodeset[7].attribs.id.should.equal 'inner-2-2'
+      nodeset[8].type.should.equal 'tag'
+      nodeset[8].name.should.equal 'em'
+      done()
 
     # E - Matches any E element (i.e., an element of type E). - Type selectors
     it 'supports the type selector (`E`) (string case)',(done)->
@@ -325,11 +355,11 @@ describe "Stew",->
       nodeset[0].type.should.equal 'tag'
       nodeset[0].name.should.equal 'span'
       nodeset[0].attribs.id.should.equal 'escaped-quote-test'
+      #
       done()
 
 
 #-------------------------------------------------------------------------------
-# *                 Matches any element.                                                                                                                      Universal selector
 # E > F             Matches any F element that is a child of an element E.                                                                                    Child selectors
 # E:link
 # E:visited         Matches element E if E is the source anchor of a hyperlink of which the target is not yet visited (:link) 	                              The link pseudo-classes

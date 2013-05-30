@@ -88,7 +88,7 @@ class Stew
   #
   #                                                                                         11                  1           1  11                  1        111   2    2     22 22      2           22                  2                3 3             #
   #                     12                  3         4  56                  7          89  01                  2           3  45                  6        789   0    1     23 45      6           78                  9                0 1             #
-  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|([\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])?(:([\w-]+))?/   #
+  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|(\*|[\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])?(:([\w-]+))?/   #
   #                     \----------------------------/\--------------------------------/\----------------------------------/|  \---------------------------/|\--------------/\----------------------------------------------------/|    |
   #                     | name                        | id                              | one or more classes               |  | name                       || operator      | value                                               |    |
   #                                                                                                                         |                               \----------------------------------------------------------------------/    |
@@ -110,7 +110,10 @@ class Stew
     match = @CSS_SELECTOR_REGEXP.exec(selector)
     clauses = []
     if match[NAME]?
-      clauses.push(@factory.by_tag_predicate(@_to_string_or_regex(match[NAME])))
+      if match[NAME] is '*'
+        clauses.push(@factory.any_tag_predicate())
+      else
+        clauses.push(@factory.by_tag_predicate(@_to_string_or_regex(match[NAME])))
     if match[ID]?
       clauses.push(@factory.by_id_predicate(@_to_string_or_regex(match[ID].substring(1))))
     if match[CLASSES]?.length > 0
