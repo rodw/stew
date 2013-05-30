@@ -698,3 +698,18 @@ describe "Stew",->
       nodeset[0].attribs.id.should.equal 'escaped-quote-test'
       #
       done()
+
+    it 'supports multiple attribute-based selectors in series (`E[a=b][c=d]`)',(done)->
+      #
+      nodeset = @stew.select(@DOM,'[class~="outer"][class~="odd"]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      #
+      nodeset = @stew.select(@DOM,'[class=/outer/][class=/odd/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      done()

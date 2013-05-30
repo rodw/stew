@@ -70,7 +70,7 @@ class Stew
       else if selector is ','
         or_operator = true
       else
-        predicate = @_parse_selector_2(selector)
+        predicate = @_parse_selector(selector)
         if child_operator
           result.push( @factory.direct_descendant_predicate( result.pop(), predicate ) )
           child_operator = false
@@ -91,60 +91,89 @@ class Stew
   # TODO: support escaped chars, notably `\/` in regexps
   #
   #
-  #                                                                                            11                  1           1  11                  1        111   2    2     22 22      2           22                  2                3 3             #
-  #                     12                  3            4  56                  7          89  01                  2           3  45                  6        789   0    1     23 45      6           78                  9                0 1             #
-  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|(\*|[\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])?(:([\w-]+))?/   #
-  #                     \-------------------------------/\--------------------------------/\----------------------------------/|  \---------------------------/|\--------------/\----------------------------------------------------/|    |\----------/
-  #                     | name                           | id                              | one or more classes               |  | name                       || operator      | value                                               |    | | :pseudo-class
-  #                                                                                                                            |                               \----------------------------------------------------------------------/    |
-  #                                                                                                                            |                               | operator and value                                                        |
-  #                                                                                                                            \-----------------------------------------------------------------------------------------------------------/
-  #                                                                                                                            | `[...]` attribute part
+  #                                                                                            11                  1           11  11                  1        112   2    2     22 22       2           22                  3                3 3             #
+  #                     12                  3            4  56                  7          89  01                  2           34  56                  7        890   1    2     34 56       7           89                  0                1 2             #
+  CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|(\*|[\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)((\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])*)(:([\w-]+))?/   #
+  #                     \-------------------------------/\--------------------------------/\----------------------------------/||  \---------------------------/|\--------------/\----------------------------------------------------/|   | |\----------/
+  #                     | name                           | id                              | one or more classes               ||  | name                       || operator      | value                                               |   | || :pseudo-class
+  #                                                                                                                            ||                               \----------------------------------------------------------------------/   | |
+  #                                                                                                                            ||                               | operator and value                                                       | |
+  #                                                                                                                            |\----------------------------------------------------------------------------------------------------------/ |
+  #                                                                                                                            || `[...]` attribute part                                                                                     |
+  #                                                                                                                            \-------------------------------------------------------------------------------------------------------------/
+  #                                                                                                                            | `[...]*` attribute part
   NAME = 1
   ID = 4
   CLASSES = 8
-  ATTR_NAME = 14
-  OPERATOR = 18
-  DEQUOTED_ATTR_VALUE = 24
-  NEVERQUOTED_ATTR_VALUE = 27
-  PSEUDO_CLASS = 31
+  ATTRIBUTES = 13
+  # ATTR_NAME = 15
+  # OPERATOR = 19
+  # DEQUOTED_ATTR_VALUE = 25
+  # NEVERQUOTED_ATTR_VALUE = 28
+  PSEUDO_CLASS = 32
   # "tag#id.class-one.class-two[name~=\"value with spaces\"]".match(CSS_SELECTOR_REGEXP)
 
+  #                                                                          11 11       1          11                  1
+  #                         1  23                  4        567   8    9     01 23       4          56                  7
+  ATTRIBUTE_CLAUSE_REGEXP: /(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])/g #
+  #                            \---------------------------/|\--------------/\----------------------------------------------------/|
+  #                            | name                       || operator      | value                                               |
+  SUB_ATTR_NAME = 2
+  SUB_OPERATOR = 6
+  SUB_DEQUOTED_ATTR_VALUE = 12
+  SUB_NEVERQUOTED_ATTR_VALUE = 15
+
   # returns a (possibly compound) predicate that matches the provided `selector`
-  _parse_selector_2:(selector)->
+  _parse_selector:(selector)->
     match = @CSS_SELECTOR_REGEXP.exec(selector)
     clauses = []
+
+    # NAME PART
     if match[NAME]?
       if match[NAME] is '*'
         clauses.push(@factory.any_tag_predicate())
       else
         clauses.push(@factory.by_tag_predicate(@_to_string_or_regex(match[NAME])))
+
+    # ID PART
     if match[ID]?
       clauses.push(@factory.by_id_predicate(@_to_string_or_regex(match[ID].substring(1))))
-    if match[CLASSES]?.length > 0
-                                     # match[CLASSES] contains something like `.foo.bar`
+
+    # CLASS PART
+    if match[CLASSES]?.length > 0    # match[CLASSES] contains something like `.foo.bar`
       cs = match[CLASSES].split('.') # split the string into individual class names
       cs.shift()                     # and skip the first (empty) token that is included
       for c in cs
         clauses.push(@factory.by_class_predicate(@_to_string_or_regex(c)))
-    if match[ATTR_NAME]? and (not match[OPERATOR]?)
-      clauses.push(@factory.by_attr_exists_predicate(@_to_string_or_regex(match[ATTR_NAME])))
-    if match[ATTR_NAME]? and match[OPERATOR]? and (match[DEQUOTED_ATTR_VALUE]? or match[NEVERQUOTED_ATTR_VALUE]?)
-      delim = null
-      if match[OPERATOR] is '~='
-        delim = /\s+/
-      clauses.push(
-        @factory.by_attr_value_predicate(
-          @_to_string_or_regex(match[ATTR_NAME]),
-          @_to_string_or_regex(match[DEQUOTED_ATTR_VALUE] ? match[NEVERQUOTED_ATTR_VALUE]),
-          delim
-        )
-      )
+
+    # ATTRIBUTE PART
+    if match[ATTRIBUTES]?.length > 0 # match[ATTRIBUTES] contains one or more `[name=value]` (or `[name]`) strings
+      attr_match = @ATTRIBUTE_CLAUSE_REGEXP.exec(match[ATTRIBUTES])
+      while attr_match?
+        if attr_match[SUB_ATTR_NAME]? and (not attr_match[SUB_OPERATOR]?)
+          clauses.push(@factory.by_attr_exists_predicate(@_to_string_or_regex(attr_match[SUB_ATTR_NAME])))
+        if attr_match[SUB_ATTR_NAME]? and attr_match[SUB_OPERATOR]? and (attr_match[SUB_DEQUOTED_ATTR_VALUE]? or attr_match[SUB_NEVERQUOTED_ATTR_VALUE]?)
+          delim = null
+          if attr_match[SUB_OPERATOR] is '~='
+            delim = /\s+/
+          clauses.push(
+            @factory.by_attr_value_predicate(
+              @_to_string_or_regex(attr_match[SUB_ATTR_NAME]),
+              @_to_string_or_regex(attr_match[SUB_DEQUOTED_ATTR_VALUE] ? attr_match[SUB_NEVERQUOTED_ATTR_VALUE]),
+              delim
+            )
+          )
+        attr_match = @ATTRIBUTE_CLAUSE_REGEXP.exec(match[ATTRIBUTES])
+
+    # PSEUDO CLASS PART
     if match[PSEUDO_CLASS]?
       if match[PSEUDO_CLASS] is 'first-child'
         clauses.push(@factory.first_child_predicate())
+
+    # COMBINE THEM
     if clauses.length > 0
       clauses = @factory.and_predicate(clauses)
+
     return clauses
 
   # If `str` is a string that starts and ends with `/`
