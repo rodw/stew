@@ -35,35 +35,16 @@ class Stew
       if predicate(node,parent,path,siblings,sib_index)
         result.push node
       return true
-      # if predicates[predicates.length-1](node,parent,path,siblings,sib_index)
-      #   if predicates.length is 1
-      #     result.push node
-      #   else
-      #     cloned_path = [].concat(path)
-      #     cloned_predicates = [].concat(predicates)
-      #     leaf_predicate = cloned_predicates.pop()
-      #     leaf_node = node
-      #     while cloned_path.length > 0
-      #       node = cloned_path.pop()
-      #       if cloned_predicates[cloned_predicates.length-1](node,parent,path,siblings,sib_index)
-      #         cloned_predicates.pop()
-      #         if cloned_predicates.length is 0
-      #           result.push leaf_node
-      #           break
-      # return true
     DOMUtil.walk_dom dom, visit:visit
     return result
 
-  # like str.split(/\s/), but treats "quoted phrases" (and `/regular expressions/` as a single token)
-  # via: http://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array
-  # TODO add support for `,`, `+` and `>` delimiter/operators (with or without surrounding whitespace
-  # SPLIT_ON_WS_REGEXP = /([^\" ]|(\"[^\"]+\"))+/g
-  SPLIT_ON_WS_REGEXP = /([^\"\/\s]|(\"[^\"]+\")|(\/[^\/]+\/))+/g
+  # similiar to str.split(/\s/), but:
+  #  - treats "quoted phrases" (and `/regular expressions/`) as a single token
+  #  - also splits on the CSS "operators" of `>`, `+` and `,`
+  # derived from : http://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array
+  SPLIT_ON_WS_REGEXP = /([^\"\/\s,\+>]|(\"[^\"]+\")|(\/[^\/]+\/))+|[,\+>]/g
   _split_on_ws_respecting_quotes:(selector)->
     result = []
-    # in regular JS, this is
-    #   while(token = SPLIT_ON_WS_REGEXP.exec(selector) { ... }
-    # surely there is a better way to do this in coffeescript
     while true
       token = SPLIT_ON_WS_REGEXP.exec(selector)
       if token?[0]?

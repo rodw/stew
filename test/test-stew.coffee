@@ -22,7 +22,7 @@ TEST_HTML = """
     </div>
     <div class="outer even" id="outer-2">
       <div class="inner odd" id="inner-2-1"><b fact="white space is ok here"><i>C</i></b></div>
-      <div class="inner even" id="inner-2-2"><em>D</em></div>
+      <div class="inner even" id="inner-2-2"><em extra="contains spaces, commas and symbols like +">D</em></div>
     </div>
     <section>
       <span id="escaped-quote-test" label="this label includes \\\"escaped\\\" quotes"></span>
@@ -338,6 +338,19 @@ describe "Stew",->
       #
       done()
 
+    # E > F -  any F element that is a child of an E element. - Child selectors
+    it 'supports the child selector without whitespace (`E>F`) (string case)',(done)->
+      nodeset = @stew.select(@DOM,'body>div')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      #
+      done()
+
     it 'supports the child selector (`E > F`) (regexp case)',(done)->
       # `body > /d[aeiou]ve?/`
       nodeset = @stew.select(@DOM,'body /d[aeiou]ve?/')
@@ -473,6 +486,24 @@ describe "Stew",->
       #
       done()
 
+    it 'supports the attribute-value selector (`E[foo="bar"]`) (extra symbols case)',(done)->
+      nodeset = @stew.select(@DOM,'[extra="contains spaces, commas and symbols like +"]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'em'
+      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like +'
+      nodeset = @stew.select(@DOM,'[extra=/contains spaces, commas and symbols like \\+/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'em'
+      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like +'
+      nodeset = @stew.select(@DOM,'[extra=/^contains spaces, commas and symbols like \\+$/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'em'
+      nodeset[0].attribs.extra.should.equal 'contains spaces, commas and symbols like +'
+      done()
+
     # E[foo~="warning"] - Matches any E element whose "foo" attribute value is a list of space-separated values, one of which is exactly equal to "warning".
     it 'supports the ~= operator in the attribute-value selector (`E[foo~="bar"]`) (string case)',(done)->
       #
@@ -592,6 +623,21 @@ describe "Stew",->
       #
       done()
 
+    it 'supports the adjacent selector without whitespace (`E+F`) (string case)',(done)->
+      nodeset = @stew.select(@DOM,'div+div')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-2'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-2'
+      #
+      done()
+
     # E + F - any F element immediately preceded by a sibling element E - Adjacent selectors
     it 'supports the adjacent selector (`E + F`) (regexp case)',(done)->
       nodeset = @stew.select(@DOM,'/(div)|(dove)/ /(div)|(dave)/')
@@ -630,25 +676,23 @@ describe "Stew",->
       #
       done()
 
-    # TODO support E,F (without spaces)
-    # it 'supports the comma (or) operator without spaces (`E,F`) (string case)',(done)->
-    #   nodeset = @stew.select(@DOM,'b,span')
-    #   console.log nodeset
-    #   nodeset.length.should.equal 4
-    #   nodeset[0].type.should.equal 'tag'
-    #   nodeset[0].name.should.equal 'span'
-    #   nodeset[0].attribs.width.should.equal '17'
-    #   nodeset[1].type.should.equal 'tag'
-    #   nodeset[1].name.should.equal 'b'
-    #   nodeset[1].attribs.foo.should.equal 'bar'
-    #   nodeset[2].type.should.equal 'tag'
-    #   nodeset[2].name.should.equal 'b'
-    #   nodeset[2].attribs.fact.should.equal 'white space is ok here'
-    #   nodeset[3].type.should.equal 'tag'
-    #   nodeset[3].name.should.equal 'span'
-    #   nodeset[3].attribs.id.should.equal 'escaped-quote-test'
-    #   #
-    #   done()
+    it 'supports the comma (or) operator without spaces (`E,F`) (string case)',(done)->
+      nodeset = @stew.select(@DOM,'b,span')
+      nodeset.length.should.equal 4
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'b'
+      nodeset[1].attribs.foo.should.equal 'bar'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'b'
+      nodeset[2].attribs.fact.should.equal 'white space is ok here'
+      nodeset[3].type.should.equal 'tag'
+      nodeset[3].name.should.equal 'span'
+      nodeset[3].attribs.id.should.equal 'escaped-quote-test'
+      #
+      done()
 
 #-------------------------------------------------------------------------------
 # E:link
