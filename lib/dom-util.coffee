@@ -27,6 +27,8 @@ class DOMUtil
       dom_metadata.push node_metadata
       DOMUtil._unguarded_walk_dom(node,node_metadata,dom_metadata,callbacks)
 
+  # node_metadata := { parent:, path:, siblings:, sib_index: }
+  # dom_metadata := [ <node_metadata> ], indexed by node._node_id
   @_unguarded_walk_dom:(node,node_metadata,dom_metadata,callbacks)->
     visit_children = callbacks.visit?(node,node_metadata,dom_metadata)
     if visit_children and node.children?
