@@ -70,11 +70,11 @@ help:
 
 # `targets` - list targets that are not likely to be .PHONY targets
 targets:
-	grep -E "^[^ #.$$]+:( |$$)" Makefile | sort
+	@grep -E "^[^ #.$$]+:( |$$)" Makefile | sort | cut -d ":" -f 1
 
 # `todo` - list todo comments in found files
 todo:
-	grep -C 0 --exclude-dir=node_modules --exclude-dir=.git --exclude=#*# --exclude=.#* -IrH "(TODO)|(FIXME)|(XXX)" *
+	@grep -C 0 --exclude-dir=node_modules --exclude-dir=.git --exclude=#*# --exclude=.#* --exclude=*.html  --exclude=Makefile  -IrHE "(TODO)|(FIXME)|(XXX)" *
 
 ################################################################################
 # CLEAN UP TARGETS

@@ -95,3 +95,7 @@ stew.select( dom, 'ul > li > a[rel=author][href]' );
 ### Regular Expressions
 
 Stew extends the CSS selector syntax by allowing the use of regular expressions to specify tag names, class names, ids, and attributes (both name and value).  For example `a[href=/^https?:/i]` selects all anchor tags with an `href` attribute that starts with `http:` or `https:` (with a case-insensitive comparison) and `[/^data-/]` selects all tags with any attribute whose name starts with `data-`.
+
+## Licensing
+
+The Stew library and related documentation are made available under an [MIT License](http://opensource.org/licenses/MIT).  For details, please see the file [MIT-LICENSE.txt](MIT-LICENSE.txt) in the root directory of the repository.
