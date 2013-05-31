@@ -1,3 +1,4 @@
+# Scraping Headlines Using Stew
 *This is a complete (but simple) example of using [Stew](https://github.com/rodw/stew) to extract content from the web.*
 
 In this example, we'll extract headlines from the venerable social-tech-news site [Slashdot](http://slashdot.org/).
@@ -33,19 +34,15 @@ When using Stew, you'll typically import the library using something like this:
 
 but since this file is found *within* the Stew repository itself, we'll do things a little differently.  Most readers can safely ignore these next few lines and use the simple `require` statement above instead.
 
-    # You WON'T do the following.
-    # We're only doing it here because we
-    # want to use the "local" implementation
-    # of Stew.
-    fs = require 'fs'
-    path = require 'path'
-    HOMEDIR = path.join(__dirname,'..')
+    # You WON'T do the following. We're only doing it here because we
+    # want to use the "local" implementation of Stew.
+    fs          = require 'fs'
+    path        = require 'path'
+    HOMEDIR     = path.join(__dirname,'..')
     LIB_COV_DIR = path.join(HOMEDIR,'lib-cov')
-    LIB_DIR = if fs.existsSync(LIB_COV_DIR) then LIB_COV_DIR else path.join(HOMEDIR,'lib')
-    Stew = require(path.join(LIB_DIR,'stew')).Stew
-    stew = new Stew()
-
-We'll create an instance of Stew
+    LIB_DIR     = if fs.existsSync(LIB_COV_DIR) then LIB_COV_DIR else path.join(HOMEDIR,'lib')
+    Stew        = require(path.join(LIB_DIR,'stew')).Stew
+    stew        = new Stew()
 
 ## Setting up the HTML Parser
 

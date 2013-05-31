@@ -44,9 +44,8 @@ MOCHA_COV_ARGS  ?= -R html-cov --compilers coffee:coffee-script -t 6000 --global
 MARKDOWN_SRCS ?= $(shell find . -type f -name '*.md' | grep -v node_modules)
 MARKDOWN_HTML ?= ${MARKDOWN_SRCS:.md=.html}
 MARKDOWN_PROCESSOR ?= pandoc
-# MARKDOWN_STYLESHEET ?= ../docs/styles/markdown.css
-# MARKDOWN_PROCESSOR_ARGS ?= -f markdown -t html -s -H $(MARKDOWN_STYLESHEET) --toc --highlight-style pygments
-MARKDOWN_PROCESSOR_ARGS ?= -f markdown -t html -s --toc --highlight-style pygments
+MARKDOWN_STYLESHEET ?= docs/styles/markdown.css
+MARKDOWN_PROCESSOR_ARGS ?= -f markdown -t html -s -H $(MARKDOWN_STYLESHEET) --toc --highlight-style pygments
 LITCOFFEE_SRCS ?= $(shell find . -type f -name '*.litcoffee' | grep -v node_modules)
 LITCOFFEE_HTML ?= ${LITCOFFEE_SRCS:.litcoffee=.html}
 
@@ -60,7 +59,7 @@ RM_DASH_I ?= -f
 .SUFFIXES:
 
 # `.PHONY` - make targets that aren't actually files
-.PHONY: all build-coffee clean clean-coverage clean-docco clean-docs clean-js clean-markdown clean-module clean-node-modules clean-test-module-install coverage docco docs fully-clean-node-modules help js markdown module targets test test-module-install todo pack
+.PHONY: all build-coffee clean clean-coverage clean-docco clean-docs clean-js clean-markdown clean-module clean-node-modules clean-test-module-install coverage docco docs fully-clean-node-modules help js markdown module targets test test-module-install todo
 
 # `all` - the default target
 all: coverage docco
@@ -75,7 +74,7 @@ targets:
 
 # `todo` - list todo comments in found files
 todo:
-	grep -C 0 --exclude-dir=node_modules --exclude-dir=.git --exclude=#*# --exclude=.#* -IrH "TODO" *
+	grep -C 0 --exclude-dir=node_modules --exclude-dir=.git --exclude=#*# --exclude=.#* -IrH "(TODO)|(FIXME)|(XXX)" *
 
 ################################################################################
 # CLEAN UP TARGETS
@@ -137,7 +136,6 @@ $(NODE_MODULES): $(PACKAGE_JSON)
 
 npm: $(NODE_MODULES) # an alias
 install: $(NODE_MODULES) # an alias
-#node_modules/: $(NODE_MODULES) # an alias
 
 ################################################################################
 # COFFEE TARGETS
@@ -199,8 +197,3 @@ docco: $(COFFEE_SRCS) $(NODE_MODULES)
 	docco $(COFFEE_SRCS)
 	mv docs docs-temporarily-renamed-so-docco-doesnt-clobber-it/docco
 	mv docs-temporarily-renamed-so-docco-doesnt-clobber-it docs
-
-################################################################################
-# PROUDCTION DEPLOYMENTS
-deployable: npm js test
-	mkdir "../$(TMP_PACKAGE_DIR)" && cd "../$(TMP_PACKAGE_DIR)" && cp -r ../web "$(PACKAGE_DIR)" && cd "$(PACKAGE_DIR)" && ln -s $(RM_DASH_I) config/config-prod.json config.json && cd .. && tar -czf "$(PACKAGE_DIR).tgz" "$(PACKAGE_DIR)" && mv "$(PACKAGE_DIR).tgz" ../web/. && cd .. && rm -r $(RM_DASH_I) "$(TMP_PACKAGE_DIR)" && cd web
