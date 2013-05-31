@@ -44,8 +44,11 @@ MOCHA_COV_ARGS  ?= -R html-cov --compilers coffee:coffee-script -t 6000 --global
 MARKDOWN_SRCS ?= $(shell find . -type f -name '*.md' | grep -v node_modules)
 MARKDOWN_HTML ?= ${MARKDOWN_SRCS:.md=.html}
 MARKDOWN_PROCESSOR ?= pandoc
-MARKDOWN_STYLESHEET ?= ../docs/styles/markdown.css
-MARKDOWN_PROCESSOR_ARGS ?= -f markdown -t html -s -H $(MARKDOWN_STYLESHEET) --toc --highlight-style pygments
+# MARKDOWN_STYLESHEET ?= ../docs/styles/markdown.css
+# MARKDOWN_PROCESSOR_ARGS ?= -f markdown -t html -s -H $(MARKDOWN_STYLESHEET) --toc --highlight-style pygments
+MARKDOWN_PROCESSOR_ARGS ?= -f markdown -t html -s --toc --highlight-style pygments
+LITCOFFEE_SRCS ?= $(shell find . -type f -name '*.litcoffee' | grep -v node_modules)
+LITCOFFEE_HTML ?= ${LITCOFFEE_SRCS:.litcoffee=.html}
 
 # OTHER ########################################################################
 RM_DASH_I ?= -f
@@ -179,11 +182,15 @@ docs: markdown docco
 .SUFFIXES: .html .md
 .md.html:
 	$(MARKDOWN_PROCESSOR) $(MARKDOWN_PROCESSOR_ARGS) -o $@ $<
-
 $(MARKDOWN_HTML_OBJ): $(MARKDOWN_SRCS)
 
-markdown: $(MARKDOWN_HTML)
-html: $(MARKDOWN_HTML)
+.SUFFIXES: .html .litcoffee
+.litcoffee.html:
+	$(MARKDOWN_PROCESSOR) $(MARKDOWN_PROCESSOR_ARGS) -o $@ $<
+$(LITCOFFEE_HTML_OBJ): $(LITCOFFEE_SRCS)
+
+markdown: $(MARKDOWN_HTML) $(LITCOFFEE_HTML)
+html: markdown
 
 docco: $(COFFEE_SRCS) $(NODE_MODULES)
 	rm -r $(RM_DASH_I) docs/docco
