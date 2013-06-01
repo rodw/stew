@@ -1,4 +1,5 @@
 # Scraping Headlines Using Stew
+
 *This is a complete (but simple) example of using [Stew](https://github.com/rodw/stew) to extract content from the web.*
 
 In this example, we'll extract headlines from the venerable social-tech-news site [Slashdot](http://slashdot.org/).
@@ -30,7 +31,7 @@ but we'll need to jump through some hoops to download the page and parse it into
 When using Stew, you'll typically import the library using something like this:
 
     # This is what you'll typically do:
-    # stew = new (require('stew')).Stew()
+    # stew = new (require('stew-select')).Stew()
 
 but since this file is found *within* the Stew repository itself, we'll do things a little differently.  Most readers can safely ignore these next few lines and use the simple `require` statement above instead.
 

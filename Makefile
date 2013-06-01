@@ -6,8 +6,8 @@ COFFEE_EXE ?= ./node_modules/.bin/coffee
 NODE_EXE ?= node
 COFFEE_COMPILE ?= $(COFFEE_EXE) -c
 COFFEE_COMPILE_ARGS ?=
-COFFEE_SRCS ?= $(wildcard lib/gleaning/*.coffee lib/*.coffee *.coffee)
-COFFEE_TEST_SRCS ?= $(wildcard test/*.coffee test/gleaning/*.coffee)
+COFFEE_SRCS ?= $(wildcard lib/*.coffee *.coffee)
+COFFEE_TEST_SRCS ?= $(wildcard test/*.coffee)
 COFFEE_JS ?= ${COFFEE_SRCS:.coffee=.js}
 COFFEE_TEST_JS ?= ${COFFEE_TEST_SRCS:.coffee=.js}
 
@@ -26,7 +26,7 @@ PACKAGE_DIR ?= $(PACKAGE_NAME)-$(PACKAGE_VERSION)
 
 # MOCHA ########################################################################
 MOCHA_EXE ?= ./node_modules/.bin/mocha
-MOCHA_TESTS ?= $(wildcard test/test-*.coffee test/gleaning/test-*.coffee)
+MOCHA_TESTS ?= $(wildcard test/test-*.coffee)
 MOCHA_TEST_PATTERN ?=
 MOCHA_TIMEOUT ?=-t 3000
 MOCHA_TEST_ARGS  ?= -R list --compilers coffee:coffee-script $(MOCHA_TIMEOUT) $(MOCHA_TEST_PATTERN)
@@ -127,7 +127,7 @@ module: js test docs coverage
 	cp Makefile $(MODULE_DIR)
 
 test-module-install: clean-test-module-install js test docs coverage module
-	mkdir ../testing-module-install; cd ../testing-module-install; npm install "$(CURDIR)/module"; node -e "require('assert').ok(1==2)" && cd $(CURDIR) && rm -r $(RM_DASH_I) ../testing-module-install
+	mkdir ../testing-module-install; cd ../testing-module-install; npm install "$(CURDIR)/module"; node -e "require('assert').ok(require('stew-select'))" && cd $(CURDIR) && rm -r $(RM_DASH_I) ../testing-module-install && echo "It worked!"
 
 $(NODE_MODULES): $(PACKAGE_JSON)
 	$(NPM_EXE) $(NPM_ARGS) prune
@@ -163,9 +163,7 @@ coverage: js
 	rm -r $(RM_DASH_I) $(JSCOVERAGE_TMP_DIR)
 	rm -r $(RM_DASH_I) $(LIB_COV)
 	mkdir -p $(JSCOVERAGE_TMP_DIR)
-	mkdir -p $(JSCOVERAGE_TMP_DIR)/gleaning
 	cp $(LIB)/*.js $(JSCOVERAGE_TMP_DIR)/.
-	cp $(LIB)/gleaning/*.js $(JSCOVERAGE_TMP_DIR)/gleaning/.
 	$(JSCOVERAGE_EXE) -v $(JSCOVERAGE_TMP_DIR) $(LIB_COV)
 	mkdir -p `dirname $(JSCOVERAGE_REPORT)`
 	$(MOCHA_EXE) $(MOCHA_COV_ARGS) $(MOCHA_TESTS) > $(JSCOVERAGE_REPORT)

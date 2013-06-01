@@ -22,6 +22,22 @@ will extract the [Dublin Core metadata](http://dublincore.org/documents/dcq-html
 
 (The name "stew" is inspired by the Python library [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/), Simon Willison's [soupselect](http://code.google.com/p/soupselect/) extension of *BeautifulSoup*, and and Harry Fuecks' [Node.js port](https://github.com/harryf/node-soupselect) of *soupselect*. [Stew](https://github.com/rodw/stew) is a meatier soup.)
 
+## Installing
+
+Stew is deployed as an [npm module](https://npmjs.org/) under the name `stew-select`. Hence you can install a pre-packaged version with the command:
+
+```console
+npm install stew-select
+```
+
+and you can add it to your project as a dependency by adding a line like:
+
+```json
+"soup-select": "latest"
+```
+
+to the `dependencies` or `devDependencies` part of your `package.json` file.
+
 ## Features
 
 ### Core CSS Selectors
