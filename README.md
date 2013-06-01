@@ -110,7 +110,37 @@ stew.select( dom, 'ul > li > a[rel=author][href]' );
 
 ### Regular Expressions
 
-Stew extends the CSS selector syntax by allowing the use of regular expressions to specify tag names, class names, ids, and attributes (both name and value).  For example `a[href=/^https?:/i]` selects all anchor tags with an `href` attribute that starts with `http:` or `https:` (with a case-insensitive comparison) and `[/^data-/]` selects all tags with any attribute whose name starts with `data-`.
+Stew extends the CSS selector syntax by allowing the use of regular expressions to specify tag names, class names, ids, and attributes (both name and value).
+
+For example,
+
+```javascript
+var metadata = stew.select(dom,'a[href=/^https?:/i]');
+```
+
+will select all anchor (`<a>`)tags with an `href` attribute that starts with `http:` or `https:` (with a case-insensitive comparison).
+
+Another example:
+
+```javascript
+var metadata = stew.select(dom,'[/^data-/]');
+```
+
+selects all tags with an attribute whose name starts with `data-`.
+
+Any name or value that starts and ends with `/` will be treated as a regular expression. (Or, more accurately, any name or value that starts with `/` and ends with `/` with an optional suffix of any combination of the letters `g`, `m` and `i`.  E.g., `/example/gi`.)
+
+The regular expression is processed using JavaScript's standard regular expression syntax, including support for `\b` and other special class markers.
+
+Here are some example CSS selectors using regular expressions:
+
+  * Tag names: `/^d[aeiou]ve?$/` matches `div`, but also `dove`, `dave`, etc.
+  * Class names: `./^nav/` matches any tag with a class name that starts with the string `nav`.
+  * IDs: `#/^main$/i` matches any tag with the id `main`, using a case insensitive comparision (so it also matches `MAIN`, `Main` and other variants.
+  * Attribute names: As above, `[/^data-/]` matches any tag with an attribute whose name starts with `data-`.
+  * Attribute values: As above, `[href=/^https?:/i]` matches any tag with an `href` attribute whose value starts with `http:` or `https:` (case-insensitive).
+
+These may be used in any combination, and freely mixed with "regular" CSS selectors.
 
 ## Licensing
 
