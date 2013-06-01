@@ -24,7 +24,7 @@ will extract the [Dublin Core metadata](http://dublincore.org/documents/dcq-html
 
 ## Installing
 
-Stew is deployed as an [npm module](https://npmjs.org/) under the name `stew-select`. Hence you can install a pre-packaged version with the command:
+Stew is deployed as an [npm module](https://npmjs.org/) under the name [`stew-select`](https://npmjs.org/package/stew-select). Hence you can install a pre-packaged version with the command:
 
 ```console
 npm install stew-select
