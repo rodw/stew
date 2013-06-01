@@ -123,8 +123,9 @@ module: js test docs coverage
 	cp -r test $(MODULE_DIR)
 	cp -r docs $(MODULE_DIR)
 	cp $(PACKAGE_JSON) $(MODULE_DIR)
-	cp README.* $(MODULE_DIR)
+	cp README.md $(MODULE_DIR)
 	cp Makefile $(MODULE_DIR)
+	cp *.txt $(MODULE_DIR)
 
 test-module-install: clean-test-module-install js test docs coverage module
 	mkdir ../testing-module-install; cd ../testing-module-install; npm install "$(CURDIR)/module"; node -e "require('assert').ok(require('stew-select'))" && cd $(CURDIR) && rm -r $(RM_DASH_I) ../testing-module-install && echo "It worked!"

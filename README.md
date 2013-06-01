@@ -20,7 +20,7 @@ var metadata = stew.select(dom,'head meta[name=/^dc\.|:/i]');
 
 will extract the [Dublin Core metadata](http://dublincore.org/documents/dcq-html/) from a document by selecting every `<meta>` tag found in the `<head>` that has a `name` attribute that starts with `DC.` or `DC:` (ignoring case).
 
-(The name "stew" is inspired by the Python library [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/), Simon Willison's [soupselect](http://code.google.com/p/soupselect/) extension of *BeautifulSoup*, and and Harry Fuecks' [Node.js port](https://github.com/harryf/node-soupselect) of *soupselect*. [Stew](https://github.com/rodw/stew) is a meatier soup.)
+(The name "stew" is inspired by the Python library [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/), Simon Willison's [soupselect](http://code.google.com/p/soupselect/) extension of *BeautifulSoup*, and Harry Fuecks' [Node.js port](https://github.com/harryf/node-soupselect) of *soupselect*. [Stew](https://github.com/rodw/stew) is a meatier soup.)
 
 ## Installing
 
