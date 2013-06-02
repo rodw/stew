@@ -2,6 +2,26 @@ class DOMUtil
 
   constructor:()->
 
+  # parses the given HTML string into one or more DOM trees using the `htmlparser` library (if present)
+  parse_html:(html,options,callback)->
+    if typeof options is 'function' and typeof callback isnt 'function'
+      [ options, callback ] = [ callback, options ]
+    unless @htmlparser?
+      try
+        @htmlparser = require 'htmlparser'
+      catch err
+        callback(err,null)
+    if @htmlparser?
+      handler = new @htmlparser.DefaultHandler (err,domset)->
+        if err?
+          callback(err,null)
+        else if Array.isArray(domset) and domset.length <= 1
+          callback(null,domset[0])
+        else
+          callback(null,domset)
+      parser = new @htmlparser.Parser(handler,options)
+      parser.parseComplete(html)
+
   # returns `nodeset[0]` if *nodeset* is an array, `nodeset` otherwise.
   as_node: (nodeset)->
     if Array.isArray(nodeset)
@@ -28,9 +48,6 @@ class DOMUtil
       else
         return {'continue':true,'visit_children':false}
     return buffer
-
-  inner_text:(elt,filter)->@to_text(elt,filter)
-
 
   inner_text:(elt,filter)->@to_text(elt,filter)
 
@@ -72,7 +89,7 @@ class DOMUtil
         if node.children?
           buffer += @to_html(node.children)
     else if elt?.children?
-      buffer += @to_html elt.children
+      buffer = @to_html elt.children
     return buffer
 
 

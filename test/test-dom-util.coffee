@@ -23,6 +23,33 @@ describe "DOMUtil",=>
     @dom_util = null
     done()
 
+
+  describe "parse_html",=>
+    it "produces a DOM tree for the given HTML string",(done)=>
+      @dom_util.parse_html '<html><div>This is an example HTML document</div></html>', (err, dom)=>
+        should.not.exist err
+        should.exist dom
+        dom.type.should.equal 'tag'
+        dom.name.should.equal 'html'
+        done()
+    it "produces an array of DOM trees when the given HTML string has more than one root",(done)=>
+      @dom_util.parse_html '<div>First div.</div><span>Second span.</span>', (err, dom)=>
+        should.not.exist err
+        should.exist dom
+        dom.length.should.equal 2
+        dom[0].type.should.equal 'tag'
+        dom[0].name.should.equal 'div'
+        dom[1].type.should.equal 'tag'
+        dom[1].name.should.equal 'span'
+        done()
+    it "allows a map of options to be passed",(done)=>
+      @dom_util.parse_html '<html><DIV>This is an example HTML document</div></HTML>', HTMLPARSER_OPTIONS, (err, dom)=>
+        should.not.exist err
+        should.exist dom
+        dom.type.should.equal 'tag'
+        dom.name.should.equal 'html'
+        done()
+
   it "as_node converts a nodeset to a single node",(done)=>
     should.not.exist @dom_util.as_node(null)
     should.not.exist @dom_util.as_node([])
@@ -54,75 +81,68 @@ describe "DOMUtil",=>
 
   describe "to_text",=>
     it "returns the value of all text descendants",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         text = @dom_util.to_text dom
         text.should.equal 'alphabeta'
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
     it "handles whitespace between nodes",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         text = @dom_util.to_text dom
         text.should.equal ' alpha beta '
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
 
     it "supports a `filter` function for excluding nodes",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         text = @dom_util.to_text dom, (node)=>node.attribs?.id isnt 'A'
         text.should.equal 'beta'
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
     it "is also known as `inner_text`",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         text = @dom_util.inner_text dom
         text.should.equal 'alphabeta'
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
   describe "inner_html",=>
     it "returns an HTML representation of the children of the given node",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         text = @dom_util.inner_html dom
         text.should.equal '<div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div>'
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
     it "handles whitespace between nodes",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         text = @dom_util.inner_html dom
         text.should.equal '<div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div>'
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
 
   describe "to_html",=>
     it "returns an HTML representation of the given node",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         text = @dom_util.to_html dom
         text.should.equal '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
     it "handles whitespace between nodes",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         text = @dom_util.to_html dom
         text.should.equal '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
 
   describe "walk_dom",=>
 
     it "performs a depth-first walk of the dom tree",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         expected = [ 'html', 'div', 'span', 'div', 'b', 'i' ]
         @dom_util.walk_dom dom, (node)=>
           if node.type is 'tag'
@@ -131,11 +151,10 @@ describe "DOMUtil",=>
           return true
         expected.length.should.equal 0
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
     it "passes parent node to visit function",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         expected = [ null, 'html', 'div', 'html', 'div', 'b' ]
         @dom_util.walk_dom dom, (node,node_metadata)=>
           if node.type is 'tag'
@@ -148,11 +167,10 @@ describe "DOMUtil",=>
           return true
         expected.length.should.equal 0
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
     it "passes path to node to visit function",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         expected = [ [], ['html'], ['html','div'], ['html','div','span'], ['html'], ['html','div'], ['html','div','b'], ['html','div','b','i'] ]
         @dom_util.walk_dom dom, (node,node_metadata)=>
           if node.type is 'tag' or node.type is 'text'
@@ -163,11 +181,10 @@ describe "DOMUtil",=>
           return true
         expected.length.should.equal 0
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
     it "passes siblings to visit function",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         expected = [ ['html'], ['div','div'], ['span'], ['div','div'],['b'],['i'] ]
         @dom_util.walk_dom dom, (node,node_metadata)=>
           if node.type is 'tag'
@@ -178,11 +195,10 @@ describe "DOMUtil",=>
           return true
         expected.length.should.equal 0
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
     it "passes sibling index to visit function",(done)=>
-      handler = new htmlparser.DefaultHandler (err, dom)=>
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
         expected = [ 0, 0, 0, 1, 0, 0 ]
         @dom_util.walk_dom dom, (node,node_metadata)=>
           if node.type is 'tag'
@@ -191,5 +207,3 @@ describe "DOMUtil",=>
           return true
         expected.length.should.equal 0
         done()
-      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
-      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
