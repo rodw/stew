@@ -67,27 +67,19 @@ class PredicateFactory
       vp = (str)->attrvalue.test(str)
 
     return (node)->
-      # console.log "by_attribute_predicate",attrname,attrvalue,valuedelim,node.raw
       for name,value of node?.attribs
         if np(name)
           if vp is null
-            # console.log "returning true"
             return true
           else
             if valuedelim?
               if value?
                 for token in value.split(valuedelim)
                   if vp(token)
-                    # console.log "returning true"
                     return true
             else
-              # console.log "attrvalue",attrvalue
-              # console.log "value",value
-              # console.log "vp(value)",vp(value)
               if vp(value)
-                # console.log "returning true"
                 return true
-      # console.log "returning false"
       return false
 
   # **by_class_predicate** creates a predicate
@@ -157,10 +149,9 @@ class PredicateFactory
   first_child_predicate:()->return @_first_child_impl
   _first_child_impl:(node,node_metadata,dom_metadata)->
     if node.type is 'tag' and node_metadata.siblings?
-      index_of_first_tag = -1
-      for elt, index in node_metadata.siblings
+      for elt in node_metadata.siblings
         if elt.type is 'tag'
-          return node._node_id is elt._node_id
+          return node._stew_node_id is elt._stew_node_id
     return false
 
   # **any_tag_predicate**
@@ -200,7 +191,7 @@ class PredicateFactory
           cloned_predicates.pop() # drop last predicate, we just tested it
           while cloned_path.length > 0
             node = cloned_path.pop()
-            node_metadata = dom_metadata[node._node_id]
+            node_metadata = dom_metadata[node._stew_node_id]
             if cloned_predicates[cloned_predicates.length-1](node,node_metadata,dom_metadata)
               cloned_predicates.pop()
               if cloned_predicates.length is 0
@@ -213,7 +204,7 @@ class PredicateFactory
     return (node,node_metadata,dom_metadata)->
       if child_selector(node,node_metadata,dom_metadata)
         parent = node_metadata.parent
-        parent_metadata = dom_metadata[parent._node_id]
+        parent_metadata = dom_metadata[parent._stew_node_id]
         return parent_selector(parent,parent_metadata,dom_metadata)
       return false
 
@@ -225,7 +216,7 @@ class PredicateFactory
         while prev_tag_index > 0
           if node_metadata.siblings[prev_tag_index].type is 'tag'
             prev_tag = node_metadata.siblings[prev_tag_index]
-            return first(prev_tag,dom_metadata[prev_tag._node_id],dom_metadata)
+            return first(prev_tag,dom_metadata[prev_tag._stew_node_id],dom_metadata)
           else
             prev_tag_index -= 1
       return false

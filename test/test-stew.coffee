@@ -52,6 +52,26 @@ describe "Stew",->
     (typeof selector).should.equal 'function'
     done()
 
+  describe "select_first()",->
+    it 'supports the any-tag selector (`*`)',(done)->
+      node = @stew.select_first(@DOM,'div *')
+      node.type.should.equal 'tag'
+      node.name.should.equal 'div'
+      node.attribs.id.should.equal 'inner-1-1'
+      done()
+
+    it 'supports the type selector (`E`)',(done)->
+      node = @stew.select_first(@DOM,'em')
+      node.type.should.equal 'tag'
+      node.name.should.equal 'em'
+      #
+      node = @stew.select_first(@DOM,'div')
+      node.type.should.equal 'tag'
+      node.name.should.equal 'div'
+      node.attribs.id.should.equal 'outer-1'
+      # done
+      done()
+
   describe "select()",->
 
     # * - Matches any tag

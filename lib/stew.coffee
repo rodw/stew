@@ -25,7 +25,23 @@ class Stew
     visit = (node,parent,path,siblings,sib_index)->
       if predicate(node,parent,path,siblings,sib_index)
         result.push node
-      return true
+      return { 'continue':true, 'visit-children':true }
+    DOMUtil.walk_dom dom, visit:visit
+    return result
+
+  select_first:(dom,selector)->
+    if typeof selector is 'string'
+      selector = @_parse_selectors(selector)
+    return @_unguarded_select_first(dom,selector)
+
+  _unguarded_select_first:(dom,predicate)->
+    result = null
+    visit = (node,parent,path,siblings,sib_index)->
+      if predicate(node,parent,path,siblings,sib_index)
+        result = node
+        return { 'continue':false, 'visit-children':false }
+      else
+        return { 'continue':true, 'visit-children':true }
     DOMUtil.walk_dom dom, visit:visit
     return result
 
