@@ -72,7 +72,28 @@ describe "Stew",->
       # done
       done()
 
+    it 'can also parse a string into a DOM automatically, if given a callback',(done)->
+      @stew.select_first TEST_HTML,'em',(err,node)->
+        node.type.should.equal 'tag'
+        node.name.should.equal 'em'
+        done()
+
+    it 'throws an exception when given an HTML string but no callback',(done)->
+      (()=>@stew.select_first(TEST_HTML, 'em')).should.throw(/callback/)
+      done()
+
   describe "select()",->
+
+    it 'can also parse a string into a DOM automatically, if given a callback',(done)->
+      @stew.select TEST_HTML, 'em', (err,nodeset)->
+        nodeset.length.should.equal 1
+        nodeset[0].type.should.equal 'tag'
+        nodeset[0].name.should.equal 'em'
+        done()
+
+    it 'throws an exception when given an HTML string but no callback',(done)->
+      (()=>@stew.select(TEST_HTML, 'em')).should.throw(/callback/)
+      done()
 
     # * - Matches any tag
     it 'supports the any-tag selector (`*`)',(done)->

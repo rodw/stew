@@ -10,14 +10,26 @@ PredicateFactory = require(path.join(LIB_DIR,'predicate-factory')).PredicateFact
 # TODO support `\/` as escaped `/` in regexp
 class Stew
 
-  constructor:()->
+  constructor:(dom_util)->
       @factory = new PredicateFactory()
-      @dom_util = new DOMUtil()
+      @dom_util = dom_util ? new DOMUtil()
 
-  select:(dom,selector)->
+  select:(dom,selector,callback)->
     if typeof selector is 'string'
       selector = @_parse_selectors(selector)
-    return @_unguarded_select(dom,selector)
+    if typeof dom is 'string'
+      if callback?
+        @dom_util.parse_html dom, (err, dom)=>
+          if err?
+            callback(err)
+          else
+            callback(null,@_unguarded_select(dom,selector))
+      else
+        throw new Error('When select is invoked on a string object, the `callback(err,nodeset)` parameter is required.')
+    else
+      nodeset = @_unguarded_select(dom,selector)
+      callback?(null,nodeset)
+      return nodeset
 
   _unguarded_select:(dom,predicate)->
     result = []
@@ -28,10 +40,22 @@ class Stew
     @dom_util.walk_dom dom, visit:visit
     return result
 
-  select_first:(dom,selector)->
+  select_first:(dom,selector,callback)->
     if typeof selector is 'string'
       selector = @_parse_selectors(selector)
-    return @_unguarded_select_first(dom,selector)
+    if typeof dom is 'string'
+      if callback?
+        @dom_util.parse_html dom, (err, dom)=>
+          if err?
+            callback(err)
+          else
+            callback(null,@_unguarded_select_first(dom,selector))
+      else
+        throw new Error('When select_first is invoked on a string object, the `callback(err,node)` parameter is required.')
+    else
+      node = @_unguarded_select_first(dom,selector)
+      callback?(null,node)
+      return node
 
   _unguarded_select_first:(dom,predicate)->
     result = null
