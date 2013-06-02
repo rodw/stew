@@ -1,8 +1,6 @@
 # Stew
 
-[Stew](https://github.com/rodw/stew) is a JavaScript library that is used to select elements from a DOM structure using a beefed-up version of the [CSS selector](http://www.w3.org/TR/CSS2/selector.html) syntax that allows the use of regular expressions anywhere (tag names, class names, ids and  attributes names and values).
-
-Stew is often used as a toolkit for "screen-scrapting" web pages (extracting data from HTML and XML documents).
+[Stew](https://github.com/rodw/stew) is a JavaScript library that implements the [CSS selector](http://www.w3.org/TR/CSS2/selector.html) syntax and adds support for regular expressions in tag names, class names, ids, attribute names and attribute values.
 
 For example, given a variable `dom` containing a document tree, the JavaScript snippet:
 
@@ -20,6 +18,8 @@ var metadata = stew.select(dom,'head meta[name=/^dc\.|:/i]');
 
 will extract the [Dublin Core metadata](http://dublincore.org/documents/dcq-html/) from a document by selecting every `<meta>` tag found in the `<head>` that has a `name` attribute that starts with `DC.` or `DC:` (ignoring case).
 
+Stew is often used as a toolkit for "screen-scraping" web pages (extracting data from HTML and XML documents).
+
 (The name "stew" is inspired by the Python library [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/), Simon Willison's [soupselect](http://code.google.com/p/soupselect/) extension of *BeautifulSoup*, and Harry Fuecks' [Node.js port](https://github.com/harryf/node-soupselect) of *soupselect*. [Stew](https://github.com/rodw/stew) is a meatier soup.)
 
 ## Installing
@@ -32,8 +32,8 @@ npm install stew-select
 
 and you can add it to your project as a dependency by adding a line like:
 
-```json
-"soup-select": "latest"
+```javascript
+"stew-select": "latest"
 ```
 
 to the `dependencies` or `devDependencies` part of your `package.json` file.
@@ -42,7 +42,7 @@ to the `dependencies` or `devDependencies` part of your `package.json` file.
 
 ### Core CSS Selectors
 
-Stew supports essentially all of the [CSS selector](http://www.w3.org/TR/CSS2/selector.html) syntax, including
+Stew supports the full [CSS selector](http://www.w3.org/TR/CSS2/selector.html) syntax, including
 
   * The universal selector (`*`).
 
@@ -60,7 +60,7 @@ Stew supports essentially all of the [CSS selector](http://www.w3.org/TR/CSS2/se
 
       E.g., `stew.select( dom, '#foo' )` selects all tags in the document with the id `foo`.
 
-  * Descendent selectors (`E F`).
+  * Descendant selectors (`E F`).
 
       E.g., `stew.select( dom, 'div h2 a' )` selects all `a` tags with an `h2` ancestor that has a `div` ancestor.
 
@@ -105,7 +105,6 @@ stew.select( dom, 'article div.credits > a[rel=license]' );
 stew.select( dom, 'h1, h2, h3, h4, h5, h6, .heading' );
 stew.select( dom, 'h1.title + h2.subtitle' );
 stew.select( dom, 'ul > li > a[rel=author][href]' );
-// etc.
 ```
 
 ### Regular Expressions
@@ -118,9 +117,9 @@ For example,
 var metadata = stew.select(dom,'a[href=/^https?:/i]');
 ```
 
-will select all anchor (`<a>`)tags with an `href` attribute that starts with `http:` or `https:` (with a case-insensitive comparison).
+will select all anchor (`<a>`) tags with an `href` attribute that starts with `http:` or `https:` (with a case-insensitive comparison).
 
-Another example:
+Another example, the snippet:
 
 ```javascript
 var metadata = stew.select(dom,'[/^data-/]');
@@ -136,7 +135,7 @@ Here are some example CSS selectors using regular expressions:
 
   * Tag names: `/^d[aeiou]ve?$/` matches `div`, but also `dove`, `dave`, etc.
   * Class names: `./^nav/` matches any tag with a class name that starts with the string `nav`.
-  * IDs: `#/^main$/i` matches any tag with the id `main`, using a case insensitive comparision (so it also matches `MAIN`, `Main` and other variants.
+  * IDs: `#/^main$/i` matches any tag with the id `main`, using a case insensitive comparison (so it also matches `MAIN`, `Main` and other variants.
   * Attribute names: As above, `[/^data-/]` matches any tag with an attribute whose name starts with `data-`.
   * Attribute values: As above, `[href=/^https?:/i]` matches any tag with an `href` attribute whose value starts with `http:` or `https:` (case-insensitive).
 
