@@ -147,13 +147,21 @@ class Stew
           delim = null
           if attr_match[SUB_OPERATOR] is '~='
             delim = /\s+/
-          clauses.push(
-            @factory.by_attr_value_predicate(
-              @_to_string_or_regex(attr_match[SUB_ATTR_NAME]),
-              @_to_string_or_regex(attr_match[SUB_DEQUOTED_ATTR_VALUE] ? attr_match[SUB_NEVERQUOTED_ATTR_VALUE]),
-              delim
+          if attr_match[SUB_OPERATOR] is '|='
+            clauses.push(
+              @factory.by_attr_value_pipe_equals(
+                @_to_string_or_regex(attr_match[SUB_ATTR_NAME]),
+                @_to_string_or_regex(attr_match[SUB_DEQUOTED_ATTR_VALUE] ? attr_match[SUB_NEVERQUOTED_ATTR_VALUE])
+              )
             )
-          )
+          else
+            clauses.push(
+              @factory.by_attr_value_predicate(
+                @_to_string_or_regex(attr_match[SUB_ATTR_NAME]),
+                @_to_string_or_regex(attr_match[SUB_DEQUOTED_ATTR_VALUE] ? attr_match[SUB_NEVERQUOTED_ATTR_VALUE]),
+                delim
+              )
+            )
         attr_match = @ATTRIBUTE_CLAUSE_REGEXP.exec(match[ATTRIBUTES])
 
     # PSEUDO CLASS PART

@@ -17,11 +17,11 @@ TEST_HTML = """
 <html>
   <body>
     <div class="outer odd" id="outer-1">
-      <div class="inner odd" id="inner-1-1"><span width=17>A</span></div>
-      <div class="inner even" id="inner-1-2"><b foo="bar">B</b></div>
+      <div class="inner odd" id="inner-1-1" lang="en-gb"><span width=17>A</span></div>
+      <div class="inner even" id="inner-1-2" lang="en"><b foo="bar">B</b></div>
     </div>
     <div class="outer even" id="outer-2">
-      <div class="inner odd" id="inner-2-1"><b fact="white space is ok here"><i>C</i></b></div>
+      <div class="inner odd" id="inner-2-1" lang="en-us"><b fact="white space is ok here"><i>C</i></b></div>
       <div class="inner even" id="inner-2-2"><em extra="contains spaces, commas and symbols like + and /">D</em></div>
     </div>
     <section>
@@ -527,50 +527,78 @@ describe "Stew",->
       #
       done()
 
-    it 'supports the ~= operator in the attribute-value selector (`E[foo~="bar"]`) (regex case)',(done)->
+    it 'supports the |= operator in the attribute-value selector (`E[lang|="en"]`) (string case)',(done)->
       #
-      nodeset = @stew.select(@DOM,'div[class~=/inn/]')
-      nodeset.length.should.equal 4
-      for node in nodeset
-        node.type.should.equal 'tag'
-        node.name.should.equal 'div'
+      nodeset = @stew.select(@DOM,'div[lang|="en"]')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-2'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-1'
       #
-      nodeset = @stew.select(@DOM,'div[class~=/inner/]')
-      nodeset.length.should.equal 4
-      for node in nodeset
-        node.type.should.equal 'tag'
-        node.name.should.equal 'div'
-      #
-      nodeset = @stew.select(@DOM,'div[id~=/(1|2)-1/]')
-      nodeset.length.should.equal 2
-      for node in nodeset
-        node.type.should.equal 'tag'
-        node.name.should.equal 'div'
-      #
-      nodeset = @stew.select(@DOM,'[fact~=/space/]')
+      nodeset = @stew.select(@DOM,'div[lang|="en-us"]')
       nodeset.length.should.equal 1
-      for node in nodeset
-        node.type.should.equal 'tag'
-        node.name.should.equal 'b'
-      #
-      nodeset = @stew.select(@DOM,'[class~=/..t.r/]')
-      nodeset.length.should.equal 2
-      for node in nodeset
-        node.type.should.equal 'tag'
-        node.name.should.equal 'div'
-      #
-      nodeset = @stew.select(@DOM,'[foo~=/^bar$/]')
-      nodeset.length.should.equal 1
-      for node in nodeset
-        node.type.should.equal 'tag'
-        node.name.should.equal 'b'
-      #
-      nodeset = @stew.select(@DOM,'[foo~=/^car$/]')
-      nodeset.length.should.equal 0
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-2-1'
       #
       done()
 
-    # E:first-child     Matches element E when E is the first child of its parent.                                                                                The :first-child pseudo-class
+    it 'supports the |= operator in the attribute-value selector (`E[lang|="en"]`) (regexp case)',(done)->
+      #
+      nodeset = @stew.select(@DOM,'div[lang|=/EN/i]')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-2'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'div[lang|=/en?/]')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-2'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'div[lang|=/^en/]')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-2'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'div[lang|=/[aeiou]n-[aeioug][sb]/]')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-2-1'
+      #
+      done()
+
+    # E:first-child - Matches element E when E is the first child of its parent. - The :first-child pseudo-class
     it 'supports the :first-child pseudo class (`E:first-child`) (string case)',(done)->
       nodeset = @stew.select(@DOM,'div:first-child')
       nodeset.length.should.equal 3

@@ -102,9 +102,27 @@ class PredicateFactory
   by_id_predicate:(id)=>
     return @by_attribute_predicate('id',id)
 
-  # **by_attr_value_predicate** is equivalent to `by_attribute_predicate`
   by_attr_value_predicate:(attrname,attrvalue,valuedelim)=>
     return @by_attribute_predicate(attrname,attrvalue,valuedelim)
+
+  _escape_for_regexp:(str)->return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
+
+  by_attr_value_pipe_equals:(attrname,attrvalue)=>
+    if typeof attrvalue is 'string'
+      regexp_source = @_escape_for_regexp(attrvalue)
+      attrvalue = new RegExp("^#{regexp_source}($|-)")
+    else
+      regexp_source = attrvalue.source
+      modifier = ''
+      modifier += 'i' if attrvalue.ignoreCase
+      modifier += 'g' if attrvalue.global
+      modifier += 'm' if attrvalue.multiline
+      unless /^\^/.test regexp_source
+        regexp_source = "^#{regexp_source}"
+      unless /\(\$\|-\)$/.test regexp_source
+        regexp_source = "#{regexp_source}($|-)"
+      attrvalue = new RegExp(regexp_source,modifier)
+    return @by_attribute_predicate(attrname,attrvalue)
 
   # **by_attr_exists_predicate** creates a
   # predicate that returns `true` if the given DOM
