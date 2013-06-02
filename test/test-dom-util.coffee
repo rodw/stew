@@ -4,7 +4,6 @@ path             = require 'path'
 HOMEDIR          = path.join(__dirname,'..')
 LIB_DIR          = if fs.existsSync(path.join(HOMEDIR,'lib-cov')) then path.join(HOMEDIR,'lib-cov') else path.join(HOMEDIR,'lib')
 #-------------------------------------------------------------------------------
-htmlparser       = require 'htmlparser'
 DOMUtil          = require(path.join(LIB_DIR,'dom-util')).DOMUtil
 #-------------------------------------------------------------------------------
 
@@ -22,7 +21,6 @@ describe "DOMUtil",=>
   afterEach (done)=>
     @dom_util = null
     done()
-
 
   describe "parse_html",=>
     it "produces a DOM tree for the given HTML string",(done)=>
