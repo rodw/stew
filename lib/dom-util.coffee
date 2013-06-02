@@ -16,6 +16,17 @@ class DOMUtil
     else
       return []
 
+  @to_text:(elt,filter)->
+    filter ?= ()->true
+    buffer = ''
+    DOMUtil.walk_dom elt, visit:(node,node_metadata,all_metadata)=>
+      if(filter(node,node_metadata,all_metadata))
+        buffer += node.raw if node?.type is 'text' and node?.raw?
+        return {'continue':true,'visit-children':true}
+      else
+        return {'continue':true,'visit-children':false}
+    return buffer
+
   # ***walk_dom*** performs a depth-first walk of the given DOM tree (or trees),
   # invoking the specified "visit" function for each node.
   #
