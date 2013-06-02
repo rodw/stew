@@ -1,6 +1,6 @@
 {
   "name"         : "stew-select",
-  "version"      : "0.0.2",
+  "version"      : "0.0.3",
   "description"  : "CSS selectors that allow regular expressions. Stew is a meatier soup.",
   "homepage"     : "https://github.com/rodw/stew",
   "repository"   : { "type": "git", "url": "https://github.com/rodw/stew.git" },
