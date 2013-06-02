@@ -69,6 +69,48 @@ describe "DOMUtil",->
       parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
       parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
 
+    it "is also known as `inner_text`",(done)=>
+      handler = new htmlparser.DefaultHandler (err, dom)=>
+        text = DOMUtil.inner_text dom
+        text.should.equal 'alphabeta'
+        done()
+      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+
+  describe "inner_html",->
+    it "returns an HTML representation of the children of the given node",(done)=>
+      handler = new htmlparser.DefaultHandler (err, dom)=>
+        text = DOMUtil.inner_html dom
+        text.should.equal '<div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div>'
+        done()
+      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+
+    it "handles whitespace between nodes",(done)=>
+      handler = new htmlparser.DefaultHandler (err, dom)=>
+        text = DOMUtil.inner_html dom
+        text.should.equal '<div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div>'
+        done()
+      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+      parser.parseComplete '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
+
+  describe "to_html",->
+    it "returns an HTML representation of the given node",(done)=>
+      handler = new htmlparser.DefaultHandler (err, dom)=>
+        text = DOMUtil.to_html dom
+        text.should.equal '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+        done()
+      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+      parser.parseComplete '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+
+    it "handles whitespace between nodes",(done)=>
+      handler = new htmlparser.DefaultHandler (err, dom)=>
+        text = DOMUtil.to_html dom
+        text.should.equal '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
+        done()
+      parser = new htmlparser.Parser(handler,HTMLPARSER_OPTIONS)
+      parser.parseComplete '<html><div id="A"> <span>alpha</span></div> <div id="B"><b><i>beta</i> </b></div></html>'
+
   describe "walk_dom",->
 
     it "performs a depth-first walk of the dom tree",(done)=>

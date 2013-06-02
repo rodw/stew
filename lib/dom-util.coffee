@@ -22,10 +22,57 @@ class DOMUtil
     DOMUtil.walk_dom elt, visit:(node,node_metadata,all_metadata)=>
       if(filter(node,node_metadata,all_metadata))
         buffer += node.raw if node?.type is 'text' and node?.raw?
-        return {'continue':true,'visit-children':true}
+        return {'continue':true,'visit_children':true}
       else
-        return {'continue':true,'visit-children':false}
+        return {'continue':true,'visit_children':false}
     return buffer
+
+  @inner_text:(elt,filter)->DOMUtil.to_text(elt,filter)
+
+
+  @inner_text:(elt,filter)->DOMUtil.to_text(elt,filter)
+
+  @to_html:(elt)->
+    buffer = ''
+    DOMUtil.walk_dom elt, {
+      visit:(node)->
+        switch node.type
+          when 'text'
+            buffer += node.raw
+          when 'tag'
+            buffer += "<#{node.name}"
+            if node.attribs?
+              for name,value of node.attribs
+                buffer += " #{name}=\"#{value}\""
+            buffer += ">"
+          when 'script','style','comment'
+            # ignored
+          else
+            console.error "element of type \"#{node.type}\" not handled in to_html:",node
+        return true
+      after_visit:(node)->
+        switch node.type
+          when 'tag'
+            buffer += "</#{node.name}>"
+          when 'script','style','comment','text'
+            # ignored
+          else
+            console.error "element of type \"#{node.type}\" not handled in to_html:",node
+        return true
+    }
+    return buffer
+
+  @inner_html:(elt)->
+    buffer = null
+    if Array.isArray(elt)
+      buffer = ''
+      for node in elt
+        if node.children?
+          buffer += DOMUtil.to_html(node.children)
+    else if elt?.children?
+      buffer += DOMUtil.to_html elt.children
+    return buffer
+
 
   # ***walk_dom*** performs a depth-first walk of the given DOM tree (or trees),
   # invoking the specified "visit" function for each node.
@@ -65,9 +112,9 @@ class DOMUtil
   # If the value returned by `visit` is a boolean, that
   # value will be assumed for the values of `continue` and
   # `visit-children`. (I.e, `true` is treated as
-  # `{ 'continue':true, 'visit-children':true }`
+  # `{ 'continue':true, 'visit_children':true }`
   # and `false` is treated as
-  # `{ 'continue':false, 'visit-children':false }`.)
+  # `{ 'continue':false, 'visit_children':false }`.)
   @walk_dom:(dom,callbacks)->
     if typeof callbacks is 'function'
       callbacks = { visit:callbacks }
@@ -85,14 +132,11 @@ class DOMUtil
   # dom_metadata := [ <node_metadata> ], indexed by node._stew_node_id
   # returns `false` if processing if further processing should be aborted, `true` otherwise
   @_unguarded_walk_dom:(node,node_metadata,dom_metadata,callbacks)->
-    response = callbacks.visit?(node,node_metadata,dom_metadata)
-    if response is true
-      response = { 'continue':true, 'visit-children':true }
-    else if response is false
-      response = { 'continue':false, 'visit-children':false }
-
-    if response['continue'] or (not response['continue']?)
-      if response['visit-children'] and node.children?
+    response = {'continue':true,'visit_children':true}
+    if callbacks.visit?
+      response = callbacks.visit(node,node_metadata,dom_metadata)
+    if response is true or response?['continue'] is true or (not response?['continue']?)
+      if node.children? and (response is true or response?['visit_children'] is true or (not response?['visit_children']?))
         new_path = [].concat(node_metadata.path)
         new_path.push(node)
         for child,index in node.children
@@ -102,7 +146,14 @@ class DOMUtil
           should_continue = DOMUtil._unguarded_walk_dom(child,new_node_metadata,dom_metadata,callbacks)
           if not should_continue
             return false
-      return true
+      if callbacks['after_visit']?
+        response = callbacks.after_visit(node,node_metadata,dom_metadata)
+        if response is true or response?['continue'] is true or (not response?['continue']?)
+          return true
+        else
+          return false
+      else
+        return true
     else
       return false
 

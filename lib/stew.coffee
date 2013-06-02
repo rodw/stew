@@ -25,7 +25,7 @@ class Stew
     visit = (node,parent,path,siblings,sib_index)->
       if predicate(node,parent,path,siblings,sib_index)
         result.push node
-      return { 'continue':true, 'visit-children':true }
+      return { 'continue':true, 'visit_children':true }
     DOMUtil.walk_dom dom, visit:visit
     return result
 
@@ -39,9 +39,9 @@ class Stew
     visit = (node,parent,path,siblings,sib_index)->
       if predicate(node,parent,path,siblings,sib_index)
         result = node
-        return { 'continue':false, 'visit-children':false }
+        return { 'continue':false, 'visit_children':false }
       else
-        return { 'continue':true, 'visit-children':true }
+        return { 'continue':true, 'visit_children':true }
     DOMUtil.walk_dom dom, visit:visit
     return result
 
