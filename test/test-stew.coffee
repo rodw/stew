@@ -72,6 +72,12 @@ describe "Stew",->
       # done
       done()
 
+    it 'invokes a callback, if provided',(done)->
+      @stew.select_first @DOM, 'em', (err,node)->
+        node.type.should.equal 'tag'
+        node.name.should.equal 'em'
+        done()
+
     it 'can also parse a string into a DOM automatically, if given a callback',(done)->
       @stew.select_first TEST_HTML,'em',(err,node)->
         node.type.should.equal 'tag'
@@ -86,6 +92,13 @@ describe "Stew",->
 
     it 'can also parse a string into a DOM automatically, if given a callback',(done)->
       @stew.select TEST_HTML, 'em', (err,nodeset)->
+        nodeset.length.should.equal 1
+        nodeset[0].type.should.equal 'tag'
+        nodeset[0].name.should.equal 'em'
+        done()
+
+    it 'invokes a callback, when provided',(done)->
+      @stew.select @DOM,'em',(err,nodeset)->
         nodeset.length.should.equal 1
         nodeset[0].type.should.equal 'tag'
         nodeset[0].name.should.equal 'em'
