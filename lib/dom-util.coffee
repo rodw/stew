@@ -1,14 +1,16 @@
 class DOMUtil
 
+  constructor:()->
+
   # returns `nodeset[0]` if *nodeset* is an array, `nodeset` otherwise.
-  @as_node: (nodeset)->
+  as_node: (nodeset)->
     if Array.isArray(nodeset)
       return nodeset[0]
     else
       return nodeset
 
   # returns `node` if *node* is an array, `[ node ]` otherwise.
-  @as_nodeset: (node)->
+  as_nodeset: (node)->
     if Array.isArray(node)
       return node
     else if node?
@@ -16,10 +18,10 @@ class DOMUtil
     else
       return []
 
-  @to_text:(elt,filter)->
+  to_text:(elt,filter)->
     filter ?= ()->true
     buffer = ''
-    DOMUtil.walk_dom elt, visit:(node,node_metadata,all_metadata)=>
+    @walk_dom elt, visit:(node,node_metadata,all_metadata)=>
       if(filter(node,node_metadata,all_metadata))
         buffer += node.raw if node?.type is 'text' and node?.raw?
         return {'continue':true,'visit_children':true}
@@ -27,14 +29,14 @@ class DOMUtil
         return {'continue':true,'visit_children':false}
     return buffer
 
-  @inner_text:(elt,filter)->DOMUtil.to_text(elt,filter)
+  inner_text:(elt,filter)->@to_text(elt,filter)
 
 
-  @inner_text:(elt,filter)->DOMUtil.to_text(elt,filter)
+  inner_text:(elt,filter)->@to_text(elt,filter)
 
-  @to_html:(elt)->
+  to_html:(elt)->
     buffer = ''
-    DOMUtil.walk_dom elt, {
+    @walk_dom elt, {
       visit:(node)->
         switch node.type
           when 'text'
@@ -62,15 +64,15 @@ class DOMUtil
     }
     return buffer
 
-  @inner_html:(elt)->
+  inner_html:(elt)->
     buffer = null
     if Array.isArray(elt)
       buffer = ''
       for node in elt
         if node.children?
-          buffer += DOMUtil.to_html(node.children)
+          buffer += @to_html(node.children)
     else if elt?.children?
-      buffer += DOMUtil.to_html elt.children
+      buffer += @to_html elt.children
     return buffer
 
 
@@ -115,23 +117,23 @@ class DOMUtil
   # `{ 'continue':true, 'visit_children':true }`
   # and `false` is treated as
   # `{ 'continue':false, 'visit_children':false }`.)
-  @walk_dom:(dom,callbacks)->
+  walk_dom:(dom,callbacks)->
     if typeof callbacks is 'function'
       callbacks = { visit:callbacks }
-    nodes = DOMUtil.as_nodeset(dom)
+    nodes = @as_nodeset(dom)
     dom_metadata = []
     for node, sib_index in nodes
       node_metadata = { parent:null, path:[], siblings:nodes, sib_index: sib_index }
       node._stew_node_id = dom_metadata.length
       dom_metadata.push node_metadata
-      should_continue = DOMUtil._unguarded_walk_dom(node,node_metadata,dom_metadata,callbacks)
+      should_continue = @_unguarded_walk_dom(node,node_metadata,dom_metadata,callbacks)
       if not should_continue
         break
 
   # node_metadata := { parent:, path:, siblings:, sib_index: }
   # dom_metadata := [ <node_metadata> ], indexed by node._stew_node_id
   # returns `false` if processing if further processing should be aborted, `true` otherwise
-  @_unguarded_walk_dom:(node,node_metadata,dom_metadata,callbacks)->
+  _unguarded_walk_dom:(node,node_metadata,dom_metadata,callbacks)->
     response = {'continue':true,'visit_children':true}
     if callbacks.visit?
       response = callbacks.visit(node,node_metadata,dom_metadata)
@@ -143,7 +145,7 @@ class DOMUtil
           new_node_metadata = { parent:node, path:new_path, siblings:node.children, sib_index: index }
           child._stew_node_id = dom_metadata.length
           dom_metadata.push new_node_metadata
-          should_continue = DOMUtil._unguarded_walk_dom(child,new_node_metadata,dom_metadata,callbacks)
+          should_continue = @_unguarded_walk_dom(child,new_node_metadata,dom_metadata,callbacks)
           if not should_continue
             return false
       if callbacks['after_visit']?

@@ -14,6 +14,7 @@ class Stew
 
   constructor:()->
       @factory = new PredicateFactory()
+      @dom_util = new DOMUtil()
 
   select:(dom,selector)->
     if typeof selector is 'string'
@@ -26,7 +27,7 @@ class Stew
       if predicate(node,parent,path,siblings,sib_index)
         result.push node
       return { 'continue':true, 'visit_children':true }
-    DOMUtil.walk_dom dom, visit:visit
+    @dom_util.walk_dom dom, visit:visit
     return result
 
   select_first:(dom,selector)->
@@ -42,7 +43,7 @@ class Stew
         return { 'continue':false, 'visit_children':false }
       else
         return { 'continue':true, 'visit_children':true }
-    DOMUtil.walk_dom dom, visit:visit
+    @dom_util.walk_dom dom, visit:visit
     return result
 
   # similiar to str.split(/\s/), but:
