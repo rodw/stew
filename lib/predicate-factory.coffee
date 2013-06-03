@@ -1,5 +1,22 @@
+#
+# **PredicateFactory** generates boolean-valued
+# functions that implement specific CSS selector
+# tests.
+#
+# Each generated function has the signature:
+#
+#     predicate(node,node_metadata,dom_metadata)
+#
+# and returns `true` iff the given node matches
+# the associated CSS selection rule.
+#
+# (This is an internal class, primarily used by
+# the class `Stew`. These methods are subject to
+# change without notice.)
+#
 class PredicateFactory
 
+  # **and_predicate** generates a function that returns `true` iff *all* of the given `predicates` evaluate to `true`.
   and_predicate:(predicates)->
     return (node,node_metadata,dom_metadata)->
       for predicate in predicates
@@ -7,6 +24,7 @@ class PredicateFactory
           return false
       return true
 
+  # **or_predicate** generates a function that returns `true` iff *any* of the given `predicates` evaluate to `true`.
   or_predicate:(predicates)->
     return (node,node_metadata,dom_metadata)->
       for predicate in predicates
@@ -22,15 +40,15 @@ class PredicateFactory
   # return true if the tested node has an attribute
   # named `attrname`.
   #
-  # If `attrvalue` is a RegExp then the predicate will
-  # return true if the value of the `attrname` attribute
-  # *matches* the `attrvalue` *expression*.
-  #
   # If `attrvalue` is a String then the predicate will
   # return true if the value of the `attrname` attribute
   # *equals* the `attrvalue` *string*.
   #
-  # If `valuedelim` is non-null, the specified value will
+  # If `attrvalue` is a `RegExp` then the predicate will
+  # return `true` if the value of the `attrname` attribute
+  # *matches* the `attrvalue` *expression*.
+  #
+  # If `valuedelim` is non-`null`, the specified value will
   # be used as a delimiter by which to split the value of
   # the `attrname` attribute, and the corresponding elements
   # will be tested rather than the entire string.
@@ -94,11 +112,28 @@ class PredicateFactory
   by_id_predicate:(id)=>
     return @by_attribute_predicate('id',id)
 
+  # **by_attr_exists_predicate** creates a
+  # predicate that returns `true` if the given DOM
+  # node has an attribute with the specified `attrname`,
+  # regardless of the value for the atttribute.
+  by_attr_exists_predicate:(attrname)=>
+    return @by_attribute_predicate(attrname,null)
+
+  # **by_attr_value_predicate** is an alias to `by_attribute_predicate`.
   by_attr_value_predicate:(attrname,attrvalue,valuedelim)=>
     return @by_attribute_predicate(attrname,attrvalue,valuedelim)
 
+  # **_escape_for_regexp** is an internal utility function that escapes
+  # reserved characters to create a string that can be embedded
+  # in a regular expression.
   _escape_for_regexp:(str)->return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
 
+  # **by_attr_value_pipe_equals** creates a predicate that
+  # implements the `[name|=value]` CSS selector (mathing tags
+  # with an attributed named *name* with the value `value`
+  # or a value that starts with `value-`).
+  #
+  # (Used for selectors such as `[lang|=en]`, for example.)
   by_attr_value_pipe_equals:(attrname,attrvalue)=>
     if typeof attrvalue is 'string'
       regexp_source = @_escape_for_regexp(attrvalue)
@@ -115,13 +150,6 @@ class PredicateFactory
         regexp_source = "#{regexp_source}($|-)"
       attrvalue = new RegExp(regexp_source,modifier)
     return @by_attribute_predicate(attrname,attrvalue)
-
-  # **by_attr_exists_predicate** creates a
-  # predicate that returns `true` if the given DOM
-  # node has an attributed with the specified `attrname`,
-  # regardless of the value for the atttribute.
-  by_attr_exists_predicate:(attrname)=>
-    return @by_attribute_predicate(attrname,null)
 
   # **by_tag_predicate** creates a
   # predicate that returns `true` if the given DOM
@@ -140,10 +168,9 @@ class PredicateFactory
     else
       return (node)->(name.test(node.name))
 
-  # **first_child_predicate**
-  # returns a predicate that evaluates to `true`
-  # iff the given `node` is the first child *tag* node
-  # among all of its siblings.
+  # **first_child_predicate** returns a predicate that evaluates to `true`
+  # iff the given `node` is the first child *tag* node among all of
+  # its siblings.
   #
   # TODO FIXME should :first-child also consider elements like <script>?
   first_child_predicate:()->return @_first_child_impl
@@ -154,32 +181,35 @@ class PredicateFactory
           return node._stew_node_id is elt._stew_node_id
     return false
 
-  # **any_tag_predicate**
-  # returns a predicate that evaluates to `true`
-  # iff the given `node` is a tag.
+  # **any_tag_predicate** returns a predicate
+  # that evaluates to `true` iff the given
+  # `node` is a tag.
   any_tag_predicate:()->return @_any_tag_impl
+  # (...and **_any_tag_predicate** is the "singleton"
+  # implementation of that predicate.)
   _any_tag_impl:(node)->(node?.type is 'tag')
 
   # **descendant_predicate**
   # returns a predicate that for the given array
-  # of *n* predicates *P*, evaluates to `true` for
-  # a given node if:
+  # *P* containing *n*, evaluates to `true` for
+  # a given `node` if:
   #
-  #  - *P[n-1](node)* is `true`, and
+  #  - `P[n-1](node)` is `true`, and
   #
-  #  - *P[n-2](parent)* is `true` for some element
+  #  - `P[n-2](parent)` is `true` for some element
   #    `parent` that is an ancestor of `node`
   #
-  #  - *P[n-3](parent2)* is `true` for some element
+  #  - `P[n-3](parent2)` is `true` for some element
   #     `parent2` that is an ancestor of `parent`
   #
   #  - ...etc.
   #
   # In other words, the returned predicate will evalue to `true`
-  # for the current node if each of the given `predicates`
-  # evaluates to true for some ancestor of the node, in sequence.
+  # for the current `node` if each of the given `predicates`
+  # evaluates to `true` for some ancestor of the node, *in sequence*.
   # (I.e., the node that matches `predicates[n]` must be an ancestor
   # of the node that mathces `predicates[n+1]`.)
+  #
   descendant_predicate:(predicates)->
     if predicates.length is 1
       return predicates[0]
@@ -199,7 +229,10 @@ class PredicateFactory
                 break
         return false
 
-  # **direct_descendant_predicate**
+  # **direct_descendant_predicate** returns a predicate
+  # that evaluates to `true` iff `child_selector` evalutes
+  # to `true` for the given `node` and `parent_selector` evalutes
+  # to `true` for the given `node`'s parent.
   direct_descendant_predicate:(parent_selector,child_selector)->
     return (node,node_metadata,dom_metadata)->
       if child_selector(node,node_metadata,dom_metadata)
@@ -208,10 +241,15 @@ class PredicateFactory
         return parent_selector(parent,parent_metadata,dom_metadata)
       return false
 
+
+  # **adjacent_sibling_predicate** returns a predicate
+  # that evaluates to `true` iff `second` evaluates
+  # to `true` for the given `node` and `first` evaluates
+  # to `true` for the tag sibling immediately preceding
+  # the given `node`.
   adjacent_sibling_predicate:(first,second)->
     return (node,node_metadata,dom_metadata)->
       if second(node,node_metadata,dom_metadata)
-        # prev_tag_node = null
         prev_tag_index = node_metadata.sib_index - 1
         while prev_tag_index > 0
           if node_metadata.siblings[prev_tag_index].type is 'tag'
@@ -221,5 +259,6 @@ class PredicateFactory
             prev_tag_index -= 1
       return false
 
+# The PredicateFactory class is exported under the name `PredicateFactory`.
 exports = exports ? this
 exports.PredicateFactory = PredicateFactory
