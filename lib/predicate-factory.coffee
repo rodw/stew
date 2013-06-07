@@ -1,13 +1,13 @@
 #
 # **PredicateFactory** generates boolean-valued
-# functions that implement specific CSS selector
-# tests.
+# functions that implement tests of specific
+# CSS selectors.
 #
 # Each generated function has the signature:
 #
 #     predicate(node,node_metadata,dom_metadata)
 #
-# and returns `true` iff the given node matches
+# and returns `true` iff the given `node` matches
 # the associated CSS selection rule.
 #
 # (This is an internal class, primarily used by
@@ -36,22 +36,22 @@ class PredicateFactory
   # that returns `true` if the given `attrname`
   # matches the given `attrvalue`.
   #
-  # If `attrvalue` is null, then the predicate will
-  # return true if the tested node has an attribute
-  # named `attrname`.
+  # * When `attrvalue` is `null`, then the predicate will
+  #   return `true` if the tested node has an attribute
+  #   named `attrname`.
   #
-  # If `attrvalue` is a String then the predicate will
-  # return true if the value of the `attrname` attribute
-  # *equals* the `attrvalue` *string*.
+  # * When `attrvalue` is a String then the predicate will
+  #   return true if the value of the `attrname` attribute
+  #   *equals* the `attrvalue` *string*.
   #
-  # If `attrvalue` is a `RegExp` then the predicate will
-  # return `true` if the value of the `attrname` attribute
-  # *matches* the `attrvalue` *expression*.
+  # * When `attrvalue` is a `RegExp` then the predicate will
+  #   return `true` if the value of the `attrname` attribute
+  #   *matches* the `attrvalue` *expression*.
   #
-  # If `valuedelim` is non-`null`, the specified value will
-  # be used as a delimiter by which to split the value of
-  # the `attrname` attribute, and the corresponding elements
-  # will be tested rather than the entire string.
+  # * When `valuedelim` is non-`null`, the specified value will
+  #   be used as a delimiter by which to split the value of
+  #   the `attrname` attribute, and the corresponding elements
+  #   will be tested rather than the entire string.
   #
   # For example, the call:
   #
@@ -129,11 +129,28 @@ class PredicateFactory
   _escape_for_regexp:(str)->return str.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1")
 
   # **by_attr_value_pipe_equals** creates a predicate that
-  # implements the `[name|=value]` CSS selector (mathing tags
-  # with an attributed named *name* with the value `value`
-  # or a value that starts with `value-`).
+  # implements the `[name|=value]` CSS selector (matching tags
+  # with a `name` attribute with a value matching `value`
+  # (exactly) or a value that starts with `value` followed
+  # by a `-` character..
   #
-  # (Used for selectors such as `[lang|=en]`, for example.)
+  # (Used for selectors such as `[lang|=en]`, for example,
+  # which will match the values `en`, `en-US` and `en-CA`.)
+  #
+  # When `attrvalue` is a regular expression:
+  #
+  #  - If `attrvalue` doesn't already start with
+  #    `^` (matching the beginning of a line),
+  #    then `^` will be added.
+  #
+  #  - If `attrvalue` doesn't already end with
+  #    `($|-)` (matching the end of a line, or `-`)
+  #    then `($|-)` will be added.
+  #
+  # Hence the regular expression `/f[aeio]o?/`
+  # would be converted to `/^f[aeio]o?($|-)/` but
+  # the regular expression `/^en($|-)/` would be
+  # left alone.
   by_attr_value_pipe_equals:(attrname,attrvalue)=>
     if typeof attrvalue is 'string'
       regexp_source = @_escape_for_regexp(attrvalue)
@@ -144,7 +161,7 @@ class PredicateFactory
       modifier += 'i' if attrvalue.ignoreCase
       modifier += 'g' if attrvalue.global
       modifier += 'm' if attrvalue.multiline
-      unless /^\^/.test regexp_source
+      unless /^\^/.test attrvalue.source
         regexp_source = "^#{regexp_source}"
       unless /\(\$\|-\)$/.test regexp_source
         regexp_source = "#{regexp_source}($|-)"
@@ -172,7 +189,7 @@ class PredicateFactory
   # iff the given `node` is the first child *tag* node among all of
   # its siblings.
   #
-  # TODO FIXME should :first-child also consider elements like <script>?
+  #{ TODO FIXME should :first-child also consider elements like <script>?
   first_child_predicate:()->return @_first_child_impl
   _first_child_impl:(node,node_metadata,dom_metadata)->
     if node.type is 'tag' and node_metadata.siblings?
@@ -181,12 +198,10 @@ class PredicateFactory
           return node._stew_node_id is elt._stew_node_id
     return false
 
-  # **any_tag_predicate** returns a predicate
-  # that evaluates to `true` iff the given
-  # `node` is a tag.
+  # **any_tag_predicate** returns a predicate that evaluates
+  # to `true` iff the given `node` is a tag.
   any_tag_predicate:()->return @_any_tag_impl
-  # (...and **_any_tag_predicate** is the "singleton"
-  # implementation of that predicate.)
+  # (...and **_any_tag_impl** is the implementation of that predicate.)
   _any_tag_impl:(node)->(node?.type is 'tag')
 
   # **descendant_predicate**
