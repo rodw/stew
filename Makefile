@@ -59,14 +59,10 @@ RM_DASH_I ?= -f
 .SUFFIXES:
 
 # `.PHONY` - make targets that aren't actually files
-.PHONY: all build-coffee clean clean-coverage clean-docco clean-docs clean-js clean-markdown clean-module clean-node-modules clean-test-module-install coverage docco docs fully-clean-node-modules help js markdown module targets test test-module-install todo
+.PHONY: all build-coffee clean clean-coverage clean-docco clean-docs clean-js clean-markdown clean-module clean-node-modules clean-test-module-install coverage docco docs fully-clean-node-modules js markdown module targets test test-module-install todo
 
 # `all` - the default target
 all: coverage docco
-
-# `help` - list targets.
-help:
-	make -rpn | sed -n -e '/^$$/ { n ; /^[^ ]*:/p }' | egrep -v '^\.' | egrep --color '^[^ ]*:'
 
 # `targets` - list targets that are not likely to be .PHONY targets
 targets:
