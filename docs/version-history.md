@@ -1,5 +1,6 @@
 # Stew's Version History and Release Notes
 
+*([Follow this link to go back to the README file.](../README.html))*
 
 ## Version 0.0.3 - Sunday 2-June-2013
 
@@ -30,3 +31,5 @@
 ## Version 0.0.1 - Friday 31-May-2013
 
  * Initial release, includes `stew.select` with a nearly complete CSS selector syntax and regular expressions.
+
+*([Follow this link to go back to the README file.](../README.html))*

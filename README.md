@@ -1,6 +1,6 @@
 # Stew
 
-[Stew](https://github.com/rodw/stew) is a JavaScript library that implements the [CSS selector](http://www.w3.org/TR/CSS2/selector.html) syntax and adds support for regular expressions in tag names, class names, ids, attribute names and attribute values.
+**[Stew](https://github.com/rodw/stew)** is a JavaScript library that implements the [CSS selector](http://www.w3.org/TR/CSS2/selector.html) syntax, and extends it with regular expression tag names, class names, ids, attribute names and attribute values.
 
 For example, given a variable `dom` containing a document tree, the JavaScript snippet:
 
@@ -22,7 +22,24 @@ Stew is often used as a toolkit for "screen-scraping" web pages (extracting data
 
 (The name "stew" is inspired by the Python library [BeautifulSoup](http://www.crummy.com/software/BeautifulSoup/), Simon Willison's [soupselect](http://code.google.com/p/soupselect/) extension of *BeautifulSoup*, and Harry Fuecks' [Node.js port](https://github.com/harryf/node-soupselect) of *soupselect*. [Stew](https://github.com/rodw/stew) is a meatier soup.)
 
+## Links
+
+Read on for more information, or:
+
+ - [visit the repository on GitHub.](https://github.com/rodw/stew)
+ - [review the API.](./docs/using.html)
+ - [see a complete example of using Stew (in a "literate CoffeeScript" format).](./docs/example.html)
+ - [browse the annotated source code](./docs/docco/stew.html) or [test coverage report](./docs/coverage.html).
+ - [learn how to contribute to Stew.](./docs/hacking.html)
+ - [see the version history and release notes.](./docs/version-history.html)
+
 ## Installing
+
+The source code and documentation for Stew is available on GitHub at [rodw/stew](https://github.com/rodw/stew).  You can clone the repository via:
+
+```console
+git clone git@github.com:rodw/stew.git
+```
 
 Stew is deployed as an [npm module](https://npmjs.org/) under the name [`stew-select`](https://npmjs.org/package/stew-select). Hence you can install a pre-packaged version with the command:
 

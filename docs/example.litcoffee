@@ -1,6 +1,6 @@
 # Scraping Headlines Using Stew
 
-*This is a complete (but simple) example of using [Stew](https://github.com/rodw/stew) to extract content from the web.*
+*This is a complete (but simple) example of using [Stew](https://github.com/rodw/stew) to extract content from the web. It is written as a "litcoffee" file, which is an executable/compilable file containing Markdown content with embedded CoffeeScript. ([Follow this link to go back to the README file.](../README.html))*
 
 In this example, we'll extract headlines from the venerable social-tech-news site [Slashdot](http://slashdot.org/).
 
@@ -26,7 +26,9 @@ Now, given an `html` string, selecting and printing the headlines is as simple a
         for node in nodeset
           print_headline node
 
-but we'll need to jump through some hoops to download that HTML document.
+That's really all there is to it. All of the Stew-specific code is found above.
+
+The rest of this file jumps through the hoops needed to download the HTML document from the web.
 
 ## Importing the Library
 
@@ -126,3 +128,5 @@ Seeing Atomic Bonds Before and After Reactions <http://science.slashdot.org/stor
 U.S. Authorizes Sales of American Communication Tech To Iran <http://news.slashdot.org/story/13/05/31/145229/us-authorizes-sales-of-american-communication-tech-to-iran>
 -----------------------------------------
 ```
+
+*([Follow this link to go back to the README file.](../README.html))*
