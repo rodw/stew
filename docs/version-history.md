@@ -2,6 +2,14 @@
 
 *([Follow this link to go back to the README file.](../README.html))*
 
+## Version 0.0.4 - Friday 7-June-2013
+
+ * Added `npm test`, `npm run-script compile` and `npm run-script slashdot-example` targets.
+
+ * Added API (`using.md`) and developer (`hacking.md`) documentation.
+
+ * Added docco-friendly comments to all coffee files.
+
 ## Version 0.0.3 - Sunday 2-June-2013
 
  * Added support for the `|=` attribute-comparision-operator.
