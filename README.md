@@ -33,6 +33,8 @@ Read on for more information, or:
  - [learn how to contribute to Stew.](./docs/hacking.html)
  - [see the version history and release notes.](./docs/version-history.html)
 
+(Links not working? Try it from [heyrod.com/stew](http://heyrod.com/stew).)
+
 ## Installing
 
 The source code and documentation for Stew is available on GitHub at [rodw/stew](https://github.com/rodw/stew).  You can clone the repository via:
