@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <!-- /* a stylesheet to include in our *.md-based html. */ -->
+  <!-- /* please leave the begin and end style tags, they let us include the text of this file "inline" in html documents */-->
+  <style>
+  #TOC { font-family: 'droid sans',helvetica,sans serif; font-size: 0.8em; position: fixed; right: 0em; top: 0em; background: #e5e5ee; -webkit-box-shadow: 0 0 1em #777777; -moz-box-shadow: 0 0 1em #777777; -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px; text-align: left; max-height: 80%; z-index: 200; width: 7em; white-space:nowrap; overflow:hidden; padding-top: 3em; opacity: 0.9; }
+  #TOC:before { content:"Contents"; font-weight: bold; text-align:right; align:right; display:block; position:fixed; right: 1.5em; top: 1em; background: #e5e5ee; opacity:0.9; }
+  #TOC:hover { width: auto; padding-right:2em; max-width:80%; overflow:auto !important; opacity:1.0; }
+  #TOC ul { margin: 0 0 0 1em; padding: 0; }
+  #TOC li { padding: 0; margin: 1px; list-style: none; overflow:hidden; text-overflow: ellipsis; }
+  
+  html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+  
+  body{ color:#444; font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif; font-size:12px; line-height:1.5em; padding:1em; margin:auto; max-width:48em; background:#fefefe; }
+  
+  a { color: #0645ad; text-decoration:none;}
+  a:visited { color: #0b0080; }
+  a:hover { color: #06e; }
+  a:active { color:#faa700; }
+  a:focus { outline: thin dotted; }
+  a:hover, a:active { outline: 0; }
+  
+  ::-moz-selection {background:rgba(255,255,0,0.3);color:#000}
+  ::selection {background:rgba(255,255,0,0.3);color:#000}
+  
+  a::-moz-selection {background:rgba(255,255,0,0.3);color:#0645ad}
+  a::selection {background:rgba(255,255,0,0.3);color:#0645ad}
+  
+  p { margin:1em 0; }
+  p.caption { font-style: italic; text-align: right; }
+  
+  img { max-width:100%; }
+  
+  h1,h2,h3,h4,h5,h6 { font-weight:normal; color:#111; line-height:1em; } 
+  h4,h5,h6{ font-weight: bold; }
+  h1 { font-size:2.5em; }
+  h2 { font-size:2em; }
+  h3 { font-size:1.5em; }
+  h4 { font-size:1.2em; }
+  h5 { font-size:1em; }
+  h6 { font-size:0.9em; }
+  
+  blockquote{ color:#666666; margin:0; padding-left: 3em; border-left: 0.5em #eee solid; }
+  hr { display: block; height: 2px; border: 0; border-top: 1px solid #aaa;border-bottom: 1px solid #eee; margin: 1em 0; padding: 0; }
+  pre, code, kbd, samp { font-family: 'droid sans mono slashed', 'droid sans mono', monospace, monospace; }
+  pre { padding:2px; background:#333; color:#9e9; border:1px solid #444; overflow:hidden; text-overflow: ellipsis;} 
+  pre:hover { overflow:visible; width: auto; } 
+  pre:hover code {  background:#333; }
+  code { padding:2px; background: #f5f5ff; border:1px solid #e5e5ee; font-size:0.9em; }
+  code.url { padding:2px;  border:none; background:none; font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif; }
+  pre code { border: none; background:#333; } 
+  
+  b, strong { font-weight: bold; }
+  dfn { font-style: italic; }
+  ins { background: #ff9; color: #000; text-decoration: none; }
+  mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
+  sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+  sup { top: -0.5em; }
+  sub { bottom: -0.25em; }
+  ul, ol { margin: 1em 0; padding: 0 0 0 2em; }
+  li p:last-child { margin:0 }
+  dd { margin: 0 0 0 2em; }
+  img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle; }
+  table { border-collapse: collapse; border-spacing: 0; }
+  td { vertical-align: top; }
+  
+  /* TODO: this could use a better color scheme */
+  code > span.kw { color: #dd7522; font-weight: bold; }
+  code > span.dt { color: #dd7522; }
+  code > span.dv { color: #669933; }
+  code > span.bn { color: #eddd3d; }
+  code > span.fl { color: #eddd3d; }
+  code > span.ch { color: #eddd3d; }
+  code > span.st { color: #669933; }
+  code > span.co { color: grey; font-style: italic; }
+  code > span.al { color: #ff0000; font-weight: bold; }
+  code > span.fu { color: #dd7522; }
+  code > span.ot { color: #007020; }
+  code > span.er { color: #ff0000; font-weight: bold; }
+  
+  @media only screen and (min-width: 480px) { body{font-size:14px;} }
+  
+  @media only screen and (min-width: 768px) { body{font-size:16px;} }
+  
+  @media print {
+    #TOC { display:none; } 
+    * { background: transparent !important; color: black !important; filter:none !important; -ms-filter: none !important; }
+    body{font-size:12pt; max-width:100%;}
+    a, a:visited { text-decoration: none; }
+    hr { height: 1px; border:0; border-bottom:1px solid black; }
+    a[href]:after { content: " (" attr(href) ")"; }
+    abbr[title]:after { content: " (" attr(title) ")"; }
+    .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
+    pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
+    pre  { font-size: 0.8em; }
+    tr, img { page-break-inside: avoid; }
+    img { max-width: 100% !important; }
+    @page :left { margin: 15mm 20mm 15mm 10mm; }
+    @page :right { margin: 15mm 10mm 15mm 20mm; }
+    p, h2, h3 { orphans: 3; widows: 3; }
+    h2, h3 { page-break-after: avoid; }
+  }
+  </style>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#stew">Stew</a><ul>
+<li><a href="#links">Links</a></li>
+<li><a href="#installing">Installing</a></li>
+<li><a href="#features">Features</a><ul>
+<li><a href="#core-css-selectors">Core CSS Selectors</a></li>
+<li><a href="#regular-expressions">Regular Expressions</a></li>
+</ul></li>
+<li><a href="#licensing">Licensing</a></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="stew"><a href="#TOC">Stew</a></h1>
+<p><strong><a href="https://github.com/rodw/stew">Stew</a></strong> is a JavaScript library that implements the <a href="http://www.w3.org/TR/CSS2/selector.html">CSS selector</a> syntax, and extends it with regular expression tag names, class names, ids, attribute names and attribute values.</p>
+<p>For example, given a variable <code>dom</code> containing a document tree, the JavaScript snippet:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> links = <span class="kw">stew</span>.<span class="fu">select</span>(dom,<span class="ch">&#39;a[href]&#39;</span>);</code></pre>
+<p>will return an array of all the anchor tags (<code>&lt;a&gt;</code>) found in <code>dom</code> that include an <code>href</code> attribute.</p>
+<p>While the JavaScript snippet:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> metadata = <span class="kw">stew</span>.<span class="fu">select</span>(dom,<span class="ch">&#39;head meta[name=/^dc\.|:/i]&#39;</span>);</code></pre>
+<p>will extract the <a href="http://dublincore.org/documents/dcq-html/">Dublin Core metadata</a> from a document by selecting every <code>&lt;meta&gt;</code> tag found in the <code>&lt;head&gt;</code> that has a <code>name</code> attribute that starts with <code>DC.</code> or <code>DC:</code> (ignoring case).</p>
+<p>Stew is often used as a toolkit for &quot;screen-scraping&quot; web pages (extracting data from HTML and XML documents).</p>
+<p>(The name &quot;stew&quot; is inspired by the Python library <a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a>, Simon Willison's <a href="http://code.google.com/p/soupselect/">soupselect</a> extension of <em>BeautifulSoup</em>, and Harry Fuecks' <a href="https://github.com/harryf/node-soupselect">Node.js port</a> of <em>soupselect</em>. <a href="https://github.com/rodw/stew">Stew</a> is a meatier soup.)</p>
+<h2 id="links"><a href="#TOC">Links</a></h2>
+<p>Read on for more information, or:</p>
+<ul>
+<li><a href="https://github.com/rodw/stew">visit the repository on GitHub.</a></li>
+<li><a href="./docs/using.html">review the API.</a></li>
+<li><a href="./docs/example.html">see a complete example of using Stew (in a &quot;literate CoffeeScript&quot; format).</a></li>
+<li><a href="./docs/docco/stew.html">browse the annotated source code</a> or <a href="./docs/coverage.html">test coverage report</a>.</li>
+<li><a href="./docs/hacking.html">learn how to contribute to Stew.</a></li>
+<li><a href="./docs/version-history.html">see the version history and release notes.</a></li>
+</ul>
+<h2 id="installing"><a href="#TOC">Installing</a></h2>
+<p>The source code and documentation for Stew is available on GitHub at <a href="https://github.com/rodw/stew">rodw/stew</a>. You can clone the repository via:</p>
+<pre class="console"><code>git clone git@github.com:rodw/stew.git</code></pre>
+<p>Stew is deployed as an <a href="https://npmjs.org/">npm module</a> under the name <a href="https://npmjs.org/package/stew-select"><code>stew-select</code></a>. Hence you can install a pre-packaged version with the command:</p>
+<pre class="console"><code>npm install stew-select</code></pre>
+<p>and you can add it to your project as a dependency by adding a line like:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;stew-select&quot;</span>: <span class="st">&quot;latest&quot;</span></code></pre>
+<p>to the <code>dependencies</code> or <code>devDependencies</code> part of your <code>package.json</code> file.</p>
+<h2 id="features"><a href="#TOC">Features</a></h2>
+<h3 id="core-css-selectors"><a href="#TOC">Core CSS Selectors</a></h3>
+<p>Stew supports the full <a href="http://www.w3.org/TR/CSS2/selector.html">CSS selector</a> syntax, including</p>
+<ul>
+<li><p>The universal selector (<code>*</code>).</p>
+<p>E.g., <code>stew.select( dom, '*' )</code> selects all the tags in the document.</p></li>
+<li><p>Type selectors (<code>E</code>).</p>
+<p>E.g., <code>stew.select( dom, 'h2' )</code> selects all the <code>h2</code> tags in the document.</p></li>
+<li><p>Class selectors (<code>E.foo</code>).</p>
+<p>E.g., <code>stew.select( dom, '.foo' )</code> selects all tags in the document with the class <code>foo</code>.</p></li>
+<li><p>ID selectors (<code>E#foo</code>).</p>
+<p>E.g., <code>stew.select( dom, '#foo' )</code> selects all tags in the document with the id <code>foo</code>.</p></li>
+<li><p>Descendant selectors (<code>E F</code>).</p>
+<p>E.g., <code>stew.select( dom, 'div h2 a' )</code> selects all <code>a</code> tags with an <code>h2</code> ancestor that has a <code>div</code> ancestor.</p></li>
+<li><p>Child selectors (<code>E &gt; F</code>).</p>
+<p>E.g., <code>stew.select( dom, 'div &gt; h2 &gt; a')</code> selects all <code>a</code> tags with an <code>h2</code> <em>parent</em> that has a <code>div</code> <em>parent</em>.</p></li>
+<li><p>Attribute name selectors (<code>E[foo]</code>).</p>
+<p>E.g., <code>stew.select( dom, 'a[href]')</code> selects all <code>a</code> tags with an <code>href</code> attribute (and <code>stew.select( dom, '[href]')</code> selects <em>all</em> tags with an <code>href</code> attribute).</p></li>
+<li><p>Attribute value selectors (<code>E[foo=&quot;bar&quot;]</code>).</p>
+<p>E.g., <code>stew.select( dom, 'a[rel=&quot;author&quot;]')</code> selects all <code>a</code> tags with a <code>rel</code> attribute set to the value <code>author</code>.</p></li>
+<li><p>The <code>~=</code> operator (<code>E[foo~=&quot;bar&quot;]</code>).</p>
+<p>E.g., <code>stew.select( dom, 'a[class~=&quot;author&quot;]')</code> selects all <code>a</code> tags with the <code>class</code> <code>author</code>, whether or not that tag has other classes as well. More generally <code>~=</code> treats the attribute value as a white-space delimited list of values (to which the given value is compared).</p></li>
+<li><p>The <code>|=</code> operator (<code>E[foo|=&quot;bar&quot;]</code>).</p>
+<p>E.g., <code>stew.select( dom, 'div[lang|=&quot;en&quot;]')</code> selects all <code>div</code> tags with a <code>lang</code> attribute whose value is <em>exactly</em> <code>en</code> or whose value starts with <code>en-</code>.</p></li>
+<li><p>Adjacent selectors (<code>E + F</code>).</p>
+<p>E.g., <code>stew.select( dom, 'h1 + p')</code> selects all <code>p</code> tags that immediately follow an <code>h1</code> tag.</p></li>
+<li><p>The &quot;or&quot; conjunction (<code>E, F</code>).</p>
+<p>E.g., <code>stew.select( dom, 'h1, h2')</code> selects all <code>h1</code> and <code>h2</code> tags.</p></li>
+<li><p>The :first-child pseudo-class (<code>E:first-child</code>).</p>
+<p>E.g., <code>stew.select( dom, 'li:first-child' )</code> selects all <code>li</code> tags that happen to be the first tag among its siblings.</p></li>
+</ul>
+<p>And of course, you can use arbitrary combinations of these selectors:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">stew</span>.<span class="fu">select</span>( dom, <span class="ch">&#39;article div.credits &gt; a[rel=license]&#39;</span> );
+<span class="kw">stew</span>.<span class="fu">select</span>( dom, <span class="ch">&#39;h1, h2, h3, h4, h5, h6, .heading&#39;</span> );
+<span class="kw">stew</span>.<span class="fu">select</span>( dom, <span class="ch">&#39;h1.title + h2.subtitle&#39;</span> );
+<span class="kw">stew</span>.<span class="fu">select</span>( dom, <span class="ch">&#39;ul &gt; li &gt; a[rel=author][href]&#39;</span> );</code></pre>
+<h3 id="regular-expressions"><a href="#TOC">Regular Expressions</a></h3>
+<p>Stew extends the CSS selector syntax by allowing the use of regular expressions to specify tag names, class names, ids, and attributes (both name and value).</p>
+<p>For example,</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> metadata = <span class="kw">stew</span>.<span class="fu">select</span>(dom,<span class="ch">&#39;a[href=/^https?:/i]&#39;</span>);</code></pre>
+<p>will select all anchor (<code>&lt;a&gt;</code>) tags with an <code>href</code> attribute that starts with <code>http:</code> or <code>https:</code> (with a case-insensitive comparison).</p>
+<p>Another example, the snippet:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> metadata = <span class="kw">stew</span>.<span class="fu">select</span>(dom,<span class="ch">&#39;[/^data-/]&#39;</span>);</code></pre>
+<p>selects all tags with an attribute whose name starts with <code>data-</code>.</p>
+<p>Any name or value that starts and ends with <code>/</code> will be treated as a regular expression. (Or, more accurately, any name or value that starts with <code>/</code> and ends with <code>/</code> with an optional suffix of any combination of the letters <code>g</code>, <code>m</code> and <code>i</code>. E.g., <code>/example/gi</code>.)</p>
+<p>The regular expression is processed using JavaScript's standard regular expression syntax, including support for <code>\b</code> and other special class markers.</p>
+<p>Here are some example CSS selectors using regular expressions:</p>
+<ul>
+<li>Tag names: <code>/^d[aeiou]ve?$/</code> matches <code>div</code>, but also <code>dove</code>, <code>dave</code>, etc.</li>
+<li>Class names: <code>./^nav/</code> matches any tag with a class name that starts with the string <code>nav</code>.</li>
+<li>IDs: <code>#/^main$/i</code> matches any tag with the id <code>main</code>, using a case insensitive comparison (so it also matches <code>MAIN</code>, <code>Main</code> and other variants.</li>
+<li>Attribute names: As above, <code>[/^data-/]</code> matches any tag with an attribute whose name starts with <code>data-</code>.</li>
+<li>Attribute values: As above, <code>[href=/^https?:/i]</code> matches any tag with an <code>href</code> attribute whose value starts with <code>http:</code> or <code>https:</code> (case-insensitive).</li>
+</ul>
+<p>These may be used in any combination, and freely mixed with &quot;regular&quot; CSS selectors.</p>
+<h2 id="licensing"><a href="#TOC">Licensing</a></h2>
+<p>The Stew library and related documentation are made available under an <a href="http://opensource.org/licenses/MIT">MIT License</a>. For details, please see the file <a href="MIT-LICENSE.txt">MIT-LICENSE.txt</a> in the root directory of the repository.</p>
+</body>
+</html>
