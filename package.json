@@ -1,8 +1,8 @@
 {
   "name"         : "stew-select",
-  "version"      : "0.0.3",
+  "version"      : "0.0.4",
   "description"  : "CSS selectors that allow regular expressions. Stew is a meatier soup.",
-  "homepage"     : "https://github.com/rodw/stew",
+  "homepage"     : "http://heyrod.com/stew",
   "repository"   : { "type": "git", "url": "https://github.com/rodw/stew.git" },
   "bugs"         : "https://github.com/rodw/stew/issues",
   "license"      : "MIT",
@@ -22,7 +22,6 @@
     "test"             : "mocha -R list --compilers coffee:coffee-script -t 3000 test/test-*.coffee",
     "compile"          : "coffee -c lib/*.coffee",
     "slashdot-example" : "coffee docs/example.litcoffee"
-
   },
   "engines"      : { "node": ">=0.8"  },
   "keywords"     : [ "css", "scraping", "screen-scrape", "regular expression", "regexp", "select", "selector", "soup", "soupselect", "html", "dom", "scraper" ]
