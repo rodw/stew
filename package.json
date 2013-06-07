@@ -19,7 +19,10 @@
   },
   "main"         : "lib/stew.js",
   "scripts": {
-    "test"       : "make test"
+    "test"             : "mocha -R list --compilers coffee:coffee-script -t 3000 test/test-*.coffee",
+    "compile"          : "coffee -c lib/*.coffee",
+    "slashdot-example" : "coffee docs/example.litcoffee"
+
   },
   "engines"      : { "node": ">=0.8"  },
   "keywords"     : [ "css", "scraping", "screen-scrape", "regular expression", "regexp", "select", "selector", "soup", "soupselect", "html", "dom", "scraper" ]
