@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <!-- /* a stylesheet to include in our *.md-based html. */ -->
+  <!-- /* please leave the begin and end style tags, they let us include the text of this file "inline" in html documents */-->
+  <style>
+  #TOC { font-family: 'droid sans',helvetica,sans serif; font-size: 0.8em; position: fixed; right: 0em; top: 0em; background: #e5e5ee; -webkit-box-shadow: 0 0 1em #777777; -moz-box-shadow: 0 0 1em #777777; -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px; text-align: left; max-height: 80%; z-index: 200; width: 7em; white-space:nowrap; overflow:hidden; padding-top: 3em; opacity: 0.9; }
+  #TOC:before { content:"Contents"; font-weight: bold; text-align:right; align:right; display:block; position:fixed; right: 1.5em; top: 1em; background: #e5e5ee; opacity:0.9; }
+  #TOC:hover { width: auto; padding-right:2em; max-width:80%; overflow:auto !important; opacity:1.0; }
+  #TOC ul { margin: 0 0 0 1em; padding: 0; }
+  #TOC li { padding: 0; margin: 1px; list-style: none; overflow:hidden; text-overflow: ellipsis; }
+  
+  html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+  
+  body{ color:#444; font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif; font-size:12px; line-height:1.5em; padding:1em; margin:auto; max-width:48em; background:#fefefe; }
+  
+  a { color: #0645ad; text-decoration:none;}
+  a:visited { color: #0b0080; }
+  a:hover { color: #06e; }
+  a:active { color:#faa700; }
+  a:focus { outline: thin dotted; }
+  a:hover, a:active { outline: 0; }
+  
+  ::-moz-selection {background:rgba(255,255,0,0.3);color:#000}
+  ::selection {background:rgba(255,255,0,0.3);color:#000}
+  
+  a::-moz-selection {background:rgba(255,255,0,0.3);color:#0645ad}
+  a::selection {background:rgba(255,255,0,0.3);color:#0645ad}
+  
+  p { margin:1em 0; }
+  p.caption { font-style: italic; text-align: right; }
+  
+  img { max-width:100%; }
+  
+  h1,h2,h3,h4,h5,h6 { font-weight:normal; color:#111; line-height:1em; } 
+  h4,h5,h6{ font-weight: bold; }
+  h1 { font-size:2.5em; }
+  h2 { font-size:2em; }
+  h3 { font-size:1.5em; }
+  h4 { font-size:1.2em; }
+  h5 { font-size:1em; }
+  h6 { font-size:0.9em; }
+  
+  blockquote{ color:#666666; margin:0; padding-left: 3em; border-left: 0.5em #eee solid; }
+  hr { display: block; height: 2px; border: 0; border-top: 1px solid #aaa;border-bottom: 1px solid #eee; margin: 1em 0; padding: 0; }
+  pre, code, kbd, samp { font-family: 'droid sans mono slashed', 'droid sans mono', monospace, monospace; }
+  pre { padding:2px; background:#333; color:#9e9; border:1px solid #444; overflow:hidden; text-overflow: ellipsis;} 
+  pre:hover { overflow:visible; width: auto; } 
+  pre:hover code {  background:#333; }
+  code { padding:2px; background: #f5f5ff; border:1px solid #e5e5ee; font-size:0.9em; }
+  code.url { padding:2px;  border:none; background:none; font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif; }
+  pre code { border: none; background:#333; } 
+  
+  b, strong { font-weight: bold; }
+  dfn { font-style: italic; }
+  ins { background: #ff9; color: #000; text-decoration: none; }
+  mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
+  sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+  sup { top: -0.5em; }
+  sub { bottom: -0.25em; }
+  ul, ol { margin: 1em 0; padding: 0 0 0 2em; }
+  li p:last-child { margin:0 }
+  dd { margin: 0 0 0 2em; }
+  img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle; }
+  table { border-collapse: collapse; border-spacing: 0; }
+  td { vertical-align: top; }
+  
+  /* TODO: this could use a better color scheme */
+  code > span.kw { color: #dd7522; font-weight: bold; }
+  code > span.dt { color: #dd7522; }
+  code > span.dv { color: #669933; }
+  code > span.bn { color: #eddd3d; }
+  code > span.fl { color: #eddd3d; }
+  code > span.ch { color: #eddd3d; }
+  code > span.st { color: #669933; }
+  code > span.co { color: grey; font-style: italic; }
+  code > span.al { color: #ff0000; font-weight: bold; }
+  code > span.fu { color: #dd7522; }
+  code > span.ot { color: #007020; }
+  code > span.er { color: #ff0000; font-weight: bold; }
+  
+  @media only screen and (min-width: 480px) { body{font-size:14px;} }
+  
+  @media only screen and (min-width: 768px) { body{font-size:16px;} }
+  
+  @media print {
+    #TOC { display:none; } 
+    * { background: transparent !important; color: black !important; filter:none !important; -ms-filter: none !important; }
+    body{font-size:12pt; max-width:100%;}
+    a, a:visited { text-decoration: none; }
+    hr { height: 1px; border:0; border-bottom:1px solid black; }
+    a[href]:after { content: " (" attr(href) ")"; }
+    abbr[title]:after { content: " (" attr(title) ")"; }
+    .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
+    pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
+    pre  { font-size: 0.8em; }
+    tr, img { page-break-inside: avoid; }
+    img { max-width: 100% !important; }
+    @page :left { margin: 15mm 20mm 15mm 10mm; }
+    @page :right { margin: 15mm 10mm 15mm 20mm; }
+    p, h2, h3 { orphans: 3; widows: 3; }
+    h2, h3 { page-break-after: avoid; }
+  }
+  </style>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#the-stew-api">The Stew API</a><ul>
+<li><a href="#installing">Installing</a></li>
+<li><a href="#importing">Importing</a></li>
+<li><a href="#api">API</a><ul>
+<li><a href="#stew">Stew</a><ul>
+<li><a href="#stew.selectdomselector">stew.select(dom,selector)</a></li>
+<li><a href="#stew.selecthtmlselectorcallback">stew.select(html,selector,callback)</a></li>
+<li><a href="#stew.select_firstdomselector">stew.select_first(dom,selector)</a></li>
+<li><a href="#stew.select_firsthtmlselectorcallback">stew.select_first(html,selector,callback)</a></li>
+</ul></li>
+<li><a href="#domutil">DOMUtil</a><ul>
+<li><a href="#domutil.parse_htmlhtmlcallback">domutil.parse_html(html,callback)</a></li>
+<li><a href="#domutil.to_textnode">domutil.to_text(node)</a></li>
+<li><a href="#domutil.to_textnodeaccept">domutil.to_text(node,accept)</a></li>
+<li><a href="#domutil.to_htmlnode">domutil.to_html(node)</a></li>
+<li><a href="#domutil.inner_htmlnode">domutil.inner_html(node)</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="the-stew-api"><a href="#TOC">The Stew API</a></h1>
+<p><em>(<a href="../README.html">Follow this link to go back to the README file.</a>)</em></p>
+<p><a href="https://github.com/rodw/stew">Stew</a> is a JavaScript library that extends <a href="http://www.w3.org/TR/CSS2/selector.html">CSS selector</a> with regular expressions.</p>
+<p>It is primarily intended to be used in a <a href="http://nodejs.org/">Node.js</a> environment.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></p>
+<h2 id="installing"><a href="#TOC">Installing</a></h2>
+<p>Stew is deployed as an <a href="https://npmjs.org/">npm module</a> under the name <a href="https://npmjs.org/package/stew-select"><code>stew-select</code></a>. Hence you can install a pre-packaged version with the command:</p>
+<pre class="console"><code>npm install stew-select</code></pre>
+<p>and you can add it to your project as a dependency by adding a line like:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="st">&quot;stew-select&quot;</span>: <span class="st">&quot;latest&quot;</span></code></pre>
+<p>to the <code>dependencies</code> or <code>devDependencies</code> part of your <code>package.json</code> file.</p>
+<h2 id="importing"><a href="#TOC">Importing</a></h2>
+<p>Stew can be loaded into a Node.js program as follows:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> Stew = require(<span class="ch">&#39;stew-select&#39;</span>).<span class="fu">Stew</span>;</code></pre>
+<p>The Stew type is an instantiable class, hence (if you're content with the default configuration) you might prefer this alternative:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> stew = <span class="kw">new</span> (require(<span class="ch">&#39;stew-select&#39;</span>)).<span class="fu">Stew</span>();</code></pre>
+<p>Stew also exposes a class named DOMUtil, which can be loaded like this:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> DOMUtil = require(<span class="ch">&#39;stew-select&#39;</span>).<span class="fu">DOMUtil</span>;</code></pre>
+<p>or like this:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> domutil = <span class="kw">new</span> (require(<span class="ch">&#39;stew-select&#39;</span>)).<span class="fu">DOMUtil</span>();</code></pre>
+<h2 id="api"><a href="#TOC">API</a></h2>
+<h3 id="stew"><a href="#TOC">Stew</a></h3>
+<h4 id="stew.selectdomselector"><a href="#TOC">stew.select(dom,selector)</a></h4>
+<p>This variation of <code>select</code> accepts a DOM object (generated by <a href="https://github.com/tautologistics/node-htmlparser">node-htmlparser</a>) and string containing CSS selector and returns an array of DOM nodes that match the given selector.</p>
+<p>For example:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> author_links = <span class="kw">stew</span>.<span class="fu">select</span>(dom, <span class="ch">&#39;a[href][rel=&quot;author&quot;]&#39;</span>);</code></pre>
+<h4 id="stew.selecthtmlselectorcallback"><a href="#TOC">stew.select(html,selector,callback)</a></h4>
+<p>This variation of <code>select</code> accepts a string containing HTML, a string containing a CSS selector and a callback method (with the signature <code>callback(err,nodeset)</code>) and passes an array of matching DOM nodes to the callback.</p>
+<p>The HTML is parsed using <a href="https://github.com/tautologistics/node-htmlparser">node-htmlparser</a>, if available.</p>
+<p>If an error occurs during parsing, it will be passed as the first argument to the callback.</p>
+<p>For example:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">stew</span>.<span class="fu">select</span>(dom, <span class="ch">&#39;a[href][rel=&quot;author&quot;]&#39;</span>, <span class="kw">function</span>(err,nodeset) {
+  <span class="kw">if</span>(err) {
+    <span class="kw">console</span>.<span class="fu">error</span>(err);
+  } <span class="kw">else</span> {
+    <span class="kw">console</span>.<span class="fu">log</span>(nodeset);
+  }
+});</code></pre>
+<h4 id="stew.select_firstdomselector"><a href="#TOC">stew.select_first(dom,selector)</a></h4>
+<p>This variation of <code>select_first</code> accepts a DOM object (generated by <a href="https://github.com/tautologistics/node-htmlparser">node-htmlparser</a>) and string containing CSS selector and returns the <em>first</em> DOM node that matches the selector.</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> title_tag = <span class="kw">stew</span>.<span class="fu">select</span>(dom, <span class="ch">&#39;head title&#39;</span>);</code></pre>
+<h4 id="stew.select_firsthtmlselectorcallback"><a href="#TOC">stew.select_first(html,selector,callback)</a></h4>
+<p>This variation of <code>select_first</code> accepts a string containing HTML, a string containing a CSS selector and a callback method (with the signature <code>callback(err,node)</code>) and passes the <em>first</em> matching DOM node to the callback.</p>
+<p>The HTML is parsed using <a href="https://github.com/tautologistics/node-htmlparser">node-htmlparser</a>, if available.</p>
+<p>If an error occurs during parsing, it will be passed as the first argument to the callback.</p>
+<p>For example:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">stew</span>.<span class="fu">select</span>_<span class="fu">first</span>(dom, <span class="ch">&#39;html title&#39;</span>, <span class="kw">function</span>(err,title_tag) {
+  <span class="kw">if</span>(err) {
+    <span class="kw">console</span>.<span class="fu">error</span>(err);
+  } <span class="kw">else</span> {
+    <span class="kw">console</span>.<span class="fu">log</span>(<span class="kw">domutil</span>.<span class="fu">toText</span>(title_tag));
+  }
+});</code></pre>
+<h3 id="domutil"><a href="#TOC">DOMUtil</a></h3>
+<h4 id="domutil.parse_htmlhtmlcallback"><a href="#TOC">domutil.parse_html(html,callback)</a></h4>
+<p><code>parse_html</code> accepts a string of HTML and a callback method (with the signature <code>callback(err,node)</code>). The HTML is parsed and the corresponding DOM node will be passed to the callback function.</p>
+<p>If <code>html</code> contains more than one &quot;root&quot; node, an array of DOM nodes will be passed to the callback function.</p>
+<p>The HTML is parsed using <a href="https://github.com/tautologistics/node-htmlparser">node-htmlparser</a>, if available.</p>
+<p>If an error occurs during parsing, it will be passed as the first argument to the callback.</p>
+<p>For example, the JavaScript snippet:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> html = <span class="ch">&#39;&lt;div&gt;First doc&lt;/div&gt; &lt;span&gt;&lt;i&gt;Second&lt;/i&gt; doc&lt;/span&gt;&#39;</span>;
+
+<span class="kw">domutil</span>.<span class="fu">parse</span>_<span class="fu">html</span>( html, <span class="kw">function</span>(err,dom) {
+  <span class="kw">if</span>(err) {
+    <span class="kw">console</span>.<span class="fu">error</span>(err);
+  } <span class="kw">else</span> {
+    <span class="kw">console</span>.<span class="fu">log</span>(<span class="kw">dom</span>.<span class="fu">length</span>);
+  }
+});</code></pre>
+<p>will output <code>2</code>, and</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> html = <span class="ch">&#39;&lt;body&gt;Only doc&lt;/body&gt;&#39;</span>;
+
+<span class="kw">domutil</span>.<span class="fu">parse</span>_<span class="fu">html</span>( html, <span class="kw">function</span>(err,dom) {
+  <span class="kw">if</span>(err) {
+    <span class="kw">console</span>.<span class="fu">error</span>(err);
+  } <span class="kw">else</span> {
+    <span class="kw">console</span>.<span class="fu">log</span>(<span class="kw">dom</span>.<span class="fu">name</span>);
+  }
+});</code></pre>
+<p>will output <code>body</code>.</p>
+<h4 id="domutil.to_textnode"><a href="#TOC">domutil.to_text(node)</a></h4>
+<p><code>to_text</code> accepts a DOM node and returns a string containing the text content of node or node's descendants.</p>
+<p>For example, the JavaScript snippet:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> html = <span class="ch">&#39;&lt;span&gt;This example has &lt;b&gt;bold&lt;/b&gt; and &lt;i&gt;italic&lt;/i&gt; text.&lt;/span&gt;&#39;</span>;
+
+<span class="kw">domutil</span>.<span class="fu">parse</span>_<span class="fu">html</span>( html, <span class="kw">function</span>(err,dom) {
+  <span class="kw">if</span>(err) {
+    <span class="kw">console</span>.<span class="fu">error</span>(err);
+  } <span class="kw">else</span> {
+    <span class="kw">console</span>.<span class="fu">log</span>(<span class="kw">domutil</span>.<span class="fu">toText</span>(dom));
+  }
+});</code></pre>
+<p>will print:</p>
+<pre><code>This example has bold and italic text.</code></pre>
+<h4 id="domutil.to_textnodeaccept"><a href="#TOC">domutil.to_text(node,accept)</a></h4>
+<p>This variant of <code>to_text</code> accepts a DOM node and boolean valued filter (with the signature <code>accept(node)</code>) and returns a string containing the text content any of node or node's descendants for which <code>accept(node)</code> returns <code>true</code></p>
+<p>For example, the JavaScript snippet:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> html = <span class="ch">&#39;&lt;span&gt;This example has &lt;b&gt;bold&lt;/b&gt; and &lt;i&gt;italic&lt;/i&gt; text.&lt;/span&gt;&#39;</span>;
+<span class="kw">var</span> not_italic = <span class="kw">function</span>(node) {
+  <span class="kw">return</span> <span class="kw">node</span>.<span class="fu">type</span> != <span class="ch">&#39;tag&#39;</span> || <span class="kw">node</span>.<span class="fu">name</span> != <span class="ch">&#39;i&#39;</span>;\
+}
+
+<span class="kw">domutil</span>.<span class="fu">parse</span>_<span class="fu">html</span>( html, <span class="kw">function</span>(err,dom) {
+  <span class="kw">if</span>(err) {
+    <span class="kw">console</span>.<span class="fu">error</span>(err);
+  } <span class="kw">else</span> {
+    <span class="kw">console</span>.<span class="fu">log</span>(<span class="kw">domutil</span>.<span class="fu">toText</span>(dom,not_italic));
+  }
+});</code></pre>
+<p>will print:</p>
+<pre><code>This example has bold and  text.</code></pre>
+<h4 id="domutil.to_htmlnode"><a href="#TOC">domutil.to_html(node)</a></h4>
+<p><code>to_html</code> accepts a DOM node and returns a string containing an HTML representation of the node and its children.</p>
+<p>For example, the JavaScript snippet:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> html = <span class="ch">&#39;&lt;span&gt;This example has &lt;b&gt;bold&lt;/b&gt; and &lt;i&gt;italic&lt;/i&gt; text.&lt;/span&gt;&#39;</span>;
+
+<span class="kw">domutil</span>.<span class="fu">parse</span>_<span class="fu">html</span>( html, <span class="kw">function</span>(err,dom) {
+  <span class="kw">if</span>(err) {
+    <span class="kw">console</span>.<span class="fu">error</span>(err);
+  } <span class="kw">else</span> {
+    <span class="kw">console</span>.<span class="fu">log</span>(<span class="kw">domutil</span>.<span class="fu">to</span>_<span class="fu">html</span>(dom));
+  }
+});</code></pre>
+<p>will print:</p>
+<pre><code>&lt;span&gt;This example has &lt;b&gt;bold&lt;/b&gt; and &lt;i&gt;italic&lt;/i&gt; text.&lt;/span&gt;</code></pre>
+<h4 id="domutil.inner_htmlnode"><a href="#TOC">domutil.inner_html(node)</a></h4>
+<p><code>inner_html</code> accepts a DOM node and returns a string containing an HTML representation of node's children.</p>
+<p>For example, the JavaScript snippet:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> html = <span class="ch">&#39;&lt;span&gt;This example has &lt;b&gt;bold&lt;/b&gt; and &lt;i&gt;italic&lt;/i&gt; text.&lt;/span&gt;&#39;</span>;
+
+<span class="kw">domutil</span>.<span class="fu">parse</span>_<span class="fu">html</span>( html, <span class="kw">function</span>(err,dom) {
+  <span class="kw">if</span>(err) {
+    <span class="kw">console</span>.<span class="fu">error</span>(err);
+  } <span class="kw">else</span> {
+    <span class="kw">console</span>.<span class="fu">log</span>(<span class="kw">domutil</span>.<span class="fu">inner</span>_<span class="fu">html</span>(dom));
+  }
+});</code></pre>
+<p>will print:</p>
+<pre><code>This example has &lt;b&gt;bold&lt;/b&gt; and &lt;i&gt;italic&lt;/i&gt; text.</code></pre>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Although it probably wouldn't be difficult to make Stew work in a browser context, we haven't had any need for that, and so we haven't (yet) attempted to do it. Drop us a <a href="https://github.com/rodw/stew/issues">note</a> if this is something you'd like to see Stew support.<a href="#fnref1">↩</a></p></li>
+</ol>
+</div>
+</body>
+</html>

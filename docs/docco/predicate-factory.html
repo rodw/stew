@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>predicate-factory.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="dom-util.html">
+                dom-util.coffee
+              </a>
+            
+              
+              <a class="source" href="predicate-factory.html">
+                predicate-factory.coffee
+              </a>
+            
+              
+              <a class="source" href="stew.html">
+                stew.coffee
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>predicate-factory.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p><strong>PredicateFactory</strong> generates boolean-valued
+functions that implement tests of specific
+CSS selectors.</p>
+<p>Each generated function has the signature:</p>
+<pre><code>predicate(node,node_metadata,dom_metadata)</code></pre>
+<p>and returns <code>true</code> iff the given <code>node</code> matches
+the associated CSS selection rule.</p>
+<p>(This is an internal class, primarily used by
+the class <code>Stew</code>. These methods are subject to
+change without notice.)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">PredicateFactory</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p><strong>and_predicate</strong> generates a function that returns <code>true</code> iff <em>all</em> of the given <code>predicates</code> evaluate to <code>true</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  and_predicate:(predicates)-&gt;
+    <span class="keyword">return</span> (node,node_metadata,dom_metadata)-&gt;
+      <span class="keyword">for</span> predicate <span class="keyword">in</span> predicates
+        <span class="keyword">if</span> <span class="keyword">not</span> predicate(node,node_metadata,dom_metadata)
+          <span class="keyword">return</span> <span class="literal">false</span>
+      <span class="keyword">return</span> <span class="literal">true</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p><strong>or_predicate</strong> generates a function that returns <code>true</code> iff <em>any</em> of the given <code>predicates</code> evaluate to <code>true</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  or_predicate:(predicates)-&gt;
+    <span class="keyword">return</span> (node,node_metadata,dom_metadata)-&gt;
+      <span class="keyword">for</span> predicate <span class="keyword">in</span> predicates
+        <span class="keyword">if</span> predicate(node,node_metadata,dom_metadata)
+          <span class="keyword">return</span> <span class="literal">true</span>
+      <span class="keyword">return</span> <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p><strong>by_attribute_predicate</strong> creates a predicate
+that returns <code>true</code> if the given <code>attrname</code>
+matches the given <code>attrvalue</code>.</p>
+<ul>
+<li><p>When <code>attrvalue</code> is <code>null</code>, then the predicate will
+return <code>true</code> if the tested node has an attribute
+named <code>attrname</code>.</p>
+</li>
+<li><p>When <code>attrvalue</code> is a String then the predicate will
+return true if the value of the <code>attrname</code> attribute
+<em>equals</em> the <code>attrvalue</code> <em>string</em>.</p>
+</li>
+<li><p>When <code>attrvalue</code> is a <code>RegExp</code> then the predicate will
+return <code>true</code> if the value of the <code>attrname</code> attribute
+<em>matches</em> the <code>attrvalue</code> <em>expression</em>.</p>
+</li>
+<li><p>When <code>valuedelim</code> is non-<code>null</code>, the specified value will
+be used as a delimiter by which to split the value of
+the <code>attrname</code> attribute, and the corresponding elements
+will be tested rather than the entire string.</p>
+</li>
+</ul>
+<p>For example, the call:</p>
+<pre><code>by_attribute_predicate(&#39;class&#39;,&#39;foo&#39;,/\s+/)</code></pre>
+<p>will return a function that tests if a given DOM node
+has been assigned class <code>foo</code>.  E.g, <code>true</code> for these:</p>
+<pre><code>&lt;span class=&quot;foo&quot;&gt;&lt;/span&gt;
+
+&lt;span class=&quot;bar foo&quot;&gt;&lt;/span&gt;</code></pre>
+<p>and <code>false</code> for these:</p>
+<pre><code>&lt;span&gt;&lt;/span&gt;
+
+&lt;span class=&quot;food&quot;&gt;&lt;/span&gt;</code></pre>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  by_attribute_predicate:(attrname,attrvalue=<span class="literal">null</span>,valuedelim=<span class="literal">null</span>)-&gt;
+    <span class="keyword">if</span> <span class="keyword">typeof</span>(attrname) <span class="keyword">is</span> <span class="string">'string'</span>
+      <span class="function"><span class="title">np</span></span> = (str)-&gt;str <span class="keyword">is</span> attrname
+    <span class="keyword">else</span>
+      <span class="function"><span class="title">np</span></span> = (str)-&gt;attrname.test(str)
+
+    <span class="keyword">if</span> attrvalue <span class="keyword">is</span> <span class="literal">null</span>
+      vp = <span class="literal">null</span>
+    <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">typeof</span>(attrvalue) <span class="keyword">is</span> <span class="string">'string'</span>
+      attrvalue = attrvalue.replace(<span class="regexp">/\\\"/g</span>,<span class="string">'"'</span>)
+      <span class="function"><span class="title">vp</span></span> = (str)-&gt;str <span class="keyword">is</span> attrvalue
+    <span class="keyword">else</span> <span class="keyword">if</span> attrvalue?.test?
+      <span class="function"><span class="title">vp</span></span> = (str)-&gt;attrvalue.test(str)
+
+    <span class="keyword">return</span> (node)-&gt;
+      <span class="keyword">for</span> name,value <span class="keyword">of</span> node?.attribs
+        <span class="keyword">if</span> np(name)
+          <span class="keyword">if</span> vp <span class="keyword">is</span> <span class="literal">null</span>
+            <span class="keyword">return</span> <span class="literal">true</span>
+          <span class="keyword">else</span>
+            <span class="keyword">if</span> valuedelim?
+              <span class="keyword">if</span> value?
+                <span class="keyword">for</span> token <span class="keyword">in</span> value.split(valuedelim)
+                  <span class="keyword">if</span> vp(token)
+                    <span class="keyword">return</span> <span class="literal">true</span>
+            <span class="keyword">else</span>
+              <span class="keyword">if</span> vp(value)
+                <span class="keyword">return</span> <span class="literal">true</span>
+      <span class="keyword">return</span> <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p><strong>by_class_predicate</strong> creates a predicate
+that returns <code>true</code> if the given DOM node has
+the specified <code>klass</code> value.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  by_class_predicate:(klass)=&gt;
+    <span class="keyword">return</span> <span class="property">@by_attribute_predicate</span>(<span class="string">'class'</span>,klass,<span class="regexp">/\s+/</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p><strong>by_id_predicate</strong> creates a predicate
+that returns <code>true</code> if the given DOM node has
+the specified <code>id</code> value.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  by_id_predicate:(id)=&gt;
+    <span class="keyword">return</span> <span class="property">@by_attribute_predicate</span>(<span class="string">'id'</span>,id)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p><strong>by_attr_exists_predicate</strong> creates a
+predicate that returns <code>true</code> if the given DOM
+node has an attribute with the specified <code>attrname</code>,
+regardless of the value for the atttribute.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  by_attr_exists_predicate:(attrname)=&gt;
+    <span class="keyword">return</span> <span class="property">@by_attribute_predicate</span>(attrname,<span class="literal">null</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p><strong>by_attr_value_predicate</strong> is an alias to <code>by_attribute_predicate</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  by_attr_value_predicate:(attrname,attrvalue,valuedelim)=&gt;
+    <span class="keyword">return</span> <span class="property">@by_attribute_predicate</span>(attrname,attrvalue,valuedelim)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><strong>_escape_for_regexp</strong> is an internal utility function that escapes
+reserved characters to create a string that can be embedded
+in a regular expression.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _escape_for_regexp:(str)-&gt;<span class="keyword">return</span> str.replace(<span class="regexp">/([.?*+^$[\]\\(){}|-])/g</span>, <span class="string">"\\$1"</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><strong>by_attr_value_pipe_equals</strong> creates a predicate that
+implements the <code>[name|=value]</code> CSS selector (matching tags
+with a <code>name</code> attribute with a value matching <code>value</code>
+(exactly) or a value that starts with <code>value</code> followed
+by a <code>-</code> character..</p>
+<p>(Used for selectors such as <code>[lang|=en]</code>, for example,
+which will match the values <code>en</code>, <code>en-US</code> and <code>en-CA</code>.)</p>
+<p>When <code>attrvalue</code> is a regular expression:</p>
+<ul>
+<li><p>If <code>attrvalue</code> doesn&#39;t already start with
+<code>^</code> (matching the beginning of a line),
+then <code>^</code> will be added.</p>
+</li>
+<li><p>If <code>attrvalue</code> doesn&#39;t already end with
+<code>($|-)</code> (matching the end of a line, or <code>-</code>)
+then <code>($|-)</code> will be added.</p>
+</li>
+</ul>
+<p>Hence the regular expression <code>/f[aeio]o?/</code>
+would be converted to <code>/^f[aeio]o?($|-)/</code> but
+the regular expression <code>/^en($|-)/</code> would be
+left alone.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  by_attr_value_pipe_equals:(attrname,attrvalue)=&gt;
+    <span class="keyword">if</span> <span class="keyword">typeof</span> attrvalue <span class="keyword">is</span> <span class="string">'string'</span>
+      regexp_source = <span class="property">@_escape_for_regexp</span>(attrvalue)
+      attrvalue = <span class="keyword">new</span> RegExp(<span class="string">"^<span class="subst">#{regexp_source}</span>($|-)"</span>)
+    <span class="keyword">else</span>
+      regexp_source = attrvalue.source
+      modifier = <span class="string">''</span>
+      modifier += <span class="string">'i'</span> <span class="keyword">if</span> attrvalue.ignoreCase
+      modifier += <span class="string">'g'</span> <span class="keyword">if</span> attrvalue.global
+      modifier += <span class="string">'m'</span> <span class="keyword">if</span> attrvalue.multiline
+      <span class="keyword">unless</span> <span class="regexp">/^\^/</span>.test attrvalue.source
+        regexp_source = <span class="string">"^<span class="subst">#{regexp_source}</span>"</span>
+      <span class="keyword">unless</span> <span class="regexp">/\(\$\|-\)$/</span>.test regexp_source
+        regexp_source = <span class="string">"<span class="subst">#{regexp_source}</span>($|-)"</span>
+      attrvalue = <span class="keyword">new</span> RegExp(regexp_source,modifier)
+    <span class="keyword">return</span> <span class="property">@by_attribute_predicate</span>(attrname,attrvalue)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><strong>by_tag_predicate</strong> creates a
+predicate that returns <code>true</code> if the given DOM
+node is a tag with the specified <code>name</code>.</p>
+<p>If <code>name</code> is a RegExp then the predicate will
+return true if tag&#39;s name <em>matches</em> the
+specified <em>expression</em>.</p>
+<p>If <code>name</code> is a String then the predicate will
+return true if the tag&#39;s name <em>equals</em> the
+specified <em>string</em>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  by_tag_predicate:(name)-&gt;
+    <span class="keyword">if</span> <span class="keyword">typeof</span> name <span class="keyword">is</span> <span class="string">'string'</span>
+      <span class="keyword">return</span> (node)-&gt;(name <span class="keyword">is</span> node.name)
+    <span class="keyword">else</span>
+      <span class="keyword">return</span> (node)-&gt;(name.test(node.name))</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><strong>first_child_predicate</strong> returns a predicate that evaluates to <code>true</code>
+iff the given <code>node</code> is the first child <em>tag</em> node among all of
+its siblings.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="comment">#{ TODO FIXME should :first-child also consider elements like &lt;script&gt;?</span>
+  first_child_predicate:()-&gt;<span class="keyword">return</span> <span class="property">@_first_child_impl</span>
+  _first_child_impl:(node,node_metadata,dom_metadata)-&gt;
+    <span class="keyword">if</span> node.type <span class="keyword">is</span> <span class="string">'tag'</span> <span class="keyword">and</span> node_metadata.siblings?
+      <span class="keyword">for</span> elt <span class="keyword">in</span> node_metadata.siblings
+        <span class="keyword">if</span> elt.type <span class="keyword">is</span> <span class="string">'tag'</span>
+          <span class="keyword">return</span> node._stew_node_id <span class="keyword">is</span> elt._stew_node_id
+    <span class="keyword">return</span> <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><strong>any_tag_predicate</strong> returns a predicate that evaluates
+to <code>true</code> iff the given <code>node</code> is a tag.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  any_tag_predicate:()-&gt;<span class="keyword">return</span> <span class="property">@_any_tag_impl</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>(...and <strong>_any_tag_impl</strong> is the implementation of that predicate.)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  _any_tag_impl:(node)-&gt;(node?.type <span class="keyword">is</span> <span class="string">'tag'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p><strong>descendant_predicate</strong>
+returns a predicate that for the given array
+<em>P</em> containing <em>n</em>, evaluates to <code>true</code> for
+a given <code>node</code> if:</p>
+<ul>
+<li><p><code>P[n-1](node)</code> is <code>true</code>, and</p>
+</li>
+<li><p><code>P[n-2](parent)</code> is <code>true</code> for some element
+<code>parent</code> that is an ancestor of <code>node</code></p>
+</li>
+<li><p><code>P[n-3](parent2)</code> is <code>true</code> for some element
+ <code>parent2</code> that is an ancestor of <code>parent</code></p>
+</li>
+<li><p>...etc.</p>
+</li>
+</ul>
+<p>In other words, the returned predicate will evalue to <code>true</code>
+for the current <code>node</code> if each of the given <code>predicates</code>
+evaluates to <code>true</code> for some ancestor of the node, <em>in sequence</em>.
+(I.e., the node that matches <code>predicates[n]</code> must be an ancestor
+of the node that mathces <code>predicates[n+1]</code>.)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  descendant_predicate:(predicates)-&gt;
+    <span class="keyword">if</span> predicates.length <span class="keyword">is</span> <span class="number">1</span>
+      <span class="keyword">return</span> predicates[<span class="number">0</span>]
+    <span class="keyword">else</span>
+      <span class="keyword">return</span> (node,node_metadata,dom_metadata)-&gt;
+        <span class="keyword">if</span> predicates[predicates.length-<span class="number">1</span>](node,node_metadata,dom_metadata)
+          cloned_path = [].concat(node_metadata.path)
+          cloned_predicates = [].concat(predicates)
+          cloned_predicates.pop() <span class="comment"># drop last predicate, we just tested it</span>
+          <span class="keyword">while</span> cloned_path.length &gt; <span class="number">0</span>
+            node = cloned_path.pop()
+            node_metadata = dom_metadata[node._stew_node_id]
+            <span class="keyword">if</span> cloned_predicates[cloned_predicates.length-<span class="number">1</span>](node,node_metadata,dom_metadata)
+              cloned_predicates.pop()
+              <span class="keyword">if</span> cloned_predicates.length <span class="keyword">is</span> <span class="number">0</span>
+                <span class="keyword">return</span> <span class="literal">true</span>
+                <span class="keyword">break</span>
+        <span class="keyword">return</span> <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p><strong>direct_descendant_predicate</strong> returns a predicate
+that evaluates to <code>true</code> iff <code>child_selector</code> evalutes
+to <code>true</code> for the given <code>node</code> and <code>parent_selector</code> evalutes
+to <code>true</code> for the given <code>node</code>&#39;s parent.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  direct_descendant_predicate:(parent_selector,child_selector)-&gt;
+    <span class="keyword">return</span> (node,node_metadata,dom_metadata)-&gt;
+      <span class="keyword">if</span> child_selector(node,node_metadata,dom_metadata)
+        parent = node_metadata.parent
+        parent_metadata = dom_metadata[parent._stew_node_id]
+        <span class="keyword">return</span> parent_selector(parent,parent_metadata,dom_metadata)
+      <span class="keyword">return</span> <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p><strong>adjacent_sibling_predicate</strong> returns a predicate
+that evaluates to <code>true</code> iff <code>second</code> evaluates
+to <code>true</code> for the given <code>node</code> and <code>first</code> evaluates
+to <code>true</code> for the tag sibling immediately preceding
+the given <code>node</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  adjacent_sibling_predicate:(first,second)-&gt;
+    <span class="keyword">return</span> (node,node_metadata,dom_metadata)-&gt;
+      <span class="keyword">if</span> second(node,node_metadata,dom_metadata)
+        prev_tag_index = node_metadata.sib_index - <span class="number">1</span>
+        <span class="keyword">while</span> prev_tag_index &gt; <span class="number">0</span>
+          <span class="keyword">if</span> node_metadata.siblings[prev_tag_index].type <span class="keyword">is</span> <span class="string">'tag'</span>
+            prev_tag = node_metadata.siblings[prev_tag_index]
+            <span class="keyword">return</span> first(prev_tag,dom_metadata[prev_tag._stew_node_id],dom_metadata)
+          <span class="keyword">else</span>
+            prev_tag_index -= <span class="number">1</span>
+      <span class="keyword">return</span> <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>The PredicateFactory class is exported under the name <code>PredicateFactory</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>exports = exports ? <span class="keyword">this</span>
+exports.PredicateFactory = PredicateFactory</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

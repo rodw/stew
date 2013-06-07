@@ -1,0 +1,279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+  </style>
+  <!-- /* a stylesheet to include in our *.md-based html. */ -->
+  <!-- /* please leave the begin and end style tags, they let us include the text of this file "inline" in html documents */-->
+  <style>
+  #TOC { font-family: 'droid sans',helvetica,sans serif; font-size: 0.8em; position: fixed; right: 0em; top: 0em; background: #e5e5ee; -webkit-box-shadow: 0 0 1em #777777; -moz-box-shadow: 0 0 1em #777777; -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px; text-align: left; max-height: 80%; z-index: 200; width: 7em; white-space:nowrap; overflow:hidden; padding-top: 3em; opacity: 0.9; }
+  #TOC:before { content:"Contents"; font-weight: bold; text-align:right; align:right; display:block; position:fixed; right: 1.5em; top: 1em; background: #e5e5ee; opacity:0.9; }
+  #TOC:hover { width: auto; padding-right:2em; max-width:80%; overflow:auto !important; opacity:1.0; }
+  #TOC ul { margin: 0 0 0 1em; padding: 0; }
+  #TOC li { padding: 0; margin: 1px; list-style: none; overflow:hidden; text-overflow: ellipsis; }
+  
+  html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+  
+  body{ color:#444; font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif; font-size:12px; line-height:1.5em; padding:1em; margin:auto; max-width:48em; background:#fefefe; }
+  
+  a { color: #0645ad; text-decoration:none;}
+  a:visited { color: #0b0080; }
+  a:hover { color: #06e; }
+  a:active { color:#faa700; }
+  a:focus { outline: thin dotted; }
+  a:hover, a:active { outline: 0; }
+  
+  ::-moz-selection {background:rgba(255,255,0,0.3);color:#000}
+  ::selection {background:rgba(255,255,0,0.3);color:#000}
+  
+  a::-moz-selection {background:rgba(255,255,0,0.3);color:#0645ad}
+  a::selection {background:rgba(255,255,0,0.3);color:#0645ad}
+  
+  p { margin:1em 0; }
+  p.caption { font-style: italic; text-align: right; }
+  
+  img { max-width:100%; }
+  
+  h1,h2,h3,h4,h5,h6 { font-weight:normal; color:#111; line-height:1em; } 
+  h4,h5,h6{ font-weight: bold; }
+  h1 { font-size:2.5em; }
+  h2 { font-size:2em; }
+  h3 { font-size:1.5em; }
+  h4 { font-size:1.2em; }
+  h5 { font-size:1em; }
+  h6 { font-size:0.9em; }
+  
+  blockquote{ color:#666666; margin:0; padding-left: 3em; border-left: 0.5em #eee solid; }
+  hr { display: block; height: 2px; border: 0; border-top: 1px solid #aaa;border-bottom: 1px solid #eee; margin: 1em 0; padding: 0; }
+  pre, code, kbd, samp { font-family: 'droid sans mono slashed', 'droid sans mono', monospace, monospace; }
+  pre { padding:2px; background:#333; color:#9e9; border:1px solid #444; overflow:hidden; text-overflow: ellipsis;} 
+  pre:hover { overflow:visible; width: auto; } 
+  pre:hover code {  background:#333; }
+  code { padding:2px; background: #f5f5ff; border:1px solid #e5e5ee; font-size:0.9em; }
+  code.url { padding:2px;  border:none; background:none; font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif; }
+  pre code { border: none; background:#333; } 
+  
+  b, strong { font-weight: bold; }
+  dfn { font-style: italic; }
+  ins { background: #ff9; color: #000; text-decoration: none; }
+  mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
+  sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+  sup { top: -0.5em; }
+  sub { bottom: -0.25em; }
+  ul, ol { margin: 1em 0; padding: 0 0 0 2em; }
+  li p:last-child { margin:0 }
+  dd { margin: 0 0 0 2em; }
+  img { border: 0; -ms-interpolation-mode: bicubic; vertical-align: middle; }
+  table { border-collapse: collapse; border-spacing: 0; }
+  td { vertical-align: top; }
+  
+  /* TODO: this could use a better color scheme */
+  code > span.kw { color: #dd7522; font-weight: bold; }
+  code > span.dt { color: #dd7522; }
+  code > span.dv { color: #669933; }
+  code > span.bn { color: #eddd3d; }
+  code > span.fl { color: #eddd3d; }
+  code > span.ch { color: #eddd3d; }
+  code > span.st { color: #669933; }
+  code > span.co { color: grey; font-style: italic; }
+  code > span.al { color: #ff0000; font-weight: bold; }
+  code > span.fu { color: #dd7522; }
+  code > span.ot { color: #007020; }
+  code > span.er { color: #ff0000; font-weight: bold; }
+  
+  @media only screen and (min-width: 480px) { body{font-size:14px;} }
+  
+  @media only screen and (min-width: 768px) { body{font-size:16px;} }
+  
+  @media print {
+    #TOC { display:none; } 
+    * { background: transparent !important; color: black !important; filter:none !important; -ms-filter: none !important; }
+    body{font-size:12pt; max-width:100%;}
+    a, a:visited { text-decoration: none; }
+    hr { height: 1px; border:0; border-bottom:1px solid black; }
+    a[href]:after { content: " (" attr(href) ")"; }
+    abbr[title]:after { content: " (" attr(title) ")"; }
+    .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
+    pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
+    pre  { font-size: 0.8em; }
+    tr, img { page-break-inside: avoid; }
+    img { max-width: 100% !important; }
+    @page :left { margin: 15mm 20mm 15mm 10mm; }
+    @page :right { margin: 15mm 10mm 15mm 20mm; }
+    p, h2, h3 { orphans: 3; widows: 3; }
+    h2, h3 { page-break-after: avoid; }
+  }
+  </style>
+</head>
+<body>
+<div id="TOC">
+<ul>
+<li><a href="#hacking-stew">Hacking Stew</a><ul>
+<li><a href="#how-it-works">How it Works</a><ul>
+<li><a href="#domutil">DOMUtil</a></li>
+<li><a href="#predicatefactory">PredicateFactory</a></li>
+<li><a href="#stew">Stew</a></li>
+<li><a href="#unit-tests">Unit Tests</a></li>
+</ul></li>
+<li><a href="#nuts-and-bolts">Nuts and Bolts</a><ul>
+<li><a href="#run-time-depenencies">Run-time Depenencies</a></li>
+<li><a href="#building-and-testing">Building and Testing</a></li>
+<li><a href="#using-make">Using Make</a><ul>
+<li><a href="#installing-and-testing">Installing and Testing</a></li>
+<li><a href="#generating-documentation">Generating Documentation</a></li>
+<li><a href="#test-coverage">Test Coverage</a></li>
+<li><a href="#npm-packaging">npm Packaging</a></li>
+<li><a href="#some-other-targets">Some other targets</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+<h1 id="hacking-stew"><a href="#TOC">Hacking Stew</a></h1>
+<p><em>(<a href="../README.html">Follow this link to go back to the README file.</a>)</em></p>
+<p><a href="https://github.com/rodw/stew">Stew</a> is a JavaScript library, implemented in <a href="http://coffeescript.org/">CoffeeScript</a>. It is primarily intended to be used in a <a href="http://nodejs.org/">Node.js</a> environment.<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup></p>
+<p>Both the (original) CoffeeScript and (generated) JavaScript files are included in the <a href="https://npmjs.org/package/stew-select">binary distribution</a>, so clients can use whichever they prefer.</p>
+<p>Stew's source code is hosted at <a href="https://github.com/rodw/stew">github.com/rodw/stew</a>. Any <a href="https://github.com/rodw/stew/issues">issues</a> or <a href="https://github.com/rodw/stew/pulls">pull-requests</a> you'd like to submit are appreciated.</p>
+<p>Stew is published under <a href="../MIT-LICENSE.txt">an MIT license</a>.</p>
+<p>This document provides information that is primarily of interest to those that want to <em>make changes</em> to Stew. Most clients (users) of the Stew library will be more intersted in the <a href="../README.html">README</a> file.</p>
+<h2 id="how-it-works"><a href="#TOC">How it Works</a></h2>
+<p>Stew is partioned into three classes: <em>DOMUtil</em>, <em>PredicateFactory</em> and <em>Stew</em>.</p>
+<p><a href="#stew"><strong><em>Stew</em></strong></a> is the real driver behind the API, parsing CSS selector expressions and collecting matching nodes from the DOM tree.</p>
+<p><a href="#predicatefactory"><strong><em>PredicateFactory</em></strong></a> defines methods that implement indvidual CSS selection rules.</p>
+<p><a href="#domutil"><strong><em>DOMUtil</em></strong></a> provides fairly generic utility methods for working with DOM structures.</p>
+<p>We'll cover those bottom-up, from the most generic to the most specific.</p>
+<h3 id="domutil"><a href="#TOC">DOMUtil</a></h3>
+<p><a href="./docco/dom-util.html"><strong><em>DOMUtil</em></strong></a> provides generic utilities for working with the DOM (Document Object Model) structure generated by <a href="https://github.com/tautologistics/node-htmlparser">node-htmlparser</a>.</p>
+<p>For our purposes, the most important of these utilities is the <code>walk_dom</code> method, which implements a depth-first walk of a given DOM tree. <code>walk_dom</code> will invoke the given <code>visit</code> (callback) method for every node in the DOM.</p>
+<p>For example, to convert a DOM structure into text, we might create a <code>visit</code> method like this:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">var</span> buffer = <span class="st">&quot;&quot;</span>;
+<span class="kw">var</span> visit = <span class="kw">new</span> <span class="kw">function</span>(node,node_metadata,all_metadata) {
+  <span class="kw">if</span>(<span class="kw">node</span>.<span class="fu">type</span> === <span class="ch">&#39;text&#39;</span>) {
+    buffer = buffer + <span class="kw">node</span>.<span class="fu">raw</span>;
+  }
+  <span class="kw">return</span> <span class="kw">true</span>;
+};</code></pre>
+<p>and invoke it like this:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">domutil</span>.<span class="fu">walk</span>_<span class="fu">dom</span>(dom,visit);
+<span class="kw">console</span>.<span class="fu">log</span>(<span class="st">&quot;The text was&quot;</span>);
+<span class="kw">console</span>.<span class="fu">log</span>(buffer);</code></pre>
+<p><em>Stew</em> uses <code>DOMUtil.walk_dom</code> to transverse the DOM tree.</p>
+<p>(<code>node_metadata</code> and <code>all_metadata</code> contain metadata about the current node, and all previously visited nodes, respectively. For example, <code>node_metadata.parent</code> contains the parent of the current node and <code>node_metadata.siblings</code> contains an array of all of <code>node_metadata.parent</code>'s children. See the comments with <code>dom-util.coffee</code> for more detail.)</p>
+<p>See the <a href="./docco/dom-util.html">annotated source</a> for more detail.</p>
+<h3 id="predicatefactory"><a href="#TOC">PredicateFactory</a></h3>
+<p><a href="./docco/predicate-factory.html"><strong><em>PredicateFactory</em></strong></a> generates predicate functions that test whether a given node matches a specific CSS selector.</p>
+<p>For example, the &quot;universal selector&quot; (<code>*</code>) matches any and every &quot;tag&quot; node. Here's a predicate function that implements the <code>*</code> selector:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> universal_selector_predicate(node) {
+  <span class="kw">return</span> <span class="kw">node</span>.<span class="fu">type</span> === <span class="ch">&#39;tag&#39;</span>;
+}</code></pre>
+<p>Here's a predicate that implements a &quot;tag&quot; selector, selecting all tags with the type (name) <code>foo</code>:</p>
+<pre class="sourceCode javascript"><code class="sourceCode javascript"><span class="kw">function</span> foo_tag_predicate(node) {
+  <span class="kw">return</span> <span class="kw">node</span>.<span class="fu">type</span> === <span class="ch">&#39;tag&#39;</span> &amp;&amp; <span class="kw">node</span>.<span class="fu">name</span> === <span class="ch">&#39;foo&#39;</span>;
+}</code></pre>
+<p><em>PredicateFactory</em> methods generate functions like these (bound to particular input parameters such as tag or attribute names).</p>
+<p><em>PredicateFactory</em> includes generators for each of the core CSS selectors (tag, ID, class, attribute name and attribute value) as well as combinators such as &quot;and&quot; (no space), &quot;or&quot; (<code>,</code>), &quot;descendant&quot; (space), &quot;direct descendant&quot; (<code>&gt;</code>), &quot;adjacent sibling&quot; (<code>+</code>).</p>
+<p><em>Stew</em> uses these predicates to implement the CSS selection logic.</p>
+<p>See the <a href="./docco/predicate-factory.html">annotated source</a> for more detail.</p>
+<h3 id="stew"><a href="#TOC">Stew</a></h3>
+<p><a href="./docco/stew.html"><strong><em>Stew</em></strong></a> is the main entry point for the overall library. <em>Stew</em> parses a <code>String</code> representation of a CSS Selector, generate the appropriate predicates (using <em>PredicateFactory</em>) and then processes the DOM tree (using <em>DOMUtil</em>) to select the matching nodes.</p>
+<p>The CSS parsing is primarily accomplished via regular expressions. This is a multi-step process.</p>
+<p>For example, lets assume complicated CSS expression such as:</p>
+<pre><code>&#39;div#main .sidebar ul.links li:first-child a[rel=&quot;author&quot;][href]&#39;</code></pre>
+<ol style="list-style-type: decimal">
+<li><p>The expression is split into individual selectors by <code>_parse_selectors</code> using <code>_SPLIT_ON_WS_REGEXP</code>. Naively this the same as splitting the expression on white-space characters, but we also need to take into account the use of spaces within <code>&quot;quoted strings&quot;</code> and <code>/regular expressions/</code> and non-whitespace delimiters like <code>,</code> or <code>+</code>. In our example, we obtain these five tokens:</p>
+<pre><code>[ &#39;div#main&#39;,  &#39;.sidebar&#39;,  &#39;ul.links&#39;,  &#39;li:first-child&#39;, &#39;a[rel=&quot;author&quot;][href]&#39; ]</code></pre></li>
+<li><p>Each of these tokens is then parsed into one or more CSS specific selectors by <code>_parse_selector</code> using <code>_CSS_SELECTOR_REGEXP</code> (and where needed, <code>_ATTRIBUTE_CLAUSE_REGEXP</code>). For example, from the first token (<code>div#main</code>) we identify two individual predicates, one that implements &quot;tag name is <code>div</code>&quot; and another that implements &quot;node id is <code>main</code>&quot;. These two predicates are then joined by an &quot;and&quot; predicate. All together, these five tokens are converted into predicates (something) like these:</p>
+<ol style="list-style-type: lower-alpha">
+<li><code>div#main</code> becomes <code>and( tag_name_is_div(), node_id_is_main() )</code></li>
+<li><code>.sidebar</code> becomes <code>class_name_is_sidebar()</code></li>
+<li><code>ul.links</code> becomes <code>and( tag_name_is_ul(), class_name_is_links() )</code></li>
+<li><code>li:first-child</code> becomes <code>and( tag_name_is_li(), tag_is_parents_first_child() )</code></li>
+<li><code>a[rel=&quot;author&quot;][href]</code> becomes <code>and( tag_name_is_a(), rel_attr_is_author(), has_href_attr() )</code></li>
+</ol></li>
+<li><p>Back in <code>_parse_selectors</code> these five predicates are joined into a &quot;descendant selector&quot; predicate, yielding a single predicate that returns <code>true</code> if and only if the current node matches the complete CSS expression.</p></li>
+</ol>
+<p>CSS-Selector-implementing predicate in hand, <em>Stew</em>'s <code>select</code> method then visits every node in the DOM tree, collecting each node that matches the predicate.</p>
+<p>See the <a href="./docco/stew.html">annotated source</a> for more detail.</p>
+<h3 id="unit-tests"><a href="#TOC">Unit Tests</a></h3>
+<p>The <code>./test</code> directory contains unit tests for each of these types. These tests can be executed by running</p>
+<pre class="console"><code>make test</code></pre>
+<p>or</p>
+<pre class="console"><code>npm test</code></pre>
+<p>The <a href="./coverage.html">test-coverage report</a> identifies the lines of code<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> that are exerciesd by the test suite. These report can be generated by running:</p>
+<pre class="console"><code>make coverage</code></pre>
+<h2 id="nuts-and-bolts"><a href="#TOC">Nuts and Bolts</a></h2>
+<h3 id="run-time-depenencies"><a href="#TOC">Run-time Depenencies</a></h3>
+<p>Technically Stew doesn't have any run-time dependencies. No external libraries are required.</p>
+<p>Practically speaking, Stew depends upon <a href="https://github.com/tautologistics/node-htmlparser">Chris Winberry's node-htmlparser</a>. Stew assumes the structure of the DOM object passed to <code>select</code> and similiar methods is compatible with that generated by node-htmlparser.</p>
+<p>If <code>node-htmlparser</code> is available (via a <code>require</code> call) then some (optional) <code>DOMUtil</code> methods will make use of it.</p>
+<p>Stew makes use of several libraries to support development, documentation and testing. These are enumerated in the <code>package.json</code> file.</p>
+<h3 id="building-and-testing"><a href="#TOC">Building and Testing</a></h3>
+<p><strong>Downloading</strong></p>
+<p>You can clone <a href="https://github.com/rodw/stew">Stew's Git repository</a> via:</p>
+<pre class="console"><code>git clone git@github.com:rodw/stew.git</code></pre>
+<p>You can also <a href="https://github.com/rodw/stew/archive/master.zip">download a ZIP archive of the latest source</a>.</p>
+<p><strong>Installing</strong></p>
+<p>Once you have Stew cloned into a local working directory, you can use <a href="https://npmjs.org/">npm</a> to install any build-time dependencies, as follows:</p>
+<pre class="console"><code>npm install</code></pre>
+<p>(This may take a few minutes, as some external libraries may need to be downloaded and natively compiled.)</p>
+<p><strong>Testing</strong></p>
+<p>Once installed, you can also run Stew's unit test suite using npm:</p>
+<pre class="console"><code>npm test</code></pre>
+<p>If everything is working properly, you should expect to see a message like <code>68 tests complete (633 ms)</code> (although the specific numbers might be different, of course).</p>
+<p><strong>Compiling the CoffeeScript files into JavaScript</strong></p>
+<p>You can run</p>
+<pre class="console"><code>npm run-script compile</code></pre>
+<p>to generate JavaScript files from the CoffeeScript files in <code>./lib</code>.</p>
+<h3 id="using-make"><a href="#TOC">Using Make</a></h3>
+<p>If you have <a href="http://www.gnu.org/software/make/">GNU Make</a> installed, the best and easiest way to work with Stew's source code is using the provided makefile.</p>
+<h4 id="installing-and-testing"><a href="#TOC">Installing and Testing</a></h4>
+<p>You can use:</p>
+<pre class="console"><code>make install</code></pre>
+<p>and:</p>
+<pre class="console"><code>make test</code></pre>
+<p>and:</p>
+<pre class="console"><code>make js</code></pre>
+<p>in place of the npm equivalents above, but the makefile can help you to do much more than that.</p>
+<h4 id="generating-documentation"><a href="#TOC">Generating Documentation</a></h4>
+<p><strong><code>make markdown</code></strong> will generate Stew's HTML documention from various <a href="http://daringfireball.net/projects/markdown/">Markdown</a> files in the repository. Most of these files will be written to the <code>./docs</code> directory. Note that the Makefile uses <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a> to generate HTML from the Markdown sources, but in theory other Markdown processors could be used.</p>
+<p><strong><code>make docco</code></strong> will generate an annotated version of Stew's source code using the nifty <a href="http://jashkenas.github.io/docco/">Docco</a> documentation generator. These files will be written to <code>./docs/docco/</code>.</p>
+<p><strong><code>make docs</code></strong> will do both of these at once.</p>
+<h4 id="test-coverage"><a href="#TOC">Test Coverage</a></h4>
+<p><strong><code>make coverage</code></strong> will generate a report that shows which source code lines are touched (and not touched) by the test suite. This runs the same unit tests as <code>make test</code>, but uses <a href="http://siliconforks.com/jscoverage/">JSCoverage</a> to evaluate the test coverage. The coverage report is written to <code>./docs/coverage.html</code>.</p>
+<h4 id="npm-packaging"><a href="#TOC">npm Packaging</a></h4>
+<p><strong><code>make module</code></strong> will generate a package suitable for distribution via npm (into a directory called <code>./module</code>).</p>
+<p><strong><code>make test-module-install</code></strong> will generate the <code>./module</code> directory and then validate it by trying to install it into a temporary directory. You should expect to see <code>It worked!</code> as the last line of output.</p>
+<h4 id="some-other-targets"><a href="#TOC">Some other targets</a></h4>
+<p><strong><code>make clean</code></strong> will remove various generated files.</p>
+<p><strong><code>make todo</code></strong> will display a list of &quot;TODO&quot; and related comments found in the source code.</p>
+<p><strong><code>make targets</code></strong> will list all available targets.</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Although it probably wouldn't be difficult to make Stew work in a browser context, we haven't had any need for that, and so we haven't (yet) attempted to do it. Drop us a <a href="https://github.com/rodw/stew/issues">note</a> if this is something you'd like to see Stew support.<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>The generated JavaScript code, not source CoffeeScript, for better or worse.<a href="#fnref2">↩</a></p></li>
+</ol>
+</div>
+</body>
+</html>
