@@ -198,15 +198,15 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>E.g., <code>stew.select( dom, 'a[class~=&quot;author&quot;]')</code> selects all <code>a</code> tags with the <code>class</code> <code>author</code>, whether or not that tag has other classes as well. More generally <code>~=</code> treats the attribute value as a white-space delimited list of values (to which the given value is compared).</p></li>
 <li><p>The <code>|=</code> operator (<code>E[foo|=&quot;bar&quot;]</code>).</p>
 <p>E.g., <code>stew.select( dom, 'div[lang|=&quot;en&quot;]')</code> selects all <code>div</code> tags with a <code>lang</code> attribute whose value is <em>exactly</em> <code>en</code> or whose value starts with <code>en-</code>.</p></li>
-<li><p>The starts-with <code>^=</code> operator (<code>E[foo^=&quot;bar&quot;]</code>). <strong><em>NEW, UNRELEASED</em></strong></p>
+<li><p>The starts-with <code>^=</code> operator (<code>E[foo^=&quot;bar&quot;]</code>).</p>
 <p>E.g., <code>stew.select( dom, 'a[href^=&quot;https://&quot;]')</code> selects all <code>a</code> tags with an <code>href</code> attribute value that starts with <code>https://</code>.</p></li>
-<li><p>The ends-with <code>$=</code> operator (<code>E[foo$=&quot;bar&quot;]</code>). <strong><em>NEW, UNRELEASED</em></strong></p>
+<li><p>The ends-with <code>$=</code> operator (<code>E[foo$=&quot;bar&quot;]</code>).</p>
 <p>E.g., <code>stew.select( dom, 'a[href$=&quot;.html&quot;]')</code> selects all <code>a</code> tags with an <code>href</code> attribute value that ends with <code>.html</code>.</p></li>
-<li><p>The contains <code>*=</code> operator (<code>E[foo*=&quot;bar&quot;]</code>). <strong><em>NEW, UNRELEASED</em></strong></p>
+<li><p>The contains <code>*=</code> operator (<code>E[foo*=&quot;bar&quot;]</code>).</p>
 <p>E.g., <code>stew.select( dom, 'a[href*=&quot;://heyrod.com/&quot;]')</code> selects all <code>a</code> tags with an <code>href</code> attribute value that contains with <code>://heyrod.com/</code>.</p></li>
 <li><p>Adjacent selectors (<code>E + F</code>).</p>
 <p>E.g., <code>stew.select( dom, 'h1 + p')</code> selects all <code>p</code> tags that immediately follow an <code>h1</code> tag.</p></li>
-<li><p>Preceeding sibling selectors (<code>E ~ F</code>). <strong><em>NEW, UNRELEASED</em></strong></p>
+<li><p>Preceeding sibling selectors (<code>E ~ F</code>).</p>
 <p>E.g., <code>stew.select( dom, 'h1 ~ p')</code> selects all <code>p</code> tags that follow an <code>h1</code> tag (even if there are other tags between the <code>h1</code> and <code>p</code>.</p></li>
 <li><p>The &quot;or&quot; conjunction (<code>E, F</code>).</p>
 <p>E.g., <code>stew.select( dom, 'h1, h2')</code> selects all <code>h1</code> and <code>h2</code> tags.</p></li>

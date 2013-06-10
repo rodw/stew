@@ -2,7 +2,7 @@
 
 *([Follow this link to go back to the README file.](../README.html))*
 
-## HEAD VERSION - UNRELEASD
+## Version 0.0.5 - Sunday 9-June-2013
 
  * Added support for preceeding sibling conjuction (`~`) as in `E ~ F`
 
@@ -11,6 +11,8 @@
  * Added support for ends-with attribute comparison operator (`[name$=value]`)
 
  * Added support for contains attribute comparison operator (`[name*=value]`)
+
+ * Fixed bug that prevented Stew from properly parsing selectors containing un-quoted attribute values with colons (e.g., `[name=foo:bar]` vs. `[name="foo:bar"]`).
 
 ## Version 0.0.4 - Friday 7-June-2013
 
