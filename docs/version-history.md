@@ -2,7 +2,7 @@
 
 *([Follow this link to go back to the README file.](../README.html))*
 
-## HEAD VERSION - UNRELEASD
+## Version 0.0.5 - Sunday 9-June-2013
 
  * Added support for preceeding sibling conjuction (`~`) as in `E ~ F`
 
