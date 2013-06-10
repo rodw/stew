@@ -12,6 +12,8 @@
 
  * Added support for contains attribute comparison operator (`[name*=value]`)
 
+ * Fixed bug that prevented Stew from properly parsing selectors containing un-quoted attribute values with colons (e.g., `[name=foo:bar]` vs. `[name="foo:bar"]`).
+
 ## Version 0.0.4 - Friday 7-June-2013
 
  * Added `npm test`, `npm run-script compile` and `npm run-script slashdot-example` targets.

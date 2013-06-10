@@ -33,7 +33,7 @@ class DOMUtil
   #    the same format as they are found in the DOM.
   #
   constructor:(params = {})->
-    @decode = params?['decode'] ? (str)->str
+    @decode = params.decode ? (str)->str
 
   # **parse_html** is a convenience function that parses a given HTML string
   # into one or more DOM trees using the `htmlparser` library (if present).

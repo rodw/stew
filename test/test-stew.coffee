@@ -31,6 +31,8 @@ TEST_HTML = """
 </html>
 """
 
+
+
 describe "Stew",->
 
   beforeEach (done)->
@@ -45,6 +47,15 @@ describe "Stew",->
     @stew = null
     @DOM = null
     done()
+
+  describe "(fixed bugs)",->
+    it "handles colon (:) in unquoted attribute values",(done)->
+      html = '<html><head><meta property="og:title" content="Stew"/><meta property="og:type" content="githubog:gitrepository"/></head></html>'
+      @stew.select html, 'meta[property=og:type]', (err,nodeset)->
+        should.not.exist err
+        nodeset.length.should.equal 1
+        nodeset[0].attribs.content.should.equal "githubog:gitrepository"
+        done()
 
   it 'can parse a selector string into a list of predictes ',(done)->
     selector = @stew._parse_selectors('tag .foo #bar [/x/i] [y=/z/]')

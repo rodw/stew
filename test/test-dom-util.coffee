@@ -99,6 +99,14 @@ describe "DOMUtil",=>
         text.should.equal 'beta'
         done()
 
+    it "supports a `decode` function for converting HTML to text nodes",(done)=>
+      dom_util = new DOMUtil(decode:(str)->str.toUpperCase())
+      html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
+      @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
+        text = dom_util.to_text dom
+        text.should.equal 'ALPHABETA'
+        done()
+
     it "is also known as `inner_text`",(done)=>
       html = '<html><div id="A"><span>alpha</span></div><div id="B"><b><i>beta</i></b></div></html>'
       @dom_util.parse_html html, HTMLPARSER_OPTIONS, (err, dom)=>
