@@ -104,9 +104,25 @@ Stew supports the full [CSS selector](http://www.w3.org/TR/CSS2/selector.html) s
 
       E.g., `stew.select( dom, 'div[lang|="en"]')` selects all `div` tags with a `lang` attribute whose value is *exactly* `en` or whose value starts with `en-`.
 
+  * The starts-with `^=` operator  (`E[foo^="bar"]`). ***NEW, UNRELEASED***
+
+      E.g., `stew.select( dom, 'a[href^="https://"]')` selects all `a` tags with an `href` attribute value that starts with `https://`.
+
+  * The ends-with `$=` operator  (`E[foo$="bar"]`). ***NEW, UNRELEASED***
+
+      E.g., `stew.select( dom, 'a[href$=".html"]')` selects all `a` tags with an `href` attribute value that ends with `.html`.
+
+  * The contains `*=` operator  (`E[foo*="bar"]`). ***NEW, UNRELEASED***
+
+      E.g., `stew.select( dom, 'a[href*="://heyrod.com/"]')` selects all `a` tags with an `href` attribute value that contains with `://heyrod.com/`.
+
   * Adjacent selectors (`E + F`).
 
       E.g., `stew.select( dom, 'h1 + p')` selects all `p` tags that immediately follow an `h1` tag.
+
+  * Preceeding sibling selectors (`E ~ F`). ***NEW, UNRELEASED***
+
+      E.g., `stew.select( dom, 'h1 ~ p')` selects all `p` tags that follow an `h1` tag (even if there are other tags between the `h1` and `p`.
 
   * The "or" conjunction (`E, F`).
 
