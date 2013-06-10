@@ -796,3 +796,36 @@ describe "Stew",->
       nodeset[0].name.should.equal 'div'
       nodeset[0].attribs.id.should.equal 'outer-1'
       done()
+
+    # E ~ F - any F element preceded by a sibling element E - Adjacent selectors
+    it 'supports the preceding adjacent selector (`E ~ F`) (string case)',(done)->
+      nodeset = @stew.select(@DOM,'.odd section')
+      nodeset.length.should.equal 0
+      nodeset = @stew.select(@DOM,'.odd + section')
+      nodeset.length.should.equal 0
+      nodeset = @stew.select(@DOM,'.odd ~ section')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'section'
+      nodeset = @stew.select(@DOM,'.odd ~ section span')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.id.should.equal 'escaped-quote-test'
+      done()
+
+    it 'supports the preceding adjacent selector (`E ~ F`) (regexp case)',(done)->
+      nodeset = @stew.select(@DOM,'.odd /section/')
+      nodeset.length.should.equal 0
+      nodeset = @stew.select(@DOM,'.odd + /s[aeiou]ction/')
+      nodeset.length.should.equal 0
+      nodeset = @stew.select(@DOM,'.odd ~ /s[aeiou]ction/')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'section'
+      nodeset = @stew.select(@DOM,'.odd ~ /s[aeiou]ction/ span')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.id.should.equal 'escaped-quote-test'
+      done()

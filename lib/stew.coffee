@@ -121,11 +121,37 @@ class Stew
   # used to split a string of CSS selectors into individual
   # selectors. It is similiar to `str.split(/\s/)`, but:
   #  - treats "quoted phrases" (and `/regular expressions/`) as a single token
-  #  - also splits on the CSS "operators" of `>`, `+` and `,`
+  #  - also splits on the CSS "operators" of `>`, `+`, `,` and `~`
   # (Shout-out to
   # http://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array
   # from which this expression was derived.)
-  _SPLIT_ON_WS_REGEXP = /([^\"\/\s,\+>]|(\"[^\"]+\")|(\/[^\/]+\/))+|[,\+>]/g
+  # _SPLIT_ON_WS_REGEXP = /([^\"\/\s,\+>]|(\"[^\"]+\")|(\/[^\/]+\/))+|[,\+>]/g
+  # #{                     |\_A_________/ \_B________/ \_C________/|| \_F__/
+  # #{                     \_D_____________________________________/|
+  # #{                     \_E______________________________________/
+  # #{                     \_G_____________________________________________/
+  # #{
+  # #{ A = not `"` `/` ` ` `,`  `+` `>
+  # #{ B = `"` ... `"`
+  # #{ C = `/` ... `/`
+  # #{ D = A or B or C
+  # #{ E = one or more D
+  # #{ F = `,`, `+` or `>`
+  # #{ G = E or F
+
+  _SPLIT_ON_WS_REGEXP = /([^\"\/\s,\+>]|(\"[^\"]+\")|(\/[^\/]+\/)|(\[[^\]]*\]))+|[,\+~>]/g
+  #{                     |\_A_________/ \_B________/ \_C________/|| \_F__/
+  #{                     \_D_____________________________________/|
+  #{                     \_E______________________________________/
+  #{                     \_G_____________________________________________/
+  #{
+  #{ A = not `"` `/` ` ` `,`  `+` `>
+  #{ B = `"` ... `"`
+  #{ C = `/` ... `/`
+  #{ D = A or B or C
+  #{ E = one or more D
+  #{ F = `,`, `+` or `>`
+  #{ G = E or F
 
   # **_split_on_ws_respecting_quotes** is used to split a string of
   # CSS selectors into individual selectors.
@@ -149,12 +175,15 @@ class Stew
       selectors = @_split_on_ws_respecting_quotes(selectors)
     child_operator = false # TODO there is probably a more elegant way to handle `>`, `+` and `,` here.
     adjacent_operator = false
+    preceding_sibling_operator = false
     or_operator = false
     for selector in selectors
       if selector is '>'
         child_operator = true
       else if selector is '+'
         adjacent_operator = true
+      else if selector is '~'
+        preceding_sibling_operator = true
       else if selector is ','
         or_operator = true
       else
@@ -165,6 +194,9 @@ class Stew
         else if adjacent_operator
           result.push( @factory.adjacent_sibling_predicate( result.pop(), predicate  ) )
           adjacent_operator = false
+        else if preceding_sibling_operator
+          result.push( @factory.preceding_sibling_predicate( result.pop(), predicate  ) )
+          preceding_sibling_operator = false
         else if or_operator
           result.push( @factory.or_predicate( [ result.pop(), predicate ] ) )
           or_operator = false

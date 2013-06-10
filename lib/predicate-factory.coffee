@@ -274,6 +274,22 @@ class PredicateFactory
             prev_tag_index -= 1
       return false
 
+  # **preceding_sibling_predicate** returns a predicate
+  # that evaluates to `true` iff `second` evaluates
+  # to `true` for the given `node` and `first` evaluates
+  # to `true` for some tag sibling preceding
+  # the given `node`.
+  preceding_sibling_predicate:(first,second)->
+    return (node,node_metadata,dom_metadata)->
+      if second(node,node_metadata,dom_metadata)
+        for prev,index in node_metadata.siblings
+          if index is node_metadata.sib_index
+            return false
+          else if prev.type is 'tag'
+            if first(prev,dom_metadata[prev._stew_node_id],dom_metadata)
+              return true
+      return false
+
 # The PredicateFactory class is exported under the name `PredicateFactory`.
 exports = exports ? this
 exports.PredicateFactory = PredicateFactory
