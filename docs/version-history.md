@@ -2,6 +2,16 @@
 
 *([Follow this link to go back to the README file.](../README.html))*
 
+## HEAD VERSION - UNRELEASD
+
+ * Added support for preceeding sibling conjuction (`~`) as in `E ~ F`
+
+ * Added support for starts-with attribute comparison operator (`[name^=value]`)
+
+ * Added support for ends-with attribute comparison operator (`[name$=value]`)
+
+ * Added support for contains attribute comparison operator (`[name*=value]`)
+
 ## Version 0.0.4 - Friday 7-June-2013
 
  * Added `npm test`, `npm run-script compile` and `npm run-script slashdot-example` targets.

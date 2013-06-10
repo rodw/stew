@@ -798,7 +798,7 @@ describe "Stew",->
       done()
 
     # E ~ F - any F element preceded by a sibling element E - Adjacent selectors
-    it 'supports the preceding adjacent selector (`E ~ F`) (string case)',(done)->
+    it 'supports the preceding sibling selector (`E ~ F`) (string case)',(done)->
       nodeset = @stew.select(@DOM,'.odd section')
       nodeset.length.should.equal 0
       nodeset = @stew.select(@DOM,'.odd + section')
@@ -814,6 +814,23 @@ describe "Stew",->
       nodeset[0].attribs.id.should.equal 'escaped-quote-test'
       done()
 
+    ## TODO FIXME make `E~F` work just like `E ~ F`
+    # it 'supports the preceding sibling selector without whitesapce (`E~F`) (string case)',(done)->
+    #   nodeset = @stew.select(@DOM,'.odd section')
+    #   nodeset.length.should.equal 0
+    #   nodeset = @stew.select(@DOM,'.odd+section')
+    #   nodeset.length.should.equal 0
+    #   nodeset = @stew.select(@DOM,'.odd~section')
+    #   nodeset.length.should.equal 1
+    #   nodeset[0].type.should.equal 'tag'
+    #   nodeset[0].name.should.equal 'section'
+    #   nodeset = @stew.select(@DOM,'.odd~section span')
+    #   nodeset.length.should.equal 1
+    #   nodeset[0].type.should.equal 'tag'
+    #   nodeset[0].name.should.equal 'span'
+    #   nodeset[0].attribs.id.should.equal 'escaped-quote-test'
+    #   done()
+
     it 'supports the preceding adjacent selector (`E ~ F`) (regexp case)',(done)->
       nodeset = @stew.select(@DOM,'.odd /section/')
       nodeset.length.should.equal 0
@@ -828,4 +845,229 @@ describe "Stew",->
       nodeset[0].type.should.equal 'tag'
       nodeset[0].name.should.equal 'span'
       nodeset[0].attribs.id.should.equal 'escaped-quote-test'
+      done()
+
+    it 'supports the ^= (starts-with) operator in the attribute-value selector (`E[foo^="bar"]`) (string case)',(done)->
+      #
+      nodeset = @stew.select(@DOM,'div[lang^="en-"]')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'span[width^=1]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      done()
+
+
+    it 'supports the ^= (starts-with) operator in the attribute-value selector (`E[foo^="bar"]`) (regexp case)',(done)->
+      nodeset = @stew.select(@DOM,'div[lang=/n/]')
+      nodeset.length.should.equal 3
+      nodeset = @stew.select(@DOM,'div[lang^=/n/]')
+      nodeset.length.should.equal 0
+      #
+      nodeset = @stew.select(@DOM,'div[lang^=/en-/]')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'div[lang^=/^en-/]')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'span[width^=/1/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      nodeset = @stew.select(@DOM,'span[width^=/17$/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      done()
+
+    it 'supports the $= (ends-with) operator in the attribute-value selector (`E[foo$="bar"]`) (string case)',(done)->
+      #
+      nodeset = @stew.select(@DOM,'div[id$="-2"]')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-2'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'outer-2'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-2'
+      #
+      nodeset = @stew.select(@DOM,'span[width$=7]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      nodeset = @stew.select(@DOM,'span[width$=17]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      nodeset = @stew.select(@DOM,'span[width$=1]')
+      nodeset.length.should.equal 0
+      #
+      done()
+
+    it 'supports the $= (ends-with) operator in the attribute-value selector (`E[foo$="bar"]`) (regexp case)',(done)->
+      nodeset = @stew.select(@DOM,'div[lang=/n/]')
+      nodeset.length.should.equal 3
+      #
+      nodeset = @stew.select(@DOM,'div[lang$=/n/]')
+      nodeset.length.should.equal 1
+      #
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-2'
+      #
+      nodeset = @stew.select(@DOM,'div[lang$=/-((gb)|(us))/]')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'div[lang$=/-(g|u)./]')
+      nodeset.length.should.equal 2
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'inner-1-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'span[width$=/[0-9]7/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      nodeset = @stew.select(@DOM,'span[width$=/7/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      nodeset = @stew.select(@DOM,'span[width$=/^17/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      nodeset = @stew.select(@DOM,'span[width$=/17$/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      nodeset = @stew.select(@DOM,'span[width$=/^17$/]')
+      nodeset.length.should.equal 1
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'span'
+      nodeset[0].attribs.width.should.equal '17'
+      #
+      done()
+
+
+    it 'supports the *= (contains) operator in the attribute-value selector (`E[foo*="bar"]`) (string case)',(done)->
+      #
+      nodeset = @stew.select(@DOM,'div[class*="er odd"]')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-1'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'div[class*="er"]')
+      nodeset.length.should.equal 6
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-1'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-1-2'
+      nodeset[3].type.should.equal 'tag'
+      nodeset[3].name.should.equal 'div'
+      nodeset[3].attribs.id.should.equal 'outer-2'
+      nodeset[4].type.should.equal 'tag'
+      nodeset[4].name.should.equal 'div'
+      nodeset[4].attribs.id.should.equal 'inner-2-1'
+      nodeset[5].type.should.equal 'tag'
+      nodeset[5].name.should.equal 'div'
+      nodeset[5].attribs.id.should.equal 'inner-2-2'
+      #
+      done()
+
+    it 'supports the *= (contains) operator in the attribute-value selector (`E[foo*="bar"]`) (regexp case)',(done)->
+      #
+      nodeset = @stew.select(@DOM,'div[class*=/er odd/]')
+      nodeset.length.should.equal 3
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-1'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-2-1'
+      #
+      nodeset = @stew.select(@DOM,'div[class*=/er/]')
+      nodeset.length.should.equal 6
+      nodeset[0].type.should.equal 'tag'
+      nodeset[0].name.should.equal 'div'
+      nodeset[0].attribs.id.should.equal 'outer-1'
+      nodeset[1].type.should.equal 'tag'
+      nodeset[1].name.should.equal 'div'
+      nodeset[1].attribs.id.should.equal 'inner-1-1'
+      nodeset[2].type.should.equal 'tag'
+      nodeset[2].name.should.equal 'div'
+      nodeset[2].attribs.id.should.equal 'inner-1-2'
+      nodeset[3].type.should.equal 'tag'
+      nodeset[3].name.should.equal 'div'
+      nodeset[3].attribs.id.should.equal 'outer-2'
+      nodeset[4].type.should.equal 'tag'
+      nodeset[4].name.should.equal 'div'
+      nodeset[4].attribs.id.should.equal 'inner-2-1'
+      nodeset[5].type.should.equal 'tag'
+      nodeset[5].name.should.equal 'div'
+      nodeset[5].attribs.id.should.equal 'inner-2-2'
+      #
       done()

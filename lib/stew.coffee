@@ -124,34 +124,8 @@ class Stew
   #  - also splits on the CSS "operators" of `>`, `+`, `,` and `~`
   # (Shout-out to
   # http://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array
-  # from which this expression was derived.)
-  # _SPLIT_ON_WS_REGEXP = /([^\"\/\s,\+>]|(\"[^\"]+\")|(\/[^\/]+\/))+|[,\+>]/g
-  # #{                     |\_A_________/ \_B________/ \_C________/|| \_F__/
-  # #{                     \_D_____________________________________/|
-  # #{                     \_E______________________________________/
-  # #{                     \_G_____________________________________________/
-  # #{
-  # #{ A = not `"` `/` ` ` `,`  `+` `>
-  # #{ B = `"` ... `"`
-  # #{ C = `/` ... `/`
-  # #{ D = A or B or C
-  # #{ E = one or more D
-  # #{ F = `,`, `+` or `>`
-  # #{ G = E or F
-
+  # from which this expression was originally derived.)
   _SPLIT_ON_WS_REGEXP = /([^\"\/\s,\+>]|(\"[^\"]+\")|(\/[^\/]+\/)|(\[[^\]]*\]))+|[,\+~>]/g
-  #{                     |\_A_________/ \_B________/ \_C________/|| \_F__/
-  #{                     \_D_____________________________________/|
-  #{                     \_E______________________________________/
-  #{                     \_G_____________________________________________/
-  #{
-  #{ A = not `"` `/` ` ` `,`  `+` `>
-  #{ B = `"` ... `"`
-  #{ C = `/` ... `/`
-  #{ D = A or B or C
-  #{ E = one or more D
-  #{ F = `,`, `+` or `>`
-  #{ G = E or F
 
   # **_split_on_ws_respecting_quotes** is used to split a string of
   # CSS selectors into individual selectors.
@@ -212,39 +186,39 @@ class Stew
   # `"tag#id.class-one.class-two[name~=\"value with spaces\"]".match(_CSS_SELECTOR_REGEXP)`
   #
   #{ TODO: Combine the `id` and `class` rules to make them order-indepedent? (I think CSS specifies the order, but still.)
-  #{##########################################################################################################################################################################################################################################################
-  #{                                                                                            11                  1           11  11                  1        112   2    2     22 22       2           22                  3                3 3           #
-  #{                     12                  3            4  56                  7          89  01                  2           34  56                  7        890   1    2     34 56       7           89                  0                1 2           #
-  _CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|(\*|[\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)((\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])*)(:([\w-]+))?/ #
-  #{                      \-name--------------------------/|\-id-----------------------------/\-class(es)-----------------------/||  \-attr-name-----------------/|\-operator-----/\-value-----------------------------------------------/|  | |\-pseduo--/  #
-  #{                                                                                                                             ||                               \-operator-and-value----------------------------------------------------/  | |             #
-  #{                                                                                                                             |\-attr-clause-([])-----------------------------------------------------------------------------------------/ |             #
-  #{                                                                                                                             \-attr-clauses-([][]...)--------------------------------------------------------------------------------------/             #
-  #{##########################################################################################################################################################################################################################################################
+  #{############################################################################################################################################################################################################################################################################
+  #{                                                                                            11                  1           11  11                  1        112   2    2     2     2     2     22 22       3          33                  3                 3 3           #
+  #{                     12                  3            4  56                  7          89  01                  2           34  56                  7        890   1    2     3     4     5     67 89       0          12                  3                 4 5           #
+  _CSS_SELECTOR_REGEXP: /((\/[^\/]*\/[gmi]*)|(\*|[\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)((\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=)|(\*=)|(\^=)|(\$=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])*)(:([\w-]+))?/ #
+  #{                      \-name--------------------------/|\-id-----------------------------/\-class(es)-----------------------/||  \-attr-name-----------------/|\-operator----------------------/\-value-----------------------------------------------/|  | |\-pseduo--/   #
+  #{                                                                                                                             ||                               \-operator-and-value---------------------------------------------------------------------/  | |              #
+  #{                                                                                                                             |\-attr-clause-([])----------------------------------------------------------------------------------------------------------/ |              #
+  #{                                                                                                                             \-attr-clauses-([][]...)-------------------------------------------------------------------------------------------------------/              #
+  #{############################################################################################################################################################################################################################################################################
 
   # Indices of the important captured groups.
   _NAME         = 1
   _ID           = 4
   _CLASSES      = 8
   _ATTRIBUTES   = 13
-  _PSEUDO_CLASS = 32
+  _PSEUDO_CLASS = 35
 
   # **_ATTRIBUTE_CLAUSE_REGEXP** is a regular expression used to
   # split one or more `[<name> <op> <value>]` expressions
   # into individual components.
-  #{#########################################################################################################################################
-  #{                                                                          11 11       1          11                  1                  #
-  #{                         1  23                  4        567   8    9     01 23       4          56                  7                  #
-  _ATTRIBUTE_CLAUSE_REGEXP: /(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])/g #
-  #{                            \-name----------------------/|\-operator-----/\-value-----------------------------------------------/|      #
-  #{                                                         \-operator-and-value----------------------------------------------------/      #
-  #{#########################################################################################################################################
+  #{###########################################################################################################################################################
+  #{                                                                          1     1     1     11 11       1          11                  2                  #
+  #{                         1  23                  4        567   8    9     0     1     2     34 56       7          89                  0                  #
+  _ATTRIBUTE_CLAUSE_REGEXP: /(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=)|(\*=)|(\^=)|(\$=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])/g #
+  #{                            \-name----------------------/|\-operator-----------------------/\-value-----------------------------------------------/|      #
+  #{                                                         \-operator-and-value----------------------------------------------------------------------/      #
+  #{###########################################################################################################################################################
 
   # Indices of the important captured groups.
   _ATTR_NAME              = 2
   _OPERATOR               = 6
-  _DEQUOTED_ATTR_VALUE    = 12
-  _NEVERQUOTED_ATTR_VALUE = 15
+  _DEQUOTED_ATTR_VALUE    = 15
+  _NEVERQUOTED_ATTR_VALUE = 18
 
   # **_parse_selector** returns a (possibly compound) predicate
   # that matches the provided `selector` (string).
@@ -270,6 +244,7 @@ class Stew
       for c in cs
         clauses.push(@factory.by_class_predicate(@_to_string_or_regex(c)))
 
+    # TODO FIXME Support for `*=`, `^=` and `$=` is kinda hacked-in here.  Refactor to be more DRY.
     # One or more attribute parts.
     if match[_ATTRIBUTES]?.length > 0 # match[_ATTRIBUTES] contains one or more `[name=value]` (or `[name]`) strings
       attr_match = @_ATTRIBUTE_CLAUSE_REGEXP.exec(match[_ATTRIBUTES])
@@ -287,6 +262,40 @@ class Stew
                 @_to_string_or_regex(attr_match[_DEQUOTED_ATTR_VALUE] ? attr_match[_NEVERQUOTED_ATTR_VALUE])
               )
             )
+          else if attr_match[_OPERATOR] is '^=' # starts with
+            aval = @_to_string_or_regex(attr_match[_DEQUOTED_ATTR_VALUE] ? attr_match[_NEVERQUOTED_ATTR_VALUE])
+            if typeof aval is 'string'
+              regexp_source = @factory._escape_for_regexp(aval)
+              aval = new RegExp("^#{regexp_source}")
+            else
+              regexp_source = aval.source
+              modifier = ''
+              modifier += 'i' if aval.ignoreCase
+              modifier += 'g' if aval.global
+              modifier += 'm' if aval.multiline
+              unless /^\^/.test regexp_source
+                aval = new RegExp("^#{regexp_source}")
+            clauses.push(@factory.by_attr_value_predicate(@_to_string_or_regex(attr_match[_ATTR_NAME]),aval))
+          else if attr_match[_OPERATOR] is '$=' # ends with
+            aval = @_to_string_or_regex(attr_match[_DEQUOTED_ATTR_VALUE] ? attr_match[_NEVERQUOTED_ATTR_VALUE])
+            if typeof aval is 'string'
+              regexp_source = @factory._escape_for_regexp(aval)
+              aval = new RegExp("#{regexp_source}$")
+            else
+              regexp_source = aval.source
+              modifier = ''
+              modifier += 'i' if aval.ignoreCase
+              modifier += 'g' if aval.global
+              modifier += 'm' if aval.multiline
+              unless /\$$/.test regexp_source
+                aval = new RegExp("#{regexp_source}$")
+            clauses.push(@factory.by_attr_value_predicate(@_to_string_or_regex(attr_match[_ATTR_NAME]),aval))
+          else if attr_match[_OPERATOR] is '*=' # contains
+            aval = @_to_string_or_regex(attr_match[_DEQUOTED_ATTR_VALUE] ? attr_match[_NEVERQUOTED_ATTR_VALUE])
+            if typeof aval is 'string'
+              regexp_source = @factory._escape_for_regexp(aval)
+              aval = new RegExp(regexp_source)
+            clauses.push(@factory.by_attr_value_predicate(@_to_string_or_regex(attr_match[_ATTR_NAME]),aval))
           else
             clauses.push(
               @factory.by_attr_value_predicate(
