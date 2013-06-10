@@ -252,14 +252,14 @@ a single node rather than an array of nodes.</p>
 used to split a string of CSS selectors into individual
 selectors. It is similiar to <code>str.split(/\s/)</code>, but:
  - treats &quot;quoted phrases&quot; (and <code>/regular expressions/</code>) as a single token
- - also splits on the CSS &quot;operators&quot; of <code>&gt;</code>, <code>+</code> and <code>,</code>
+ - also splits on the CSS &quot;operators&quot; of <code>&gt;</code>, <code>+</code>, <code>,</code> and <code>~</code>
 (Shout-out to
 <a href="http://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array">http://stackoverflow.com/questions/2817646/javascript-split-string-on-space-or-on-quotes-to-array</a>
-from which this expression was derived.)</p>
+from which this expression was originally derived.)</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  _SPLIT_ON_WS_REGEXP = <span class="regexp">/([^\"\/\s,\+&gt;]|(\"[^\"]+\")|(\/[^\/]+\/))+|[,\+&gt;]/g</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  _SPLIT_ON_WS_REGEXP = <span class="regexp">/([^\"\/\s,\+&gt;]|(\"[^\"]+\")|(\/[^\/]+\/)|(\[[^\]]*\]))+|[,\+~&gt;]/g</span></pre></div></div>
             
         </li>
         
@@ -307,12 +307,15 @@ predicate (a boolean-valued function with the signature
       selectors = <span class="property">@_split_on_ws_respecting_quotes</span>(selectors)
     child_operator = <span class="literal">false</span> <span class="comment"># TODO there is probably a more elegant way to handle `&gt;`, `+` and `,` here.</span>
     adjacent_operator = <span class="literal">false</span>
+    preceding_sibling_operator = <span class="literal">false</span>
     or_operator = <span class="literal">false</span>
     <span class="keyword">for</span> selector <span class="keyword">in</span> selectors
       <span class="keyword">if</span> selector <span class="keyword">is</span> <span class="string">'&gt;'</span>
         child_operator = <span class="literal">true</span>
       <span class="keyword">else</span> <span class="keyword">if</span> selector <span class="keyword">is</span> <span class="string">'+'</span>
         adjacent_operator = <span class="literal">true</span>
+      <span class="keyword">else</span> <span class="keyword">if</span> selector <span class="keyword">is</span> <span class="string">'~'</span>
+        preceding_sibling_operator = <span class="literal">true</span>
       <span class="keyword">else</span> <span class="keyword">if</span> selector <span class="keyword">is</span> <span class="string">','</span>
         or_operator = <span class="literal">true</span>
       <span class="keyword">else</span>
@@ -323,6 +326,9 @@ predicate (a boolean-valued function with the signature
         <span class="keyword">else</span> <span class="keyword">if</span> adjacent_operator
           result.push( <span class="property">@factory</span>.adjacent_sibling_predicate( result.pop(), predicate  ) )
           adjacent_operator = <span class="literal">false</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> preceding_sibling_operator
+          result.push( <span class="property">@factory</span>.preceding_sibling_predicate( result.pop(), predicate  ) )
+          preceding_sibling_operator = <span class="literal">false</span>
         <span class="keyword">else</span> <span class="keyword">if</span> or_operator
           result.push( <span class="property">@factory</span>.or_predicate( [ result.pop(), predicate ] ) )
           or_operator = <span class="literal">false</span>
@@ -348,15 +354,15 @@ predicate (a boolean-valued function with the signature
             </div>
             
             <div class="content"><div class='highlight'><pre>  <span class="comment">#{ TODO: Combine the `id` and `class` rules to make them order-indepedent? (I think CSS specifies the order, but still.)</span>
-  <span class="comment">#{##########################################################################################################################################################################################################################################################</span>
-  <span class="comment">#{                                                                                            11                  1           11  11                  1        112   2    2     22 22       2           22                  3                3 3           #</span>
-  <span class="comment">#{                     12                  3            4  56                  7          89  01                  2           34  56                  7        890   1    2     34 56       7           89                  0                1 2           #</span>
-  _CSS_SELECTOR_REGEXP: <span class="regexp">/((\/[^\/]*\/[gmi]*)|(\*|[\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)((\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])*)(:([\w-]+))?/</span> <span class="comment">#</span>
-  <span class="comment">#{                      \-name--------------------------/|\-id-----------------------------/\-class(es)-----------------------/||  \-attr-name-----------------/|\-operator-----/\-value-----------------------------------------------/|  | |\-pseduo--/  #</span>
-  <span class="comment">#{                                                                                                                             ||                               \-operator-and-value----------------------------------------------------/  | |             #</span>
-  <span class="comment">#{                                                                                                                             |\-attr-clause-([])-----------------------------------------------------------------------------------------/ |             #</span>
-  <span class="comment">#{                                                                                                                             \-attr-clauses-([][]...)--------------------------------------------------------------------------------------/             #</span>
-  <span class="comment">#{##########################################################################################################################################################################################################################################################</span></pre></div></div>
+  <span class="comment">#{############################################################################################################################################################################################################################################################################</span>
+  <span class="comment">#{                                                                                            11                  1           11  11                  1        112   2    2     2     2     2     22 22       3          33                  3                 3 3           #</span>
+  <span class="comment">#{                     12                  3            4  56                  7          89  01                  2           34  56                  7        890   1    2     3     4     5     67 89       0          12                  3                 4 5           #</span>
+  _CSS_SELECTOR_REGEXP: <span class="regexp">/((\/[^\/]*\/[gmi]*)|(\*|[\w-]+))?(\#((\/[^\/]*\/[gmi]*)|([\w-]+)))?((\.((\/[^\/]*\/[gmi]*)|([\w-]+)))*)((\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=)|(\*=)|(\^=)|(\$=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])*)(:([\w-]+))?/</span> <span class="comment">#</span>
+  <span class="comment">#{                      \-name--------------------------/|\-id-----------------------------/\-class(es)-----------------------/||  \-attr-name-----------------/|\-operator----------------------/\-value-----------------------------------------------/|  | |\-pseduo--/   #</span>
+  <span class="comment">#{                                                                                                                             ||                               \-operator-and-value---------------------------------------------------------------------/  | |              #</span>
+  <span class="comment">#{                                                                                                                             |\-attr-clause-([])----------------------------------------------------------------------------------------------------------/ |              #</span>
+  <span class="comment">#{                                                                                                                             \-attr-clauses-([][]...)-------------------------------------------------------------------------------------------------------/              #</span>
+  <span class="comment">#{############################################################################################################################################################################################################################################################################</span></pre></div></div>
             
         </li>
         
@@ -375,7 +381,7 @@ predicate (a boolean-valued function with the signature
   _ID           = <span class="number">4</span>
   _CLASSES      = <span class="number">8</span>
   _ATTRIBUTES   = <span class="number">13</span>
-  _PSEUDO_CLASS = <span class="number">32</span></pre></div></div>
+  _PSEUDO_CLASS = <span class="number">35</span></pre></div></div>
             
         </li>
         
@@ -392,13 +398,13 @@ into individual components.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="comment">#{#########################################################################################################################################</span>
-  <span class="comment">#{                                                                          11 11       1          11                  1                  #</span>
-  <span class="comment">#{                         1  23                  4        567   8    9     01 23       4          56                  7                  #</span>
-  _ATTRIBUTE_CLAUSE_REGEXP: <span class="regexp">/(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])/g</span> <span class="comment">#</span>
-  <span class="comment">#{                            \-name----------------------/|\-operator-----/\-value-----------------------------------------------/|      #</span>
-  <span class="comment">#{                                                         \-operator-and-value----------------------------------------------------/      #</span>
-  <span class="comment">#{#########################################################################################################################################</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="comment">#{###########################################################################################################################################################</span>
+  <span class="comment">#{                                                                          1     1     1     11 11       1          11                  2                  #</span>
+  <span class="comment">#{                         1  23                  4        567   8    9     0     1     2     34 56       7          89                  0                  #</span>
+  _ATTRIBUTE_CLAUSE_REGEXP: <span class="regexp">/(\[((\/[^\/]*\/[gmi]*)|([\w-]+))(((=)|(~=)|(\|=)|(\*=)|(\^=)|(\$=))(("(([^\\"]|(\\"))*)")|((\/[^\/]*\/[gmi]*)|([\w- ]+))))?\])/g</span> <span class="comment">#</span>
+  <span class="comment">#{                            \-name----------------------/|\-operator-----------------------/\-value-----------------------------------------------/|      #</span>
+  <span class="comment">#{                                                         \-operator-and-value----------------------------------------------------------------------/      #</span>
+  <span class="comment">#{###########################################################################################################################################################</span></pre></div></div>
             
         </li>
         
@@ -415,8 +421,8 @@ into individual components.</p>
             
             <div class="content"><div class='highlight'><pre>  _ATTR_NAME              = <span class="number">2</span>
   _OPERATOR               = <span class="number">6</span>
-  _DEQUOTED_ATTR_VALUE    = <span class="number">12</span>
-  _NEVERQUOTED_ATTR_VALUE = <span class="number">15</span></pre></div></div>
+  _DEQUOTED_ATTR_VALUE    = <span class="number">15</span>
+  _NEVERQUOTED_ATTR_VALUE = <span class="number">18</span></pre></div></div>
             
         </li>
         
@@ -499,7 +505,8 @@ that matches the provided <code>selector</code> (string).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
-              <p>One or more attribute parts.</p>
+              <p>TODO FIXME Support for <code>*=</code>, <code>^=</code> and <code>$=</code> is kinda hacked-in here.  Refactor to be more DRY.
+One or more attribute parts.</p>
 
             </div>
             
@@ -519,6 +526,40 @@ that matches the provided <code>selector</code> (string).</p>
                 <span class="property">@_to_string_or_regex</span>(attr_match[_DEQUOTED_ATTR_VALUE] ? attr_match[_NEVERQUOTED_ATTR_VALUE])
               )
             )
+          <span class="keyword">else</span> <span class="keyword">if</span> attr_match[_OPERATOR] <span class="keyword">is</span> <span class="string">'^='</span> <span class="comment"># starts with</span>
+            aval = <span class="property">@_to_string_or_regex</span>(attr_match[_DEQUOTED_ATTR_VALUE] ? attr_match[_NEVERQUOTED_ATTR_VALUE])
+            <span class="keyword">if</span> <span class="keyword">typeof</span> aval <span class="keyword">is</span> <span class="string">'string'</span>
+              regexp_source = <span class="property">@factory</span>._escape_for_regexp(aval)
+              aval = <span class="keyword">new</span> RegExp(<span class="string">"^<span class="subst">#{regexp_source}</span>"</span>)
+            <span class="keyword">else</span>
+              regexp_source = aval.source
+              modifier = <span class="string">''</span>
+              modifier += <span class="string">'i'</span> <span class="keyword">if</span> aval.ignoreCase
+              modifier += <span class="string">'g'</span> <span class="keyword">if</span> aval.global
+              modifier += <span class="string">'m'</span> <span class="keyword">if</span> aval.multiline
+              <span class="keyword">unless</span> <span class="regexp">/^\^/</span>.test regexp_source
+                aval = <span class="keyword">new</span> RegExp(<span class="string">"^<span class="subst">#{regexp_source}</span>"</span>)
+            clauses.push(<span class="property">@factory</span>.by_attr_value_predicate(<span class="property">@_to_string_or_regex</span>(attr_match[_ATTR_NAME]),aval))
+          <span class="keyword">else</span> <span class="keyword">if</span> attr_match[_OPERATOR] <span class="keyword">is</span> <span class="string">'$='</span> <span class="comment"># ends with</span>
+            aval = <span class="property">@_to_string_or_regex</span>(attr_match[_DEQUOTED_ATTR_VALUE] ? attr_match[_NEVERQUOTED_ATTR_VALUE])
+            <span class="keyword">if</span> <span class="keyword">typeof</span> aval <span class="keyword">is</span> <span class="string">'string'</span>
+              regexp_source = <span class="property">@factory</span>._escape_for_regexp(aval)
+              aval = <span class="keyword">new</span> RegExp(<span class="string">"<span class="subst">#{regexp_source}</span>$"</span>)
+            <span class="keyword">else</span>
+              regexp_source = aval.source
+              modifier = <span class="string">''</span>
+              modifier += <span class="string">'i'</span> <span class="keyword">if</span> aval.ignoreCase
+              modifier += <span class="string">'g'</span> <span class="keyword">if</span> aval.global
+              modifier += <span class="string">'m'</span> <span class="keyword">if</span> aval.multiline
+              <span class="keyword">unless</span> <span class="regexp">/\$$/</span>.test regexp_source
+                aval = <span class="keyword">new</span> RegExp(<span class="string">"<span class="subst">#{regexp_source}</span>$"</span>)
+            clauses.push(<span class="property">@factory</span>.by_attr_value_predicate(<span class="property">@_to_string_or_regex</span>(attr_match[_ATTR_NAME]),aval))
+          <span class="keyword">else</span> <span class="keyword">if</span> attr_match[_OPERATOR] <span class="keyword">is</span> <span class="string">'*='</span> <span class="comment"># contains</span>
+            aval = <span class="property">@_to_string_or_regex</span>(attr_match[_DEQUOTED_ATTR_VALUE] ? attr_match[_NEVERQUOTED_ATTR_VALUE])
+            <span class="keyword">if</span> <span class="keyword">typeof</span> aval <span class="keyword">is</span> <span class="string">'string'</span>
+              regexp_source = <span class="property">@factory</span>._escape_for_regexp(aval)
+              aval = <span class="keyword">new</span> RegExp(regexp_source)
+            clauses.push(<span class="property">@factory</span>.by_attr_value_predicate(<span class="property">@_to_string_or_regex</span>(attr_match[_ATTR_NAME]),aval))
           <span class="keyword">else</span>
             clauses.push(
               <span class="property">@factory</span>.by_attr_value_predicate(

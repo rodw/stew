@@ -29,9 +29,11 @@ Read on for more information, or:
  - [visit the repository on GitHub.](https://github.com/rodw/stew)
  - [review the API.](./docs/using.html)
  - [see a complete example of using Stew (in a "literate CoffeeScript" format).](./docs/example.html)
- - [browse the annotated source code](./docs/docco/stew.html) or [test coverage report](./docs/coverage.html).
+ - [browse the annotated source code](./docs/docco/stew.html) or [test coverage report](/docs/coverage.html).
  - [learn how to contribute to Stew.](./docs/hacking.html)
  - [see the version history and release notes.](./docs/version-history.html)
+
+(Links not working? Try it from [heyrod.com/stew](http://heyrod.com/stew).)
 
 ## Installing
 
@@ -59,7 +61,7 @@ to the `dependencies` or `devDependencies` part of your `package.json` file.
 
 ### Core CSS Selectors
 
-Stew supports the full [CSS selector](http://www.w3.org/TR/CSS2/selector.html) syntax, including
+Stew supports the full [Version 2.1 CSS selector syntax](http://www.w3.org/TR/CSS2/selector.html) and much of [Version 3](http://www.w3.org/TR/css3-selectors/), including
 
   * The universal selector (`*`).
 
@@ -102,9 +104,25 @@ Stew supports the full [CSS selector](http://www.w3.org/TR/CSS2/selector.html) s
 
       E.g., `stew.select( dom, 'div[lang|="en"]')` selects all `div` tags with a `lang` attribute whose value is *exactly* `en` or whose value starts with `en-`.
 
+  * The starts-with `^=` operator  (`E[foo^="bar"]`). ***NEW, UNRELEASED***
+
+      E.g., `stew.select( dom, 'a[href^="https://"]')` selects all `a` tags with an `href` attribute value that starts with `https://`.
+
+  * The ends-with `$=` operator  (`E[foo$="bar"]`). ***NEW, UNRELEASED***
+
+      E.g., `stew.select( dom, 'a[href$=".html"]')` selects all `a` tags with an `href` attribute value that ends with `.html`.
+
+  * The contains `*=` operator  (`E[foo*="bar"]`). ***NEW, UNRELEASED***
+
+      E.g., `stew.select( dom, 'a[href*="://heyrod.com/"]')` selects all `a` tags with an `href` attribute value that contains with `://heyrod.com/`.
+
   * Adjacent selectors (`E + F`).
 
       E.g., `stew.select( dom, 'h1 + p')` selects all `p` tags that immediately follow an `h1` tag.
+
+  * Preceeding sibling selectors (`E ~ F`). ***NEW, UNRELEASED***
+
+      E.g., `stew.select( dom, 'h1 ~ p')` selects all `p` tags that follow an `h1` tag (even if there are other tags between the `h1` and `p`.
 
   * The "or" conjunction (`E, F`).
 
@@ -113,7 +131,6 @@ Stew supports the full [CSS selector](http://www.w3.org/TR/CSS2/selector.html) s
   * The :first-child pseudo-class (`E:first-child`).
 
       E.g., `stew.select( dom, 'li:first-child' )` selects all `li` tags that happen to be the first tag among its siblings.
-
 
 And of course, you can use arbitrary combinations of these selectors:
 
@@ -157,6 +174,38 @@ Here are some example CSS selectors using regular expressions:
   * Attribute values: As above, `[href=/^https?:/i]` matches any tag with an `href` attribute whose value starts with `http:` or `https:` (case-insensitive).
 
 These may be used in any combination, and freely mixed with "regular" CSS selectors.
+
+## Current Limitations
+
+Stew currently has a couple of known issues that crop up during specific (and rare) edge-cases. We intend to eliminate these in future releases, but want to make you aware of them so that you're not surprised.
+
+(Developers: If you'd like to help address these issues, we'd love your help. Feel free to submit a pull request or reach out for more information.)
+
+### CSS 3 Selectors aren't (yet) fully supported.
+
+Our intention is to fully support the most recent CSS selector syntax.
+
+Stew supports all of the [CSS 2.1 Selectors](http://www.w3.org/TR/CSS2/selector.html). (To the extent that it makes sense to do so. It's hard to see how to interpret `:hover` and `:visited` and so on when looking at static-HTML from the server side, although `:first-child` is supported.)
+
+Not quite all of the [CSS 3 Selectors](http://www.w3.org/TR/css3-selectors/) are supported. Currently certain  [structural pseudo-classes](http://www.w3.org/TR/css3-selectors/#structural-pseudos) and [pseduo-elements](http://www.w3.org/TR/css3-selectors/#pseudo-elements) are not supported (*yet*).
+
+### Stew may not report all syntax errors.
+
+Stew will accept and properly parse any *valid* CSS selectors (unless listed as limitation elsewhere in this section).
+
+However, (currently) Stew does not always *reject* every *invalid* selector.  In particular, Stew's parser *may* ignore the invalid parts of improperly formed selectors, which can lead to unexpected results.
+
+### Stew requires white-space around the "generalized sibling" operator: `E ~ F` works, but `E~F` doesn't.
+
+Stew parsers most operators (including `+`, `>` and `,`) with or without white-space.  In other words, Stew treats the following selectors as equivalent:
+
+ * `E + F`, `E+F`, `E+ F` and `E +F`
+ * `E , F`, `E,F`, `E, F` and `E ,F`
+ * `E > F`, `E>F`, `E> F` and `E >F`
+
+Unfortantely, due to a quirk of Stew's current parser, the same is not true for the "preceeding sibling" operator (`~`).  That is, Stew supports `E ~ F` but does not properly parse `E~F`.  Currently the `~` character must be surrounded by white-space.
+
+(If you're curious, the `~=` operator is the complicating factor for `~` right now. The same patterns we use for `+`, `,` and `>` don't quite work for `~`.)
 
 ## Licensing
 

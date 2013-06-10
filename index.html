@@ -136,6 +136,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="#core-css-selectors">Core CSS Selectors</a></li>
 <li><a href="#regular-expressions">Regular Expressions</a></li>
 </ul></li>
+<li><a href="#current-limitations">Current Limitations</a><ul>
+<li><a href="#css-3-selectors-arent-yet-fully-supported.">CSS 3 Selectors aren't (yet) fully supported.</a></li>
+<li><a href="#stew-may-not-report-all-syntax-errors.">Stew may not report all syntax errors.</a></li>
+<li><a href="#stew-requires-white-space-around-the-generalized-sibling-operator-e-f-works-but-ef-doesnt.">Stew requires white-space around the &quot;generalized sibling&quot; operator: <code>E ~ F</code> works, but <code>E~F</code> doesn't.</a></li>
+</ul></li>
 <li><a href="#licensing">Licensing</a></li>
 </ul></li>
 </ul>
@@ -156,10 +161,11 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li><a href="https://github.com/rodw/stew">visit the repository on GitHub.</a></li>
 <li><a href="./docs/using.html">review the API.</a></li>
 <li><a href="./docs/example.html">see a complete example of using Stew (in a &quot;literate CoffeeScript&quot; format).</a></li>
-<li><a href="./docs/docco/stew.html">browse the annotated source code</a> or <a href="./docs/coverage.html">test coverage report</a>.</li>
+<li><a href="./docs/docco/stew.html">browse the annotated source code</a> or <a href="/docs/coverage.html">test coverage report</a>.</li>
 <li><a href="./docs/hacking.html">learn how to contribute to Stew.</a></li>
 <li><a href="./docs/version-history.html">see the version history and release notes.</a></li>
 </ul>
+<p>(Links not working? Try it from <a href="http://heyrod.com/stew">heyrod.com/stew</a>.)</p>
 <h2 id="installing"><a href="#TOC">Installing</a></h2>
 <p>The source code and documentation for Stew is available on GitHub at <a href="https://github.com/rodw/stew">rodw/stew</a>. You can clone the repository via:</p>
 <pre class="console"><code>git clone git@github.com:rodw/stew.git</code></pre>
@@ -170,7 +176,7 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>to the <code>dependencies</code> or <code>devDependencies</code> part of your <code>package.json</code> file.</p>
 <h2 id="features"><a href="#TOC">Features</a></h2>
 <h3 id="core-css-selectors"><a href="#TOC">Core CSS Selectors</a></h3>
-<p>Stew supports the full <a href="http://www.w3.org/TR/CSS2/selector.html">CSS selector</a> syntax, including</p>
+<p>Stew supports the full <a href="http://www.w3.org/TR/CSS2/selector.html">Version 2.1 CSS selector syntax</a> and much of <a href="http://www.w3.org/TR/css3-selectors/">Version 3</a>, including</p>
 <ul>
 <li><p>The universal selector (<code>*</code>).</p>
 <p>E.g., <code>stew.select( dom, '*' )</code> selects all the tags in the document.</p></li>
@@ -192,8 +198,16 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <p>E.g., <code>stew.select( dom, 'a[class~=&quot;author&quot;]')</code> selects all <code>a</code> tags with the <code>class</code> <code>author</code>, whether or not that tag has other classes as well. More generally <code>~=</code> treats the attribute value as a white-space delimited list of values (to which the given value is compared).</p></li>
 <li><p>The <code>|=</code> operator (<code>E[foo|=&quot;bar&quot;]</code>).</p>
 <p>E.g., <code>stew.select( dom, 'div[lang|=&quot;en&quot;]')</code> selects all <code>div</code> tags with a <code>lang</code> attribute whose value is <em>exactly</em> <code>en</code> or whose value starts with <code>en-</code>.</p></li>
+<li><p>The starts-with <code>^=</code> operator (<code>E[foo^=&quot;bar&quot;]</code>). <strong><em>NEW, UNRELEASED</em></strong></p>
+<p>E.g., <code>stew.select( dom, 'a[href^=&quot;https://&quot;]')</code> selects all <code>a</code> tags with an <code>href</code> attribute value that starts with <code>https://</code>.</p></li>
+<li><p>The ends-with <code>$=</code> operator (<code>E[foo$=&quot;bar&quot;]</code>). <strong><em>NEW, UNRELEASED</em></strong></p>
+<p>E.g., <code>stew.select( dom, 'a[href$=&quot;.html&quot;]')</code> selects all <code>a</code> tags with an <code>href</code> attribute value that ends with <code>.html</code>.</p></li>
+<li><p>The contains <code>*=</code> operator (<code>E[foo*=&quot;bar&quot;]</code>). <strong><em>NEW, UNRELEASED</em></strong></p>
+<p>E.g., <code>stew.select( dom, 'a[href*=&quot;://heyrod.com/&quot;]')</code> selects all <code>a</code> tags with an <code>href</code> attribute value that contains with <code>://heyrod.com/</code>.</p></li>
 <li><p>Adjacent selectors (<code>E + F</code>).</p>
 <p>E.g., <code>stew.select( dom, 'h1 + p')</code> selects all <code>p</code> tags that immediately follow an <code>h1</code> tag.</p></li>
+<li><p>Preceeding sibling selectors (<code>E ~ F</code>). <strong><em>NEW, UNRELEASED</em></strong></p>
+<p>E.g., <code>stew.select( dom, 'h1 ~ p')</code> selects all <code>p</code> tags that follow an <code>h1</code> tag (even if there are other tags between the <code>h1</code> and <code>p</code>.</p></li>
 <li><p>The &quot;or&quot; conjunction (<code>E, F</code>).</p>
 <p>E.g., <code>stew.select( dom, 'h1, h2')</code> selects all <code>h1</code> and <code>h2</code> tags.</p></li>
 <li><p>The :first-child pseudo-class (<code>E:first-child</code>).</p>
@@ -223,6 +237,25 @@ code > span.er { color: #ff0000; font-weight: bold; }
 <li>Attribute values: As above, <code>[href=/^https?:/i]</code> matches any tag with an <code>href</code> attribute whose value starts with <code>http:</code> or <code>https:</code> (case-insensitive).</li>
 </ul>
 <p>These may be used in any combination, and freely mixed with &quot;regular&quot; CSS selectors.</p>
+<h2 id="current-limitations"><a href="#TOC">Current Limitations</a></h2>
+<p>Stew currently has a couple of known issues that crop up during specific (and rare) edge-cases. We intend to eliminate these in future releases, but want to make you aware of them so that you're not surprised.</p>
+<p>(Developers: If you'd like to help address these issues, we'd love your help. Feel free to submit a pull request or reach out for more information.)</p>
+<h3 id="css-3-selectors-arent-yet-fully-supported."><a href="#TOC">CSS 3 Selectors aren't (yet) fully supported.</a></h3>
+<p>Our intention is to fully support the most recent CSS selector syntax.</p>
+<p>Stew supports all of the <a href="http://www.w3.org/TR/CSS2/selector.html">CSS 2.1 Selectors</a>. (To the extent that it makes sense to do so. It's hard to see how to interpret <code>:hover</code> and <code>:visited</code> and so on when looking at static-HTML from the server side, although <code>:first-child</code> is supported.)</p>
+<p>Not quite all of the <a href="http://www.w3.org/TR/css3-selectors/">CSS 3 Selectors</a> are supported. Currently certain <a href="http://www.w3.org/TR/css3-selectors/#structural-pseudos">structural pseudo-classes</a> and <a href="http://www.w3.org/TR/css3-selectors/#pseudo-elements">pseduo-elements</a> are not supported (<em>yet</em>).</p>
+<h3 id="stew-may-not-report-all-syntax-errors."><a href="#TOC">Stew may not report all syntax errors.</a></h3>
+<p>Stew will accept and properly parse any <em>valid</em> CSS selectors (unless listed as limitation elsewhere in this section).</p>
+<p>However, (currently) Stew does not always <em>reject</em> every <em>invalid</em> selector. In particular, Stew's parser <em>may</em> ignore the invalid parts of improperly formed selectors, which can lead to unexpected results.</p>
+<h3 id="stew-requires-white-space-around-the-generalized-sibling-operator-e-f-works-but-ef-doesnt."><a href="#TOC">Stew requires white-space around the &quot;generalized sibling&quot; operator: <code>E ~ F</code> works, but <code>E~F</code> doesn't.</a></h3>
+<p>Stew parsers most operators (including <code>+</code>, <code>&gt;</code> and <code>,</code>) with or without white-space. In other words, Stew treats the following selectors as equivalent:</p>
+<ul>
+<li><code>E + F</code>, <code>E+F</code>, <code>E+ F</code> and <code>E +F</code></li>
+<li><code>E , F</code>, <code>E,F</code>, <code>E, F</code> and <code>E ,F</code></li>
+<li><code>E &gt; F</code>, <code>E&gt;F</code>, <code>E&gt; F</code> and <code>E &gt;F</code></li>
+</ul>
+<p>Unfortantely, due to a quirk of Stew's current parser, the same is not true for the &quot;preceeding sibling&quot; operator (<code>~</code>). That is, Stew supports <code>E ~ F</code> but does not properly parse <code>E~F</code>. Currently the <code>~</code> character must be surrounded by white-space.</p>
+<p>(If you're curious, the <code>~=</code> operator is the complicating factor for <code>~</code> right now. The same patterns we use for <code>+</code>, <code>,</code> and <code>&gt;</code> don't quite work for <code>~</code>.)</p>
 <h2 id="licensing"><a href="#TOC">Licensing</a></h2>
 <p>The Stew library and related documentation are made available under an <a href="http://opensource.org/licenses/MIT">MIT License</a>. For details, please see the file <a href="MIT-LICENSE.txt">MIT-LICENSE.txt</a> in the root directory of the repository.</p>
 </body>

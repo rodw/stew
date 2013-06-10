@@ -132,6 +132,49 @@ The [test-coverage report](./coverage.html) identifies the lines of code^[The ge
 make coverage
 ```
 
+## How you can help.
+
+Your contributions, [bug reports](https://github.com/rodw/stew/issues) and [pull-requests](https://github.com/rodw/stew/pulls) are greatly appreciated.
+
+### Areas that need work.
+
+If you're looking for areas in which to contribute, here are a few ideas:
+
+ * Documenation and examples are *always* welcome. There are several Markdown-format files within [./docs/](https://github.com/rodw/stew/tree/master/docs) that are always in need of editing and improvement, and please feel free to plug any documentation gaps that you see.
+
+ * New and improved unit-tests are also always welcome. You could help us ensure we've tested all the relevant parts of the CSS selector specification, or review the [test coverage report](http://heyrod.com/stew/docs/coverage.html) to identify areas that aren't currently exercised by our unit test suite.
+
+ * Stew has a few known limitations we'd like to eliminate. See the "Limitations" section of the [README file](../README.html) for details.
+
+ * Browser-side Stew isn't yet supported, or at least not fully tested.  This probably doesn't require substantial changes, but no one has gotten around to it just yet.
+
+ * Run the target `make todo` to see a list of `TODO`, `FIXME` and similiar comments within the code and documenation.
+
+### How to contribute.
+
+We're happy to accept any help you can offer, but the following guidelines can help streamline the process for everyone.
+
+ * You can report any bugs at [github.com/rodw/stew/issues](https://github.com/rodw/stew/issues).
+
+    - We'll be able to address the issue more easily if you can provide an demonstration of the problem you are encountering. The best format for this demonstration is a failing unit test (like those found in [./test/](https://github.com/rodw/stew/tree/master/test)), but your report is welcome with or without that.
+
+ * Our preferered channel for contributions or changes to Stew's source code and documenation is as a Git "patch" or "pull-request".
+
+    - If you've never submitted a pull-request, here's one way to go about it:
+
+        1. Fork or clone the Stew repository.
+        2. Create a local branch to contain your changes (`git checkout -b my-new-branch`).
+        3. Make your changes and commit them to your local repository.
+        4. Create a pull request [as described here]( https://help.github.com/articles/creating-a-pull-request).
+
+    - If you'd rather use a private (or just non-GitHub) repository, you might find [these generic instructions on creating a "patch" with Git](https://ariejan.net/2009/10/26/how-to-create-and-apply-a-patch-with-git/) helpful.
+
+ * If you are making changes to the code please ensure that the [unit test suite](#unit-tests) still passes.
+
+ * If you are making changes to the code to address a bug or introduce new features, we'd *greatly* appreciate it if you can provide one or more [unit tests](#unit-tests) that demonstrate the bug or exercise the new feature.
+
+**Please Note:** We'd rather have a contribution that doesn't follow these guidelines than no contribution at all.  If you are confused or put-off by any of the above, your contribution is still welcome.  Feel free to contribute or comment in whatever channel works for you.
+
 ## Nuts and Bolts
 
 ### Run-time Depenencies

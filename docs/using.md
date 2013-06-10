@@ -105,7 +105,7 @@ stew.select_first(dom, 'html title', function(err,title_tag) {
   if(err) {
     console.error(err);
   } else {
-    console.log(domutil.toText(title_tag));
+    console.log(domutil.to_text(title_tag));
   }
 });
 ```
@@ -165,7 +165,7 @@ domutil.parse_html( html, function(err,dom) {
   if(err) {
     console.error(err);
   } else {
-    console.log(domutil.toText(dom));
+    console.log(domutil.to_text(dom));
   }
 });
 ```
@@ -190,7 +190,7 @@ domutil.parse_html( html, function(err,dom) {
   if(err) {
     console.error(err);
   } else {
-    console.log(domutil.toText(dom,not_italic));
+    console.log(domutil.to_text(dom,not_italic));
   }
 });
 ```

@@ -518,6 +518,34 @@ the given <code>node</code>.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
+              <p><strong>preceding_sibling_predicate</strong> returns a predicate
+that evaluates to <code>true</code> iff <code>second</code> evaluates
+to <code>true</code> for the given <code>node</code> and <code>first</code> evaluates
+to <code>true</code> for some tag sibling preceding
+the given <code>node</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  preceding_sibling_predicate:(first,second)-&gt;
+    <span class="keyword">return</span> (node,node_metadata,dom_metadata)-&gt;
+      <span class="keyword">if</span> second(node,node_metadata,dom_metadata)
+        <span class="keyword">for</span> prev,index <span class="keyword">in</span> node_metadata.siblings
+          <span class="keyword">if</span> index <span class="keyword">is</span> node_metadata.sib_index
+            <span class="keyword">return</span> <span class="literal">false</span>
+          <span class="keyword">else</span> <span class="keyword">if</span> prev.type <span class="keyword">is</span> <span class="string">'tag'</span>
+            <span class="keyword">if</span> first(prev,dom_metadata[prev._stew_node_id],dom_metadata)
+              <span class="keyword">return</span> <span class="literal">true</span>
+      <span class="keyword">return</span> <span class="literal">false</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
               <p>The PredicateFactory class is exported under the name <code>PredicateFactory</code>.</p>
 
             </div>
