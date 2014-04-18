@@ -29,7 +29,7 @@ MOCHA_EXE ?= ./node_modules/.bin/mocha
 MOCHA_TESTS ?= $(wildcard test/test-*.coffee)
 MOCHA_TEST_PATTERN ?=
 MOCHA_TIMEOUT ?=-t 3000
-MOCHA_TEST_ARGS  ?= -R list --compilers coffee:coffee-script $(MOCHA_TIMEOUT) $(MOCHA_TEST_PATTERN)
+MOCHA_TEST_ARGS  ?= -R list --compilers coffee:coffee-script/register $(MOCHA_TIMEOUT) $(MOCHA_TEST_PATTERN)
 MOCHA_EXTRA_ARGS ?=
 
 # JSCOVERAGE ###################################################################
@@ -38,7 +38,7 @@ JSCOVERAGE_REPORT ?= docs/coverage.html
 JSCOVERAGE_TMP_DIR ?=  ./jscov-tmp
 LIB_COV ?= lib-cov
 LIB ?= lib
-MOCHA_COV_ARGS  ?= -R html-cov --compilers coffee:coffee-script -t 6000 --globals "_\$$jscoverage"
+MOCHA_COV_ARGS  ?= -R html-cov --compilers coffee:coffee-script/register -t 6000 --globals "_\$$jscoverage"
 
 # MARKDOWN #####################################################################
 MARKDOWN_SRCS ?= $(shell find . -type f -name '*.md' | grep -v node_modules)
