@@ -40,6 +40,7 @@ LIB_COV ?= lib-cov
 LIB ?= lib
 MOCHA_COV_ARGS  ?= -R html-cov --compilers coffee:coffee-script/register -t 6000 --globals "_\$$jscoverage"
 
+
 # MARKDOWN #####################################################################
 MARKDOWN_SRCS ?= $(shell find . -type f -name '*.md' | grep -v node_modules)
 MARKDOWN_HTML ?= ${MARKDOWN_SRCS:.md=.html}
