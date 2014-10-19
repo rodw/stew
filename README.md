@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/rodw/stew.svg?branch=master)](https://travis-ci.org/rodw/stew)
+
 # Stew
 
 **[Stew](https://github.com/rodw/stew)** is a JavaScript library that implements the [CSS selector](http://www.w3.org/TR/CSS2/selector.html) syntax, and extends it with regular expression tag names, class names, ids, attribute names and attribute values.
