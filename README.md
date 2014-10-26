@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/rodw/stew.svg?branch=master)](https://travis-ci.org/rodw/stew)
+# Stew [![Build Status](https://travis-ci.org/rodw/stew.svg?branch=master)](https://travis-ci.org/rodw/stew) [![Dependencies](https://david-dm.org/rodw/stew.svg)](https://npmjs.org/package/stew) [![NPM version](https://badge.fury.io/js/stew.svg)](http://badge.fury.io/js/stew)
 
 # Stew
 
