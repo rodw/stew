@@ -1,6 +1,7 @@
-Copyright (c) 2013 Rodney Waldhoff and other contributors.
+Copyright (c) 2013-2014 Rodney Waldhoff and contributors.
+-----------------------------------------------------------------------
 <https://github.com/rodw/stew>
-
+-----------------------------------------------------------------------
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
