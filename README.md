@@ -199,7 +199,7 @@ However, (currently) Stew does not always *reject* every *invalid* selector.  In
 
 ### Stew requires white-space around the "generalized sibling" operator: `E ~ F` works, but `E~F` doesn't.
 
-Stew parsers most operators (including `+`, `>` and `,`) with or without white-space.  In other words, Stew treats the following selectors as equivalent:
+Stew parses most operators (including `+`, `>` and `,`) with or without white-space.  In other words, Stew treats the following selectors as equivalent:
 
  * `E + F`, `E+F`, `E+ F` and `E +F`
  * `E , F`, `E,F`, `E, F` and `E ,F`
