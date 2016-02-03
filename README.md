@@ -35,7 +35,7 @@ Read on for more information, or:
  - [learn how to contribute to Stew.](./docs/hacking.html)
  - [see the version history and release notes.](./docs/version-history.html)
 
-(Links not working? Try it from [heyrod.com/stew](http://heyrod.com/stew).)
+(Links not working? Try it from [heyrod.com/stew](http://heyrod.com/stew) or view the "raw" files [here](https://github.com/rodw/stew/tree/master/docs).)
 
 ## Installing
 
